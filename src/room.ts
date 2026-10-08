@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { createBedding } from './bedding'
+import { createCurtains } from './curtains'
 
 export const roomObstacles = [
   { minX: -5.7, maxX: -2.5, minZ: 0.1, maxZ: 4.2 },
@@ -122,6 +123,7 @@ export function createRoom() {
   for (let i = 0; i < 8; i++) box('#efdd76', [0.045, 0.045, 0.015], [-1.55 + i * 0.28, 3.77 + (i % 3) * 0.15, -4.2])
   for (const x of [-1.76, -0.5, 0.76]) box('#c49c63', [0.085, 2.31, 0.12], [x, 3.25, -4.17])
   box('#c49c63', [2.6, 0.085, 0.12], [-0.5, 2.91, -4.17])
+  room.add(createCurtains())
 
   // The reference's dark MCR poster, plus a small colorful framed picture.
   const posterCanvas = document.createElement('canvas')
