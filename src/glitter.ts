@@ -21,19 +21,6 @@ export function createGlitterBackground() {
     ctx.fillStyle = '#f8dce8'
     ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill()
   }
-  for (let i = 0; i < 40; i++) {
-    const x = random() * 1024, y = random() * 1024, size = 2 + random() * 5
-    const glow = ctx.createRadialGradient(x, y, 0, x, y, size * 2)
-    glow.addColorStop(0, '#fff0f7cc'); glow.addColorStop(0.2, '#fff0f766'); glow.addColorStop(1, '#ffffff00')
-    ctx.fillStyle = glow; ctx.fillRect(x - size * 2, y - size * 2, size * 4, size * 4)
-    ctx.fillStyle = '#fff0f7cc'
-    ctx.beginPath()
-    ctx.moveTo(x, y - size); ctx.lineTo(x + size * 0.18, y - size * 0.18)
-    ctx.lineTo(x + size, y); ctx.lineTo(x + size * 0.18, y + size * 0.18)
-    ctx.lineTo(x, y + size); ctx.lineTo(x - size * 0.18, y + size * 0.18)
-    ctx.lineTo(x - size, y); ctx.lineTo(x - size * 0.18, y - size * 0.18)
-    ctx.closePath(); ctx.fill()
-  }
   const texture = new THREE.CanvasTexture(canvas)
   texture.colorSpace = THREE.SRGBColorSpace
   texture.wrapS = texture.wrapT = THREE.RepeatWrapping
