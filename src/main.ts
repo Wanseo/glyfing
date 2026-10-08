@@ -1,7 +1,7 @@
 import './style.css'
 import * as THREE from 'three'
 import { createCharacter } from './character'
-import { clampPosition, getDirection } from './movement'
+import { clampPosition, getControls, getTravel } from './movement'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 const scene = new THREE.Scene()
@@ -65,18 +65,14 @@ let previous = 0, gait = 0, walk = 0
 renderer.setAnimationLoop((time: number) => {
   const dt = previous ? Math.min((time - previous) / 1000, 0.05) : 0
   previous = time
-  const direction = getDirection(keys)
+  const controls = getControls(keys)
+  character.root.rotation.y += controls.turn * dt * 2
+  character.root.rotation.y = Math.atan2(Math.sin(character.root.rotation.y), Math.cos(character.root.rotation.y))
+  const direction = getTravel(character.root.rotation.y, controls.forward)
   position.x = clampPosition(position.x + direction.x * dt * 3.1, halfWidth, 1.6)
   position.y = clampPosition(position.y + direction.y * dt * 3.1, halfHeight, 1.75)
-  walk = THREE.MathUtils.damp(walk, direction.moving ? 1 : 0, 12, dt)
-  gait += dt * 11 * walk
-  if (direction.moving) {
-    const target = direction.y > 0
-      ? Math.PI - direction.x * Math.PI / 9
-      : direction.x * Math.PI / 9
-    const difference = Math.atan2(Math.sin(target - character.root.rotation.y), Math.cos(target - character.root.rotation.y))
-    character.root.rotation.y += difference * (1 - Math.exp(-12 * dt))
-  }
+  walk = THREE.MathUtils.damp(walk, controls.forward !== 0 ? 1 : 0, 12, dt)
+  gait += dt * 11 * walk * (controls.forward < 0 ? -1 : 1)
   character.root.position.set(position.x, position.y - 1.77 + Math.abs(Math.sin(gait)) * 0.06 * walk, 0)
   character.torso.rotation.z = Math.sin(gait) * 0.035 * walk
   character.legs.forEach((leg, i) => { leg.rotation.x = Math.sin(gait + i * Math.PI) * 0.48 * walk })
