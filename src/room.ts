@@ -34,7 +34,8 @@ export function createRoom() {
   // Open-front miniature room, with the warm cream and peach reference palette.
   box('#efbb8d', [12, 0.22, 9.6], [0, -0.11, 0])
   box('#f6e7c6', [12.2, 5.6, 0.2], [0, 2.8, -4.7])
-  box('#efe0be', [0.2, 5.6, 9.6], [-6, 2.8, 0])
+  const leftWall = box('#efe0be', [0.2, 5.6, 9.6], [-6, 2.8, 0])
+  leftWall.castShadow = false
   box('#aa7049', [12, 0.4, 0.16], [0, 0.32, -4.54])
   box('#aa7049', [0.16, 0.4, 9.4], [-5.86, 0.32, 0])
 
