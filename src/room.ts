@@ -103,23 +103,5 @@ export function createRoom() {
   box('#c49c63', [2.6, 0.085, 0.12], [-0.5, 2.91, -4.17])
   room.add(createCurtains())
 
-  // The reference's dark MCR poster, plus a small colorful framed picture.
-  const posterCanvas = document.createElement('canvas')
-  posterCanvas.width = 256; posterCanvas.height = 384
-  const p = posterCanvas.getContext('2d')!
-  p.fillStyle = '#253847'; p.fillRect(0, 0, 256, 384)
-  p.fillStyle = '#cf4085'; p.font = 'bold 76px monospace'; p.textAlign = 'center'; p.fillText('MCR', 128, 340)
-  p.fillStyle = '#d8ba91'
-  p.beginPath(); p.moveTo(56, 180); p.lineTo(95, 155); p.lineTo(90, 181); p.fill()
-  p.beginPath(); p.moveTo(142, 172); p.lineTo(176, 150); p.lineTo(175, 178); p.fill()
-  const posterTexture = new THREE.CanvasTexture(posterCanvas)
-  posterTexture.colorSpace = THREE.SRGBColorSpace
-  box('#684e38', [1.35, 2.3, 0.13], [-4.6, 3.2, -4.5])
-  const poster = new THREE.Mesh(new THREE.PlaneGeometry(1.22, 2.17), new THREE.MeshStandardMaterial({ map: posterTexture, roughness: 1 }))
-  poster.position.set(-4.6, 3.2, -4.42)
-  room.add(poster)
-  box('#72553c', [1.16, 1.16, 0.14], [-2.9, 3.78, -4.5])
-  box('#fff0d4', [0.99, 0.99, 0.06], [-2.9, 3.78, -4.39])
-  for (let i = 0; i < 6; i++) box(['#74a5c7', '#edb86d', '#d995ad'][i % 3]!, [0.21, 0.28, 0.018], [-3.19 + (i % 3) * 0.29, 3.58 + Math.floor(i / 3) * 0.37, -4.35])
   return room
 }
