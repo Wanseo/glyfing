@@ -100,6 +100,11 @@ export function createCharacter() {
     lid.scale.set(0.245, 0.257, 0.128)
     lid.rotation.z = x! * -0.12
     eye.add(lid)
+    const lowerLid = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 16, 0, Math.PI * 2, Math.PI * 0.62, Math.PI * 0.38), skin)
+    lowerLid.position.set(0, 0, 0.072)
+    lowerLid.scale.set(0.247, 0.259, 0.13)
+    lowerLid.rotation.z = x! * -0.12
+    eye.add(lowerLid)
     const rim = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.024, 8, 48), skin)
     rim.scale.y = 1.1
     rim.position.z = 0.045
