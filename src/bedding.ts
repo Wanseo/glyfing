@@ -46,61 +46,98 @@ export function createBedding() {
   fittedSheet.position.set(0, 0.96, 2.25)
   fittedSheet.receiveShadow = fittedSheet.castShadow = true
   bedding.add(fittedSheet)
-  function pillow(material: THREE.Material, x: number, y: number, z: number, width: number, depth: number, tilt: number) {
-    const geometry = new THREE.SphereGeometry(1, 48, 32)
-    const vertices = geometry.attributes.position!
-    const uv = geometry.attributes.uv!
-    const normals = geometry.attributes.normal!
-    const normal = new THREE.Vector3()
-    for (let i = 0; i < vertices.count; i++) {
-      const round = (n: number) => Math.abs(n) < 1e-7 ? 0 : Math.sign(n) * Math.abs(n) ** 0.6
-      const x = round(vertices.getX(i)), y = round(vertices.getY(i)), z = round(vertices.getZ(i))
-      vertices.setXYZ(i, x, y, z)
-      uv.setXY(i, (x + 1) / 2, (1 - z) / 2)
-      const exponent = 2 / 0.6 - 1
-      normal.set(Math.sign(x) * Math.abs(x) ** exponent,
-        Math.sign(y) * Math.abs(y) ** exponent,
-        Math.sign(z) * Math.abs(z) ** exponent).normalize()
-      normals.setXYZ(i, normal.x, normal.y, normal.z)
+  // A pillowcase has a rectangular stitched perimeter and softly filled
+  // faces, rather than the outline and highlights of a squashed sphere.
+  function pillow(material: THREE.Material, x: number, y: number, z: number, tilt: number) {
+    const group = new THREE.Group()
+    for (const side of [-1, 1]) {
+      const geometry = new THREE.PlaneGeometry(2, 2, 40, 40)
+      const vertices = geometry.attributes.position!
+      for (let i = 0; i < vertices.count; i++) {
+        const u = vertices.getX(i), v = vertices.getY(i)
+        const fill = Math.max(0, (1 - u * u) * (1 - v * v)) ** 0.45
+        const px = u * 0.59 * (1 - 0.025 * Math.abs(v) ** 12)
+        const pz = v * 0.43 * (1 - 0.025 * Math.abs(u) ** 12)
+        const gathers = (1 - fill) * 0.005 * Math.sin(u * 21 + v * 17)
+        vertices.setXYZ(i, px, side * (0.008 + fill * 0.15 + gathers), pz)
+      }
+      geometry.computeVertexNormals()
+      const face = new THREE.Mesh(geometry, material)
+      face.castShadow = face.receiveShadow = true
+      group.add(face)
     }
-    const mesh = new THREE.Mesh(geometry, material)
-    mesh.scale.set(width, 0.17, depth)
-    mesh.position.set(x, y, z)
-    mesh.rotation.x = tilt
-    mesh.rotation.y = x * 0.15
-    mesh.castShadow = mesh.receiveShadow = true
-    bedding.add(mesh)
+    group.position.set(x, y, z)
+    group.rotation.x = tilt
+    group.rotation.y = x * 0.06
+    bedding.add(group)
   }
-  const red = new THREE.MeshStandardMaterial({ color: '#bf1930', roughness: 1, side: THREE.DoubleSide })
-  pillow(red, 0.15, 1.46, 0.94, 0.85, 0.48, 0.3)
-  pillow(cloth('patchwork'), -0.57, 1.55, 1.05, 0.59, 0.47, 0.35)
-  pillow(cloth('stars'), 0.58, 1.59, 1.14, 0.56, 0.44, 0.32)
-  pillow(new THREE.MeshStandardMaterial({ color: '#b7d5e1', roughness: 1 }), -0.36, 1.39, 1.52, 0.66, 0.39, 0.12)
+  const weaveCanvas = document.createElement('canvas')
+  weaveCanvas.width = weaveCanvas.height = 128
+  const weave = weaveCanvas.getContext('2d')!
+  weave.fillStyle = '#888888'; weave.fillRect(0, 0, 128, 128)
+  for (let y = 0; y < 128; y += 2) for (let x = 0; x < 128; x += 2) {
+    weave.fillStyle = (x + y) % 4 ? '#909090' : '#808080'
+    weave.fillRect(x, y, 1, 2)
+  }
+  const bump = new THREE.CanvasTexture(weaveCanvas)
+  bump.wrapS = bump.wrapT = THREE.RepeatWrapping
+  bump.repeat.set(8, 8)
+  const red = new THREE.MeshPhysicalMaterial({ color: '#d51a35', roughness: 1,
+    sheen: 0.65, sheenColor: new THREE.Color('#e94858'), sheenRoughness: 1,
+    bumpMap: bump, bumpScale: 0.0015, side: THREE.DoubleSide })
+  const patchwork = cloth('patchwork'); patchwork.side = THREE.DoubleSide
+  const stars = cloth('stars'); stars.side = THREE.DoubleSide
+  const blue = new THREE.MeshStandardMaterial({ color: '#a7d7ec', roughness: 1, side: THREE.DoubleSide })
+  pillow(red, -0.6, 1.58, 0.94, 0.95)
+  pillow(blue, 0.6, 1.58, 0.96, 0.93)
+  pillow(stars, -0.6, 1.39, 1.49, 0.65)
+  pillow(patchwork, 0.6, 1.38, 1.49, 0.65)
 
-  // A continuous cloth surface with soft irregular wrinkles and hanging edges.
-  const quilt = new THREE.PlaneGeometry(1, 1, 64, 64)
-  const points = quilt.attributes.position!
-  const wrinkle = (x: number, z: number) =>
-    0.023 * Math.sin(x * 7 + z * 4) + 0.014 * Math.sin(x * 13 - z * 6)
-  for (let i = 0; i < points.count; i++) {
-    const x = points.getX(i) * 2.65
-    const z = 2.9 + points.getY(i) * 2.55
-    const sideDrape = Math.max(0, (Math.abs(x) - 1.03) / 0.3) ** 1.5 * 0.5
-    const footDrape = Math.max(0, (z - 3.8) / 0.38) ** 1.3 * 0.43
-    const fold = Math.exp(-(((z - 2.03) / 0.22) ** 2)) * (0.15 + 0.025 * Math.sin(x * 3))
-    points.setXYZ(i, x, 1.3 + wrinkle(x, z) + fold - sideDrape - footDrape, z)
+  function duvet(start: number, end: number, height: number, thickness: number, flap: boolean) {
+    const geometry = new THREE.PlaneGeometry(1, 1, 64, 64)
+    const points = geometry.attributes.position!
+    for (let i = 0; i < points.count; i++) {
+      const u = points.getX(i) + 0.5, v = points.getY(i) + 0.5
+      const x = (u - 0.5) * 2.65
+      const z = start + v * (end - start)
+      const sideDrape = THREE.MathUtils.smoothstep(Math.abs(x), 1.02, 1.34) * 0.4
+      const footDrape = flap ? 0 : THREE.MathUtils.smoothstep(z, 3.72, 4.2) * 0.35
+      const broadFill = Math.sin(u * Math.PI) * Math.sin(v * Math.PI) * (flap ? 0.07 : 0.11)
+      const crease = -0.028 * Math.exp(-(((x - 0.6 + (z - 2.8) * 0.12) / 0.16) ** 2))
+      const relaxed = 0.012 * Math.sin(x * 2.3 + z * 1.8)
+      const edgeRound = THREE.MathUtils.smoothstep(v, 0.85, 1) * (flap ? 0.055 : 0.015)
+      points.setXYZ(i, x, height + broadFill + crease + relaxed - sideDrape - footDrape - edgeRound, z)
+    }
+    geometry.computeVertexNormals()
+    const top = new THREE.Mesh(geometry, red)
+    top.castShadow = top.receiveShadow = true
+    bedding.add(top)
+    const underside = new THREE.Mesh(geometry.clone(), red)
+    underside.position.y = -thickness
+    underside.receiveShadow = true
+    bedding.add(underside)
+    // Close the padded edge with a fabric strip rather than a cylindrical roll.
+    const perimeter: number[] = []
+    for (let i = 0; i < 64; i++) perimeter.push(i)
+    for (let i = 0; i < 64; i++) perimeter.push(i * 65 + 64)
+    for (let i = 64; i > 0; i--) perimeter.push(64 * 65 + i)
+    for (let i = 64; i > 0; i--) perimeter.push(i * 65)
+    const edgePositions: number[] = []
+    for (let i = 0; i < perimeter.length; i++) {
+      const a = perimeter[i]!, b = perimeter[(i + 1) % perimeter.length]!
+      const p = new THREE.Vector3().fromBufferAttribute(points, a)
+      const q = new THREE.Vector3().fromBufferAttribute(points, b)
+      edgePositions.push(p.x, p.y, p.z, q.x, q.y, q.z, p.x, p.y - thickness, p.z,
+        q.x, q.y, q.z, q.x, q.y - thickness, q.z, p.x, p.y - thickness, p.z)
+    }
+    const edge = new THREE.BufferGeometry()
+    edge.setAttribute('position', new THREE.Float32BufferAttribute(edgePositions, 3))
+    edge.computeVertexNormals()
+    const hem = new THREE.Mesh(edge, red)
+    hem.castShadow = hem.receiveShadow = true
+    bedding.add(hem)
   }
-  quilt.computeVertexNormals()
-  const blanket = new THREE.Mesh(quilt, red)
-  blanket.castShadow = blanket.receiveShadow = true
-  bedding.add(blanket)
-  const foldCurve = new THREE.CatmullRomCurve3([
-    new THREE.Vector3(-1.27, 1.25, 2.0), new THREE.Vector3(-0.8, 1.48, 1.93),
-    new THREE.Vector3(0, 1.49, 2.07), new THREE.Vector3(0.75, 1.44, 2.01),
-    new THREE.Vector3(1.26, 1.22, 2.06),
-  ])
-  const foldedEdge = new THREE.Mesh(new THREE.TubeGeometry(foldCurve, 48, 0.13, 12, false), red)
-  foldedEdge.castShadow = foldedEdge.receiveShadow = true
-  bedding.add(foldedEdge)
+  duvet(1.86, 4.16, 1.31, 0.055, false)
+  duvet(1.76, 2.7, 1.48, 0.09, true)
   return bedding
 }
