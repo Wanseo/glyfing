@@ -1,10 +1,11 @@
 import * as THREE from 'three'
+import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.js'
 
 // Visually matched to the supplied photo; the original image file is not
 // available in the workspace for exact pixel sampling.
 const referenceColors = {
-  fur: '#b6a69c',
-  eyelids: '#adaeac',
+  fur: '#d1cabe',
+  eyelids: '#c3bfb4',
   briefs: '#eee5de',
   hearts: '#d83f7d',
   waistband: '#bd1733',
@@ -29,7 +30,7 @@ export function createCharacter() {
   ctx.lineWidth = 0.6
   for (let i = 0; i < 24000; i++) {
     const variation = random() * 16 - 8
-    ctx.strokeStyle = `rgb(${182 + variation},${166 + variation},${156 + variation})`
+    ctx.strokeStyle = `rgb(${209 + variation},${202 + variation},${190 + variation})`
     const x = random() * 256, y = random() * 256
     ctx.beginPath()
     ctx.moveTo(x, y)
@@ -43,9 +44,20 @@ export function createCharacter() {
   const fur = new THREE.MeshStandardMaterial({ color: '#ffffff', map: texture, bumpMap: texture, bumpScale: 0.008, roughness: 1 })
   const fibers = new THREE.MeshPhysicalMaterial({ color: referenceColors.fur, roughness: 1,
     sheen: 0.65, sheenColor: new THREE.Color('#e0d3c9'), sheenRoughness: 1 })
-  const skin = new THREE.MeshStandardMaterial({ color: referenceColors.eyelids, roughness: 1 })
+  const weaveCanvas = document.createElement('canvas')
+  weaveCanvas.width = weaveCanvas.height = 128
+  const weaveContext = weaveCanvas.getContext('2d')!
+  weaveContext.fillStyle = '#888888'
+  weaveContext.fillRect(0, 0, 128, 128)
+  for (let row = 0; row < 128; row += 2) for (let col = 0; col < 128; col += 2) {
+    weaveContext.fillStyle = (row + col) % 4 ? '#949494' : '#808080'
+    weaveContext.fillRect(col, row, 1, 2)
+  }
+  const weave = new THREE.CanvasTexture(weaveCanvas)
+  const skin = new THREE.MeshStandardMaterial({ color: referenceColors.eyelids, bumpMap: weave, bumpScale: 0.0015, roughness: 1 })
+  const thread = new THREE.MeshStandardMaterial({ color: '#e2d9c9', roughness: 1 })
   const cream = new THREE.MeshStandardMaterial({ color: '#e0d6c8', roughness: 0.65 })
-  const toothMaterial = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.65 })
+  const toothMaterial = new THREE.MeshPhysicalMaterial({ color: '#fffdf6', roughness: 0.24, clearcoat: 0.35, clearcoatRoughness: 0.25 })
   const dark = new THREE.MeshStandardMaterial({ color: '#291c19', roughness: 0.65 })
   const iris = new THREE.MeshStandardMaterial({ color: '#684537', roughness: 0.4 })
   const sphere = new THREE.SphereGeometry(1, 32, 24)
@@ -167,12 +179,26 @@ export function createCharacter() {
     oval(eyeball, iris, [0.025, -0.035, 0.155], [0.115, 0.12, 0.036])
     oval(eyeball, dark, [0.025, -0.035, 0.186], [0.057, 0.073, 0.014])
     oval(eyeball, cream, [-0.006, 0.008, 0.199], [0.022, 0.023, 0.008])
-    const lid = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), skin)
+    const upperGeometry = new THREE.SphereGeometry(1, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2)
+    const upperVertices = upperGeometry.attributes.position!
+    for (let i = 0; i < upperVertices.count; i++) {
+      const x = upperVertices.getX(i), y = upperVertices.getY(i)
+      upperVertices.setY(i, y + 0.12 * (1 - x * x) * Math.exp(-y * y * 12))
+    }
+    upperGeometry.computeVertexNormals()
+    const lid = new THREE.Mesh(upperGeometry, skin)
     lid.position.set(0, 0.01, 0.072)
     lid.scale.set(0.245, 0.257, 0.128)
     lid.rotation.z = x! * -0.12
     eye.add(lid)
-    const lowerLid = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 16, 0, Math.PI * 2, Math.PI * 0.62, Math.PI * 0.38), skin)
+    const lowerGeometry = new THREE.SphereGeometry(1, 48, 24, 0, Math.PI * 2, Math.PI * 0.62, Math.PI * 0.38)
+    const lowerVertices = lowerGeometry.attributes.position!
+    for (let i = 0; i < lowerVertices.count; i++) {
+      const x = lowerVertices.getX(i), y = lowerVertices.getY(i)
+      lowerVertices.setY(i, y + 0.32 * x * x * Math.exp(-(((y + 0.368) / 0.22) ** 2)))
+    }
+    lowerGeometry.computeVertexNormals()
+    const lowerLid = new THREE.Mesh(lowerGeometry, skin)
     lowerLid.position.set(0, 0, 0.072)
     lowerLid.scale.set(0.247, 0.259, 0.13)
     lowerLid.rotation.z = x! * -0.12
@@ -182,16 +208,27 @@ export function createCharacter() {
     ;(crease.material as THREE.MeshStandardMaterial).color.set('#858684')
     closed.visible = crease.visible = false
     eyelids.push({ upper: lid, lower: lowerLid, eyeball, closed, crease })
-    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.024, 8, 48), skin)
+    const rim = new THREE.Mesh(new THREE.TorusGeometry(0.272, 0.016, 12, 64), skin)
     rim.scale.y = 1.1
     rim.position.z = 0.045
+    rim.scale.z = 0.5
     eye.add(rim)
+    for (let stitch = 0; stitch < 36; stitch++) {
+      const angle = stitch * Math.PI * 2 / 36
+      const points = [0, 0.5, 1].map(t => {
+        const a = angle + t * 0.085
+        const radius = 0.262 + Math.sin(t * Math.PI) * 0.003
+        return new THREE.Vector3(Math.cos(a) * radius, Math.sin(a) * radius * 1.1, 0.061)
+      })
+      const seam = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(points), 4, 0.0025, 4, false), thread)
+      eye.add(seam)
+    }
   }
   oval(torso, dark, [0, 1.83, 0.454], [0.4, 0.075, 0.045])
   for (let i = 0; i < 6; i++) {
-    const tooth = new THREE.Mesh(new THREE.BoxGeometry(0.068, 0.092 + (i % 2) * 0.018, 0.055), toothMaterial)
+    const tooth = new THREE.Mesh(new RoundedBoxGeometry(0.075, 0.106 + (i % 2) * 0.014, 0.07, 4, 0.016), toothMaterial)
     tooth.position.set((i - 2.5) * 0.112, 1.824, 0.49)
-    tooth.rotation.z = (random() - 0.5) * 0.25
+    tooth.rotation.z = (random() - 0.5) * 0.12
     torso.add(tooth)
   }
   const cloth = document.createElement('canvas')
