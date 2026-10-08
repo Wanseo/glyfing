@@ -41,28 +41,29 @@ export function createCharacter() {
   texture.repeat.set(3, 2)
   texture.colorSpace = THREE.SRGBColorSpace
   const fur = new THREE.MeshStandardMaterial({ color: '#ffffff', map: texture, bumpMap: texture, bumpScale: 0.008, roughness: 1 })
-  const fibers = new THREE.MeshStandardMaterial({ color: referenceColors.fur, roughness: 1 })
+  const fibers = new THREE.MeshPhysicalMaterial({ color: referenceColors.fur, roughness: 1,
+    sheen: 0.65, sheenColor: new THREE.Color('#e0d3c9'), sheenRoughness: 1 })
   const skin = new THREE.MeshStandardMaterial({ color: referenceColors.eyelids, roughness: 1 })
   const cream = new THREE.MeshStandardMaterial({ color: '#e0d6c8', roughness: 0.65 })
   const toothMaterial = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.65 })
   const dark = new THREE.MeshStandardMaterial({ color: '#291c19', roughness: 0.65 })
   const iris = new THREE.MeshStandardMaterial({ color: '#684537', roughness: 0.4 })
   const sphere = new THREE.SphereGeometry(1, 32, 24)
-  // Actual curved strands give the silhouette the loose, overlapping pile
-  // of the new fur reference, including when the character turns around.
+  // Short, thick, softly hooked curls overlap into a plush fleece surface.
   const strandCurve = new THREE.CatmullRomCurve3([
     new THREE.Vector3(0, -0.008, 0),
-    new THREE.Vector3(0.01, 0.028, 0.006),
-    new THREE.Vector3(-0.006, 0.059, 0.012),
-    new THREE.Vector3(0.019, 0.083, 0.006),
-    new THREE.Vector3(0.041, 0.097, -0.004),
+    new THREE.Vector3(-0.008, 0.035, 0.008),
+    new THREE.Vector3(0.005, 0.081, 0.015),
+    new THREE.Vector3(0.031, 0.105, 0.008),
+    new THREE.Vector3(0.052, 0.089, -0.005),
+    new THREE.Vector3(0.042, 0.065, -0.009),
   ])
-  const tuftGeometry = new THREE.TubeGeometry(strandCurve, 8, 0.0032, 4, false)
+  const tuftGeometry = new THREE.TubeGeometry(strandCurve, 10, 0.0075, 5, false)
   const strandVertices = tuftGeometry.attributes.position!
   for (let i = 0; i < strandVertices.count; i++) {
-    const t = Math.floor(i / 5) / 8
+    const t = Math.floor(i / 6) / 10
     const center = strandCurve.getPointAt(t)
-    const taper = 1 - t * 0.75
+    const taper = 1 - t * 0.55
     strandVertices.setXYZ(i,
       center.x + (strandVertices.getX(i) - center.x) * taper,
       center.y + (strandVertices.getY(i) - center.y) * taper,
@@ -101,16 +102,28 @@ export function createCharacter() {
     mesh.position.set(position[0]!, position[1]!, position[2]!)
     mesh.scale.set(scale[0]!, scale[1]!, scale[2]!)
     parent.add(mesh)
-    const fiberCount = count * 5
+    const fiberCount = count * 4
     const tufts = new THREE.InstancedMesh(tuftGeometry, fibers, fiberCount)
     const dummy = new THREE.Object3D()
     for (let i = 0; i < fiberCount; i++) {
       const y = 1 - 2 * (i + 0.5) / fiberCount
-      const angle = i * Math.PI * (3 - Math.sqrt(5))
+      const angle = i * Math.PI * (3 - Math.sqrt(5)) + (random() - 0.5) * 0.035
       const radius = Math.sqrt(1 - y * y)
       const v = new THREE.Vector3(radius * Math.cos(angle), y, radius * Math.sin(angle))
       if (squircle) v.set(power(v.x), power(v.y), power(v.z))
       dummy.position.set(position[0]! + v.x * scale[0]!, position[1]! + v.y * scale[1]!, position[2]! + v.z * scale[2]!)
+      const px = dummy.position.x, py = dummy.position.y, pz = dummy.position.z
+      const aroundEyes = squircle && pz > 0.2 && [[-0.62, 2.25], [0, 2.43], [0.62, 2.25]].some(([ex, ey]) =>
+        ((px - ex!) / 0.33) ** 2 + ((py - ey!) / 0.35) ** 2 < 1)
+      const aroundMouth = squircle && pz > 0.2 && Math.abs(px) < 0.47 && Math.abs(py - 1.83) < 0.14
+      const overBriefs = !squircle && position[1] === 1.38 && pz > 0.05 &&
+        (px / 0.7) ** 2 + ((py - 1.06) / 0.3) ** 2 + ((pz - 0.12) / 0.53) ** 2 < 1.3
+      if (aroundEyes || aroundMouth || overBriefs) {
+        dummy.scale.setScalar(0)
+        dummy.updateMatrix()
+        tufts.setMatrixAt(i, dummy.matrix)
+        continue
+      }
       const exponent = squircle ? 2 / 0.72 - 1 : 1
       const normal = new THREE.Vector3(
         Math.sign(v.x) * Math.abs(v.x) ** exponent / scale[0]!,
@@ -119,7 +132,7 @@ export function createCharacter() {
       ).normalize()
       dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal)
       dummy.rotateY(random() * Math.PI * 2)
-      dummy.scale.set(0.7 + random() * 0.6, 0.55 + random() * 0.65, 0.7 + random() * 0.6)
+      dummy.scale.set(0.85 + random() * 0.45, 0.75 + random() * 0.55, 0.85 + random() * 0.45)
       dummy.updateMatrix()
       tufts.setMatrixAt(i, dummy.matrix)
     }
