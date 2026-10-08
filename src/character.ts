@@ -118,7 +118,7 @@ export function createCharacter() {
     leg.position.set(side * 0.47, 0.9, 0)
     leg.rotation.z = side * 0.12
     root.add(leg)
-    fuzzy(leg, [0, -0.17, 0.03], [0.21, 0.19, 0.25], 550)
+    fuzzy(leg, [0, -0.14, 0.03], [0.21, 0.15, 0.25], 550)
     return leg
   })
   const arms = [-1, 1].map(side => {
