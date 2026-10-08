@@ -8,8 +8,8 @@ const app = document.querySelector<HTMLDivElement>('#app')!
 const scene = new THREE.Scene()
 scene.background = new THREE.Color('#f6e7c6')
 const camera = new THREE.OrthographicCamera(-10, 10, 7, -7, 0.1, 100)
-camera.position.set(0, 4.2, 18)
-camera.lookAt(0, 2.2, 0)
+camera.position.set(0, 4.65, 18)
+camera.lookAt(0, 2.65, 0)
 const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 renderer.shadowMap.enabled = true
@@ -49,7 +49,8 @@ scene.add(shadow)
 
 function resize() {
   const aspect = window.innerWidth / window.innerHeight
-  const halfHeight = Math.max(3.8, 6.7 / aspect)
+  // Fill the viewport like background-size: cover instead of letterboxing.
+  const halfHeight = Math.min(3.15, 5.95 / aspect)
   const halfWidth = halfHeight * aspect
   camera.left = -halfWidth
   camera.right = halfWidth
