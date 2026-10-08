@@ -35,7 +35,7 @@ export function createCurtains() {
   const rail = new THREE.Mesh(new THREE.CylinderGeometry(0.044, 0.044, 3.45, 16), wood)
   rail.rotation.z = Math.PI / 2
   rail.position.set(-0.5, 4.65, -3.96)
-  rail.castShadow = true
+  rail.castShadow = false
   curtains.add(rail)
   for (const x of [-2.24, 1.24]) {
     const end = new THREE.Mesh(new THREE.SphereGeometry(0.085, 16, 12), wood)
@@ -56,7 +56,8 @@ export function createCurtains() {
     }
     geometry.computeVertexNormals()
     const panel = new THREE.Mesh(geometry, fabric)
-    panel.castShadow = panel.receiveShadow = true
+    panel.castShadow = false
+    panel.receiveShadow = true
     curtains.add(panel)
     for (let i = 0; i < 5; i++) {
       const ring = new THREE.Mesh(new THREE.TorusGeometry(0.058, 0.012, 8, 16), wood)

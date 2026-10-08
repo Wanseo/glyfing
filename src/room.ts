@@ -75,15 +75,13 @@ export function createRoom() {
   chair.position.set(3.55, 0, -1.12)
   room.add(chair)
 
-  // Books on the desk and an overhead shelf.
+  // Books on the desk.
   const bookColors = ['#cdab57', '#e3d28c', '#83a65c', '#3894b2', '#a3c85b', '#dc5289', '#ece6d8', '#538cbd']
   function book(x: number, y: number, z: number, index: number, height: number) {
     box(bookColors[index % bookColors.length]!, [0.19, height, 0.38], [x, y + height / 2, z])
     box('#fff0c8', [0.15, 0.025, 0.012], [x, y + height * 0.75, z + 0.197])
     box('#fff0c8', [0.15, 0.025, 0.012], [x, y + 0.1, z + 0.197])
   }
-  box('#af794f', [3.15, 0.13, 0.61], [4.1, 4.15, -4.22])
-  for (let i = 0; i < 12; i++) book(2.72 + i * 0.25, 4.22, -4.2, i, 0.61 + (i % 3) * 0.08)
   for (let i = 0; i < 4; i++) book(4.52 + i * 0.24, 1.55, -3.42, i + 3, 0.66 + i % 2 * 0.18)
 
   // Framed window: deep blue evening sky, a landscape and little lit houses.
