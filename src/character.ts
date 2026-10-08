@@ -4,7 +4,7 @@ import { RoundedBoxGeometry } from 'three/addons/geometries/RoundedBoxGeometry.j
 // Visually matched to the supplied photo; the original image file is not
 // available in the workspace for exact pixel sampling.
 const referenceColors = {
-  fur: '#d1cabe',
+  fur: '#c4bdb1',
   eyelids: '#c3bfb4',
   briefs: '#eee5de',
   hearts: '#d83f7d',
@@ -30,7 +30,7 @@ export function createCharacter() {
   ctx.lineWidth = 0.6
   for (let i = 0; i < 24000; i++) {
     const variation = random() * 16 - 8
-    ctx.strokeStyle = `rgb(${209 + variation},${202 + variation},${190 + variation})`
+    ctx.strokeStyle = `rgb(${196 + variation},${189 + variation},${177 + variation})`
     const x = random() * 256, y = random() * 256
     ctx.beginPath()
     ctx.moveTo(x, y)
@@ -175,10 +175,11 @@ export function createCharacter() {
     oval(eye, skin, [0, 0, 0], [0.29, 0.32, 0.09])
     const eyeball = new THREE.Group()
     eye.add(eyeball)
-    oval(eyeball, cream, [0, 0, 0.065], [0.235, 0.245, 0.105])
-    oval(eyeball, iris, [0.025, -0.035, 0.155], [0.115, 0.12, 0.036])
-    oval(eyeball, dark, [0.025, -0.035, 0.186], [0.057, 0.073, 0.014])
-    oval(eyeball, cream, [-0.006, 0.008, 0.199], [0.022, 0.023, 0.008])
+    oval(eyeball, cream, [0, 0, 0.065], [0.235, 0.245, 0.075])
+    // Keep the iris and pupil behind the cloth lids so their edges occlude them.
+    oval(eyeball, iris, [0.025, -0.035, 0.146], [0.115, 0.12, 0.014])
+    oval(eyeball, dark, [0.025, -0.035, 0.158], [0.057, 0.073, 0.008])
+    oval(eyeball, cream, [-0.006, 0.008, 0.166], [0.022, 0.023, 0.004])
     const upperGeometry = new THREE.SphereGeometry(1, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2)
     const upperVertices = upperGeometry.attributes.position!
     for (let i = 0; i < upperVertices.count; i++) {
