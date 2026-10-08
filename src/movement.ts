@@ -1,12 +1,9 @@
-export function getControls(keys: ReadonlySet<string>) {
-  return {
-    turn: Number(keys.has('ArrowRight')) - Number(keys.has('ArrowLeft')),
-    forward: Number(keys.has('ArrowUp')) - Number(keys.has('ArrowDown')),
-  }
-}
-
-export function getTravel(heading: number, forward: number) {
-  return { x: Math.sin(heading) * forward, y: -Math.cos(heading) * forward }
+export function getDirection(keys: ReadonlySet<string>) {
+  let x = Number(keys.has('ArrowRight')) - Number(keys.has('ArrowLeft'))
+  let y = Number(keys.has('ArrowUp')) - Number(keys.has('ArrowDown'))
+  const length = Math.hypot(x, y)
+  if (length) { x /= length; y /= length }
+  return { x, y, moving: length > 0 }
 }
 
 export function clampPosition(value: number, extent: number, padding: number) {
