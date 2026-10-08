@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { createBedding } from './bedding'
 
 export const roomObstacles = [
   { minX: -5.7, maxX: -2.5, minZ: 0.1, maxZ: 4.2 },
@@ -34,7 +35,7 @@ export function createRoom() {
   box('#aa7049', [12, 0.4, 0.16], [0, 0.32, -4.54])
   box('#aa7049', [0.16, 0.4, 9.4], [-5.86, 0.32, 0])
 
-  // Bed: separate timber rails, feet, mattress, pillow and a soft orange quilt.
+  // Bed: timber frame with reference-inspired red bedding and patterned pillows.
   for (const x of [-5.3, -2.9]) for (const z of [0.7, 3.8]) box('#ab7549', [0.17, 0.6, 0.17], [x, 0.3, z])
   box('#b77e4f', [2.7, 0.22, 3.6], [-4.1, 0.64, 2.25])
   box('#f4eddb', [2.4, 0.42, 3.25], [-4.1, 0.96, 2.25])
@@ -42,14 +43,9 @@ export function createRoom() {
   box('#bd8759', [0.14, 0.53, 3.6], [-2.78, 0.91, 2.25])
   box('#bd8759', [2.7, 1.35, 0.16], [-4.1, 0.99, 0.5])
   box('#bd8759', [2.7, 0.75, 0.16], [-4.1, 0.74, 4])
-  const pillow = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 20), material('#fff9eb'))
-  pillow.scale.set(0.86, 0.17, 0.44)
-  pillow.position.set(-4.1, 1.29, 1.05)
-  pillow.castShadow = true
-  room.add(pillow)
-  box('#ffa065', [2.36, 0.16, 2.35], [-4.1, 1.23, 2.7])
-  box('#e98952', [2.36, 0.3, 0.12], [-4.1, 1.06, 3.9])
-  for (let i = 0; i < 5; i++) box('#ffaf77', [0.012, 0.009, 2.18], [-5 + i * 0.45, 1.316, 2.7])
+  const bedding = createBedding()
+  bedding.position.x = -4.1
+  room.add(bedding)
 
   // Bedside water bottle and small stereo.
   box('#bb8553', [1.0, 0.14, 0.85], [-5.15, 1.05, -0.15])
