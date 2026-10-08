@@ -4,7 +4,7 @@ import * as THREE from 'three'
 // available in the workspace for exact pixel sampling.
 const referenceColors = {
   fur: '#b6a69c',
-  eyelids: '#b7a79e',
+  eyelids: '#adaeac',
   briefs: '#eee5de',
   hearts: '#db5c88',
   waistband: '#bd1733',
