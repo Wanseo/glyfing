@@ -75,10 +75,10 @@ renderer.setAnimationLoop((time: number) => {
     const difference = Math.atan2(Math.sin(target - character.root.rotation.y), Math.cos(target - character.root.rotation.y))
     character.root.rotation.y += difference * (1 - Math.exp(-12 * dt))
   }
-  character.root.position.set(position.x, position.y - 1.5 + Math.abs(Math.sin(gait)) * 0.06 * walk, 0)
+  character.root.position.set(position.x, position.y - 1.68 + Math.abs(Math.sin(gait)) * 0.06 * walk, 0)
   character.torso.rotation.z = Math.sin(gait) * 0.035 * walk
   character.legs.forEach((leg, i) => { leg.rotation.x = Math.sin(gait + i * Math.PI) * 0.48 * walk })
   character.arms.forEach((arm, i) => { arm.rotation.x = Math.sin(gait + i * Math.PI + Math.PI) * 0.4 * walk })
-  shadow.position.set(position.x, position.y - 1.47, -0.8)
+  shadow.position.set(position.x, position.y - 1.31, -0.8)
   renderer.render(scene, camera)
 })

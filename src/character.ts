@@ -110,18 +110,18 @@ export function createCharacter() {
     }
     parent.add(tufts)
   }
-  fuzzy(torso, [0, 1.22, 0], [0.53, 0.66, 0.35], 1500)
+  fuzzy(torso, [0, 1.38, 0], [0.53, 0.5, 0.35], 1500)
   fuzzy(torso, [0, 2.28, 0], [1.08, 0.72, 0.47], 3800, true)
   const legs = [-1, 1].map(side => {
     const leg = new THREE.Group()
-    leg.position.set(side * 0.27, 0.52, 0)
+    leg.position.set(side * 0.27, 0.84, 0)
     root.add(leg)
     fuzzy(leg, [0, -0.22, 0.03], [0.21, 0.25, 0.25], 550)
     return leg
   })
   const arms = [-1, 1].map(side => {
     const arm = new THREE.Group()
-    arm.position.set(side * 0.51, 1.4, 0)
+    arm.position.set(side * 0.51, 1.5, 0)
     arm.rotation.z = side * 0.32
     torso.add(arm)
     fuzzy(arm, [side * 0.12, -0.23, 0], [0.18, 0.32, 0.19], 700)
@@ -185,11 +185,11 @@ export function createCharacter() {
   const pattern = new THREE.CanvasTexture(cloth)
   pattern.colorSpace = THREE.SRGBColorSpace
   const briefs = new THREE.MeshStandardMaterial({ map: pattern, roughness: 1 })
-  oval(torso, briefs, [0, 0.74, 0.008], [0.52, 0.28, 0.36])
+  oval(torso, briefs, [0, 1.06, 0.008], [0.52, 0.28, 0.36])
   const waistband = new THREE.Mesh(new THREE.TorusGeometry(0.49, 0.038, 10, 48), new THREE.MeshStandardMaterial({ color: referenceColors.waistband, roughness: 1 }))
   waistband.rotation.x = Math.PI / 2
   waistband.scale.y = 0.7
-  waistband.position.y = 0.92
+  waistband.position.y = 1.24
   torso.add(waistband)
   return { root, torso, legs, arms }
 }
