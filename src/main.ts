@@ -30,7 +30,7 @@ const fill = new THREE.DirectionalLight('#ffffff', 0.8)
 fill.position.set(4, 1, -3)
 scene.add(fill)
 const character = createCharacter()
-character.root.scale.setScalar(1)
+character.root.scale.setScalar(1.25)
 const position = new THREE.Vector2(0, 0)
 scene.add(character.root)
 
@@ -42,7 +42,7 @@ gradient.addColorStop(0, 'rgba(68, 54, 43, 0.19)')
 gradient.addColorStop(1, 'rgba(68, 54, 43, 0)')
 ctx.fillStyle = gradient
 ctx.fillRect(0, 0, 128, 128)
-const shadow = new THREE.Mesh(new THREE.PlaneGeometry(2.1, 0.4), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(shadowCanvas), transparent: true, depthWrite: false }))
+const shadow = new THREE.Mesh(new THREE.PlaneGeometry(2.625, 0.5), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(shadowCanvas), transparent: true, depthWrite: false }))
 
 scene.add(shadow)
 
@@ -97,8 +97,8 @@ renderer.setAnimationLoop((time: number) => {
   }
   const direction = getDirection(keys)
   const previousX = position.x, previousY = position.y
-  position.x = clampPosition(position.x + direction.x * dt * 2.4, viewHalfWidth, 1.3)
-  position.y = clampPosition(position.y + direction.y * dt * 2.4, viewHalfHeight, 1.5)
+  position.x = clampPosition(position.x + direction.x * dt * 2.4, viewHalfWidth, 1.625)
+  position.y = clampPosition(position.y + direction.y * dt * 2.4, viewHalfHeight, 1.875)
   const distance = Math.hypot(position.x - previousX, position.y - previousY)
   walk = THREE.MathUtils.damp(walk, distance > 0 ? 1 : 0, 12, dt)
   // Tie steps to distance travelled so the feet stop stepping at walls.
@@ -107,7 +107,7 @@ renderer.setAnimationLoop((time: number) => {
     const target = Math.atan2(direction.x, -direction.y)
     character.root.rotation.y = target
   }
-  character.root.position.set(position.x, position.y - 1.805 + Math.abs(Math.sin(gait)) * 0.025 * walk, 0)
+  character.root.position.set(position.x, position.y - 2.25625 + Math.abs(Math.sin(gait)) * 0.03125 * walk, 0)
   character.torso.rotation.z = Math.cos(gait) * 0.05 * walk
   character.torso.position.x = Math.cos(gait) * 0.035 * walk
   character.legs.forEach((leg, i) => {
@@ -121,6 +121,6 @@ renderer.setAnimationLoop((time: number) => {
     leg.rotation.z = (i === 0 ? -1 : 1) * 0.12 + Math.cos(gait) * 0.045 * walk
   })
   character.arms.forEach((arm, i) => { arm.rotation.x = Math.sin(gait + i * Math.PI) * 0.45 * walk })
-  shadow.position.set(position.x, position.y - 1.195, -0.8)
+  shadow.position.set(position.x, position.y - 1.49375, -0.8)
   renderer.render(scene, camera)
 })
