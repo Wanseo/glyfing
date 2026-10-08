@@ -83,18 +83,31 @@ renderer.setAnimationLoop((time: number) => {
     }
   }
   const direction = getDirection(keys)
-  position.x = clampPosition(position.x + direction.x * dt * 3.1, halfWidth, 1.6)
-  position.y = clampPosition(position.y + direction.y * dt * 3.1, halfHeight, 1.75)
-  walk = THREE.MathUtils.damp(walk, direction.moving ? 1 : 0, 12, dt)
-  gait += dt * 11 * walk
+  const previousX = position.x, previousY = position.y
+  position.x = clampPosition(position.x + direction.x * dt * 2.4, halfWidth, 1.6)
+  position.y = clampPosition(position.y + direction.y * dt * 2.4, halfHeight, 1.75)
+  const distance = Math.hypot(position.x - previousX, position.y - previousY)
+  walk = THREE.MathUtils.damp(walk, distance > 0 ? 1 : 0, 12, dt)
+  // Tie steps to distance travelled so the feet stop stepping at walls.
+  gait += distance * 5
   if (direction.moving) {
     const target = Math.atan2(direction.x, -direction.y)
     character.root.rotation.y = target
   }
-  character.root.position.set(position.x, position.y - 1.805 + Math.abs(Math.sin(gait)) * 0.06 * walk, 0)
-  character.torso.rotation.z = Math.sin(gait) * 0.035 * walk
-  character.legs.forEach((leg, i) => { leg.rotation.x = Math.sin(gait + i * Math.PI) * 0.48 * walk })
-  character.arms.forEach((arm, i) => { arm.rotation.x = Math.sin(gait + i * Math.PI + Math.PI) * 0.4 * walk })
+  character.root.position.set(position.x, position.y - 1.805 + Math.abs(Math.sin(gait)) * 0.025 * walk, 0)
+  character.torso.rotation.z = Math.cos(gait) * 0.05 * walk
+  character.torso.position.x = Math.cos(gait) * 0.035 * walk
+  character.legs.forEach((leg, i) => {
+    const phase = gait + i * Math.PI
+    const stride = Math.sin(phase)
+    const lift = Math.max(0, Math.cos(phase))
+    // Lift on the forward swing, then plant and push back on the ground.
+    leg.position.y = 0.9 + lift * 0.11 * walk
+    leg.position.z = stride * 0.2 * walk
+    leg.rotation.x = -stride * 0.65 * walk
+    leg.rotation.z = (i === 0 ? -1 : 1) * 0.12 + Math.cos(gait) * 0.045 * walk
+  })
+  character.arms.forEach((arm, i) => { arm.rotation.x = Math.sin(gait + i * Math.PI) * 0.45 * walk })
   shadow.position.set(position.x, position.y - 1.195, -0.8)
   renderer.render(scene, camera)
 })
