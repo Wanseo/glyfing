@@ -2,6 +2,7 @@ import * as THREE from 'three'
 import { createBedding } from './bedding'
 import { createCurtains } from './curtains'
 import { createAppleDesk } from './apple-desk'
+import { createChair } from './chair'
 
 export const roomObstacles = [
   { minX: -5.7, maxX: -2.5, minZ: 0.1, maxZ: 4.2 },
@@ -69,21 +70,10 @@ export function createRoom() {
   computer.position.set(3.2, 1.55, -3.15)
   room.add(computer)
 
-  // Blue swivel chair, including a seat, backrest, post and five wheeled feet.
-  cylinder('#65717a', 0.07, 0.62, [3.55, 0.43, -1.12])
-  box('#639bc7', [0.86, 0.16, 0.73], [3.55, 0.83, -1.12])
-  box('#548bb8', [0.86, 0.82, 0.13], [3.55, 1.25, -0.79])
-  for (const x of [3.03, 4.07]) {
-    box('#364a59', [0.06, 0.31, 0.06], [x, 0.98, -1.12])
-    box('#7caacd', [0.14, 0.07, 0.54], [x, 1.13, -1.12])
-  }
-  for (let i = 0; i < 5; i++) {
-    const a = i * Math.PI * 2 / 5
-    const foot = box('#485b67', [0.06, 0.055, 0.62], [3.55 + Math.sin(a) * 0.28, 0.14, -1.12 + Math.cos(a) * 0.28])
-    foot.rotation.y = a
-    const wheel = cylinder('#35434c', 0.085, 0.075, [3.55 + Math.sin(a) * 0.57, 0.1, -1.12 + Math.cos(a) * 0.57])
-    wheel.rotation.z = Math.PI / 2
-  }
+  // Mustard upholstered swivel chair from the supplied reference.
+  const chair = createChair()
+  chair.position.set(3.55, 0, -1.12)
+  room.add(chair)
 
   // Books on the desk and an overhead shelf.
   const bookColors = ['#cdab57', '#e3d28c', '#83a65c', '#3894b2', '#a3c85b', '#dc5289', '#ece6d8', '#538cbd']
