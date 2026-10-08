@@ -9,24 +9,24 @@ export function createGlitterBackground() {
   const random = () => { seed = (seed * 1664525 + 1013904223) >>> 0; return seed / 4294967296 }
   ctx.fillStyle = '#b52361'
   ctx.fillRect(0, 0, 1024, 1024)
-  const palette = ['#80113f', '#a81e57', '#d14882', '#ec7ca7', '#f6b5cf', '#fff0f7']
+  const palette = ['#80113f', '#a81e57', '#d14882', '#d96997', '#e994b7', '#efb5cc']
   for (let i = 0; i < 190000; i++) {
     ctx.fillStyle = palette[Math.floor(random() * palette.length)]!
     const size = 0.4 + random() * 2
     ctx.fillRect(random() * 1024, random() * 1024, size, size)
   }
-  for (let i = 0; i < 1300; i++) {
+  for (let i = 0; i < 650; i++) {
     const x = random() * 1024, y = random() * 1024
-    const radius = 0.8 + random() * 1.8
-    ctx.fillStyle = '#fff5fa'
+    const radius = 0.6 + random() * 1.3
+    ctx.fillStyle = '#f8dce8'
     ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill()
   }
-  for (let i = 0; i < 100; i++) {
-    const x = random() * 1024, y = random() * 1024, size = 3 + random() * 7
+  for (let i = 0; i < 40; i++) {
+    const x = random() * 1024, y = random() * 1024, size = 2 + random() * 5
     const glow = ctx.createRadialGradient(x, y, 0, x, y, size * 2)
-    glow.addColorStop(0, '#ffffff'); glow.addColorStop(0.2, '#ffffffaa'); glow.addColorStop(1, '#ffffff00')
+    glow.addColorStop(0, '#fff0f7cc'); glow.addColorStop(0.2, '#fff0f766'); glow.addColorStop(1, '#ffffff00')
     ctx.fillStyle = glow; ctx.fillRect(x - size * 2, y - size * 2, size * 4, size * 4)
-    ctx.fillStyle = '#ffffff'
+    ctx.fillStyle = '#fff0f7cc'
     ctx.beginPath()
     ctx.moveTo(x, y - size); ctx.lineTo(x + size * 0.18, y - size * 0.18)
     ctx.lineTo(x + size, y); ctx.lineTo(x + size * 0.18, y + size * 0.18)
