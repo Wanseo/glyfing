@@ -1,28 +1,38 @@
 import './style.css'
 import * as THREE from 'three'
 import { createCharacter } from './character'
-import { clampPosition, getDirection } from './movement'
+import { getDirection, moveInRoom } from './movement'
+import { createRoom, roomObstacles } from './room'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 const scene = new THREE.Scene()
-scene.background = new THREE.Color('#ffffff')
+scene.background = new THREE.Color('#f6e7c6')
 const camera = new THREE.OrthographicCamera(-10, 10, 7, -7, 0.1, 100)
-camera.position.set(0, 0, 20)
+camera.position.set(0, 9, 13)
+camera.lookAt(0, 1.6, 0)
 const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-renderer.setClearColor('#ffffff')
-renderer.domElement.setAttribute('aria-label', '방향키로 움직이는 세 눈의 3D 캐릭터')
+renderer.shadowMap.enabled = true
+renderer.shadowMap.type = THREE.PCFSoftShadowMap
+renderer.domElement.setAttribute('aria-label', '침대와 책상, 창문이 있는 3D 방. 방향키로 캐릭터를 움직일 수 있습니다.')
 renderer.domElement.setAttribute('role', 'img')
 app.appendChild(renderer.domElement)
-scene.add(new THREE.HemisphereLight('#ffffff', '#b1a398', 2.4))
-const light = new THREE.DirectionalLight('#fff6ed', 3)
-light.position.set(-3, 5, 8)
+scene.add(new THREE.HemisphereLight('#fff9ec', '#b19373', 1.8))
+const light = new THREE.DirectionalLight('#fff4df', 2.2)
+light.position.set(-3, 10, 6)
+light.castShadow = true
+light.shadow.mapSize.set(2048, 2048)
+Object.assign(light.shadow.camera, { left: -8, right: 8, top: 8, bottom: -8, near: 0.1, far: 30 })
+light.shadow.normalBias = 0.04
+light.shadow.bias = -0.0002
 scene.add(light)
 const fill = new THREE.DirectionalLight('#ffffff', 0.8)
 fill.position.set(4, 1, -3)
 scene.add(fill)
+scene.add(createRoom())
 const character = createCharacter()
-const position = new THREE.Vector2(0, 0)
+character.root.scale.setScalar(0.7)
+const position = new THREE.Vector2(0, -1.5)
 scene.add(character.root)
 
 const shadowCanvas = document.createElement('canvas')
@@ -33,16 +43,14 @@ gradient.addColorStop(0, 'rgba(68, 54, 43, 0.19)')
 gradient.addColorStop(1, 'rgba(68, 54, 43, 0)')
 ctx.fillStyle = gradient
 ctx.fillRect(0, 0, 128, 128)
-const shadow = new THREE.Mesh(new THREE.PlaneGeometry(2.6, 0.55), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(shadowCanvas), transparent: true, depthWrite: false }))
-shadow.position.z = -0.8
+const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1.47, 0.77), new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(shadowCanvas), transparent: true, depthWrite: false }))
+shadow.rotation.x = -Math.PI / 2
 scene.add(shadow)
 
-let halfWidth = 10, halfHeight = 7
 function resize() {
-  // A constant scale keeps the plush small, regardless of the screen size.
-  const scale = Math.min(48, window.innerHeight / 8, window.innerWidth / 6)
-  halfWidth = window.innerWidth / scale / 2
-  halfHeight = window.innerHeight / scale / 2
+  const aspect = window.innerWidth / window.innerHeight
+  const halfHeight = Math.max(5.7, 6.7 / aspect)
+  const halfWidth = halfHeight * aspect
   camera.left = -halfWidth
   camera.right = halfWidth
   camera.top = halfHeight
@@ -84,8 +92,8 @@ renderer.setAnimationLoop((time: number) => {
   }
   const direction = getDirection(keys)
   const previousX = position.x, previousY = position.y
-  position.x = clampPosition(position.x + direction.x * dt * 2.4, halfWidth, 1.6)
-  position.y = clampPosition(position.y + direction.y * dt * 2.4, halfHeight, 1.75)
+  const next = moveInRoom(position.x, -position.y, direction.x * dt * 2.4, -direction.y * dt * 2.4, roomObstacles)
+  position.set(next.x, -next.z)
   const distance = Math.hypot(position.x - previousX, position.y - previousY)
   walk = THREE.MathUtils.damp(walk, distance > 0 ? 1 : 0, 12, dt)
   // Tie steps to distance travelled so the feet stop stepping at walls.
@@ -94,7 +102,7 @@ renderer.setAnimationLoop((time: number) => {
     const target = Math.atan2(direction.x, -direction.y)
     character.root.rotation.y = target
   }
-  character.root.position.set(position.x, position.y - 1.805 + Math.abs(Math.sin(gait)) * 0.025 * walk, 0)
+  character.root.position.set(position.x, -0.427 + Math.abs(Math.sin(gait)) * 0.0175 * walk, -position.y)
   character.torso.rotation.z = Math.cos(gait) * 0.05 * walk
   character.torso.position.x = Math.cos(gait) * 0.035 * walk
   character.legs.forEach((leg, i) => {
@@ -108,6 +116,6 @@ renderer.setAnimationLoop((time: number) => {
     leg.rotation.z = (i === 0 ? -1 : 1) * 0.12 + Math.cos(gait) * 0.045 * walk
   })
   character.arms.forEach((arm, i) => { arm.rotation.x = Math.sin(gait + i * Math.PI) * 0.45 * walk })
-  shadow.position.set(position.x, position.y - 1.195, -0.8)
+  shadow.position.set(position.x, 0.014, -position.y)
   renderer.render(scene, camera)
 })

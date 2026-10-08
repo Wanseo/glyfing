@@ -71,6 +71,7 @@ export function createCharacter() {
   tuftGeometry.computeVertexNormals()
   function oval(parent: THREE.Group, material: THREE.Material, position: number[], scale: number[]) {
     const mesh = new THREE.Mesh(sphere, material)
+    mesh.castShadow = true
     mesh.position.set(position[0]!, position[1]!, position[2]!)
     mesh.scale.set(scale[0]!, scale[1]!, scale[2]!)
     parent.add(mesh)
@@ -96,6 +97,7 @@ export function createCharacter() {
     }
     // The head's continuous base avoids a texture join on the back and top.
     const mesh = new THREE.Mesh(geometry, squircle ? fibers : fur)
+    mesh.castShadow = true
     mesh.position.set(position[0]!, position[1]!, position[2]!)
     mesh.scale.set(scale[0]!, scale[1]!, scale[2]!)
     parent.add(mesh)
