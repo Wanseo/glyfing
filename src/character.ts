@@ -213,7 +213,7 @@ export function createCharacter() {
       const depth = 0.51 * Math.sqrt(Math.max(0, 1 - (x! / 0.68) ** 2 - (y! / 0.28) ** 2))
       return new THREE.Vector3(x!, 1.06 + y!, 0.12 + side * (depth + 0.012))
     })
-    const seam = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(surface), 32, 0.018, 6, false), trimMaterial)
+    const seam = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(surface), 32, 0.028, 6, false), trimMaterial)
     torso.add(seam)
   }
   for (const side of [-1, 1]) {
