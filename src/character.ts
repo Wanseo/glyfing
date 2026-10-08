@@ -116,8 +116,8 @@ export function createCharacter() {
       const aroundEyes = squircle && pz > 0.2 && [[-0.62, 2.25], [0, 2.43], [0.62, 2.25]].some(([ex, ey]) =>
         ((px - ex!) / 0.33) ** 2 + ((py - ey!) / 0.35) ** 2 < 1)
       const aroundMouth = squircle && pz > 0.2 && Math.abs(px) < 0.47 && Math.abs(py - 1.83) < 0.14
-      const overBriefs = !squircle && position[1] === 1.38 && pz > 0.05 &&
-        (px / 0.7) ** 2 + ((py - 1.06) / 0.3) ** 2 + ((pz - 0.12) / 0.53) ** 2 < 1.3
+      const overBriefs = !squircle && position[1] === 1.38 &&
+        (px / 0.7) ** 2 + ((py - 1.06) / 0.3) ** 2 + ((pz - 0.03) / 0.62) ** 2 < 1.3
       if (aroundEyes || aroundMouth || overBriefs) {
         dummy.scale.setScalar(0)
         dummy.updateMatrix()
@@ -223,7 +223,7 @@ export function createCharacter() {
   const pattern = new THREE.CanvasTexture(cloth)
   pattern.colorSpace = THREE.SRGBColorSpace
   const briefs = new THREE.MeshStandardMaterial({ map: pattern, roughness: 1 })
-  oval(torso, briefs, [0, 1.06, 0.12], [0.68, 0.28, 0.51])
+  oval(torso, briefs, [0, 1.06, 0.03], [0.68, 0.28, 0.6])
   function blink(amount: number) {
     for (const { upper, lower, eyeball, closed, crease } of eyelids) {
       upper.rotation.x = amount * 1.2
