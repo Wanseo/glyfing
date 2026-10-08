@@ -6,7 +6,7 @@ const referenceColors = {
   fur: '#b6a69c',
   eyelids: '#adaeac',
   briefs: '#eee5de',
-  hearts: '#db5c88',
+  hearts: '#d83f7d',
   waistband: '#bd1733',
 }
 
@@ -185,13 +185,13 @@ export function createCharacter() {
   paint.fillStyle = referenceColors.briefs
   paint.fillRect(0, 0, 512, 512)
   paint.fillStyle = referenceColors.hearts
-  for (let row = -1; row < 6; row++) {
-    for (let column = -1; column < 6; column++) {
-      const x = column * 112 + (row % 2 === 0 ? 0 : 56)
-      const y = row * 104 + 36
+  for (let row = 0; row < 3; row++) {
+    for (let column = -1; column < 9; column++) {
+      const x = column * 64 + 40
+      const y = row * 105 + 165
       paint.save()
       paint.translate(x, y)
-      paint.rotate(((row + column) % 3 - 1) * 0.16)
+      paint.scale(0.85, 0.85)
       paint.beginPath()
       paint.moveTo(0, 26)
       paint.bezierCurveTo(-7, 17, -33, 0, -28, -15)
