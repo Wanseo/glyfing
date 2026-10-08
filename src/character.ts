@@ -32,7 +32,7 @@ export function createCharacter() {
     const x = random() * 256, y = random() * 256
     ctx.beginPath()
     ctx.moveTo(x, y)
-    ctx.quadraticCurveTo(x + 0.7, y - 1.2, x + 0.3, y - 2.5)
+    ctx.bezierCurveTo(x + 3, y - 3, x - 2, y - 5, x + 1, y - 8)
     ctx.stroke()
   }
   const texture = new THREE.CanvasTexture(fabric)
@@ -46,7 +46,27 @@ export function createCharacter() {
   const dark = new THREE.MeshStandardMaterial({ color: '#291c19', roughness: 0.65 })
   const iris = new THREE.MeshStandardMaterial({ color: '#684537', roughness: 0.4 })
   const sphere = new THREE.SphereGeometry(1, 32, 24)
-  const tuftGeometry = new THREE.SphereGeometry(1, 6, 6)
+  // Actual curved strands give the silhouette the loose, overlapping pile
+  // of the new fur reference, including when the character turns around.
+  const strandCurve = new THREE.CatmullRomCurve3([
+    new THREE.Vector3(0, -0.008, 0),
+    new THREE.Vector3(0.01, 0.028, 0.006),
+    new THREE.Vector3(-0.006, 0.059, 0.012),
+    new THREE.Vector3(0.019, 0.083, 0.006),
+    new THREE.Vector3(0.041, 0.097, -0.004),
+  ])
+  const tuftGeometry = new THREE.TubeGeometry(strandCurve, 8, 0.0032, 4, false)
+  const strandVertices = tuftGeometry.attributes.position!
+  for (let i = 0; i < strandVertices.count; i++) {
+    const t = Math.floor(i / 5) / 8
+    const center = strandCurve.getPointAt(t)
+    const taper = 1 - t * 0.75
+    strandVertices.setXYZ(i,
+      center.x + (strandVertices.getX(i) - center.x) * taper,
+      center.y + (strandVertices.getY(i) - center.y) * taper,
+      center.z + (strandVertices.getZ(i) - center.z) * taper)
+  }
+  tuftGeometry.computeVertexNormals()
   function oval(parent: THREE.Group, material: THREE.Material, position: number[], scale: number[]) {
     const mesh = new THREE.Mesh(sphere, material)
     mesh.position.set(position[0]!, position[1]!, position[2]!)
@@ -66,8 +86,7 @@ export function createCharacter() {
     mesh.position.set(position[0]!, position[1]!, position[2]!)
     mesh.scale.set(scale[0]!, scale[1]!, scale[2]!)
     parent.add(mesh)
-    // Dense, fine short fibers instead of separated, faceted lumps.
-    const fiberCount = count * 4
+    const fiberCount = count * 5
     const tufts = new THREE.InstancedMesh(tuftGeometry, fibers, fiberCount)
     const dummy = new THREE.Object3D()
     for (let i = 0; i < fiberCount; i++) {
@@ -77,9 +96,15 @@ export function createCharacter() {
       const v = new THREE.Vector3(radius * Math.cos(angle), y, radius * Math.sin(angle))
       if (squircle) v.set(power(v.x), power(v.y), power(v.z))
       dummy.position.set(position[0]! + v.x * scale[0]!, position[1]! + v.y * scale[1]!, position[2]! + v.z * scale[2]!)
-      dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), v.clone().normalize())
-      const size = 0.006 + random() * 0.004
-      dummy.scale.set(size, 0.016 + random() * 0.012, size)
+      const exponent = squircle ? 2 / 0.72 - 1 : 1
+      const normal = new THREE.Vector3(
+        Math.sign(v.x) * Math.abs(v.x) ** exponent / scale[0]!,
+        Math.sign(v.y) * Math.abs(v.y) ** exponent / scale[1]!,
+        Math.sign(v.z) * Math.abs(v.z) ** exponent / scale[2]!,
+      ).normalize()
+      dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal)
+      dummy.rotateY(random() * Math.PI * 2)
+      dummy.scale.set(0.7 + random() * 0.6, 0.55 + random() * 0.65, 0.7 + random() * 0.6)
       dummy.updateMatrix()
       tufts.setMatrixAt(i, dummy.matrix)
     }
