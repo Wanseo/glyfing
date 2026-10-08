@@ -115,7 +115,8 @@ export function createCharacter() {
   fuzzy(torso, [0, 2.28, 0], [1.08, 0.72, 0.47], 3800, true)
   const legs = [-1, 1].map(side => {
     const leg = new THREE.Group()
-    leg.position.set(side * 0.27, 0.84, 0)
+    leg.position.set(side * 0.39, 0.9, 0)
+    leg.rotation.z = side * 0.12
     root.add(leg)
     fuzzy(leg, [0, -0.17, 0.03], [0.21, 0.19, 0.25], 550)
     return leg
