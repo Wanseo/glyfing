@@ -108,6 +108,18 @@ export function createCharacter() {
         normals.setXYZ(i, normal.x, normal.y, normal.z)
       }
     }
+    const isBody = !squircle && position[1] === 1.38
+    const neckWidth = (y: number) => {
+      const t = THREE.MathUtils.clamp((y + 0.15) / 1.15, 0, 1)
+      return 1 - 0.28 * t * t * (3 - 2 * t)
+    }
+    if (isBody) {
+      const vertices = geometry.attributes.position!
+      for (let i = 0; i < vertices.count; i++) {
+        vertices.setX(i, vertices.getX(i) * neckWidth(vertices.getY(i)))
+      }
+      geometry.computeVertexNormals()
+    }
     // The head's continuous base avoids a texture join on the back and top.
     const mesh = new THREE.Mesh(geometry, squircle ? fibers : fur)
     mesh.castShadow = true
@@ -123,7 +135,8 @@ export function createCharacter() {
       const radius = Math.sqrt(1 - y * y)
       const v = new THREE.Vector3(radius * Math.cos(angle), y, radius * Math.sin(angle))
       if (squircle) v.set(power(v.x), power(v.y), power(v.z))
-      dummy.position.set(position[0]! + v.x * scale[0]!, position[1]! + v.y * scale[1]!, position[2]! + v.z * scale[2]!)
+      const bodyWidth = isBody ? neckWidth(v.y) : 1
+      dummy.position.set(position[0]! + v.x * bodyWidth * scale[0]!, position[1]! + v.y * scale[1]!, position[2]! + v.z * scale[2]!)
       const px = dummy.position.x, py = dummy.position.y, pz = dummy.position.z
       const aroundEyes = squircle && pz > 0.2 && [[-0.62, 2.25], [0, 2.43], [0.62, 2.25]].some(([ex, ey]) =>
         ((px - ex!) / 0.33) ** 2 + ((py - ey!) / 0.35) ** 2 < 1)
@@ -142,6 +155,13 @@ export function createCharacter() {
         Math.sign(v.y) * Math.abs(v.y) ** exponent / scale[1]!,
         Math.sign(v.z) * Math.abs(v.z) ** exponent / scale[2]!,
       ).normalize()
+      if (isBody) {
+        const t = THREE.MathUtils.clamp((v.y + 0.15) / 1.15, 0, 1)
+        const widthDerivative = -0.28 * 6 * t * (1 - t) / 1.15
+        normal.set(v.x / (bodyWidth * scale[0]!),
+          (v.y - v.x * v.x * widthDerivative / bodyWidth) / scale[1]!,
+          v.z / scale[2]!).normalize()
+      }
       dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal)
       dummy.rotateY(random() * Math.PI * 2)
       dummy.scale.set(0.85 + random() * 0.45, 0.75 + random() * 0.55, 0.85 + random() * 0.45)
