@@ -205,34 +205,6 @@ export function createCharacter() {
       paint.restore()
     }
   }
-  // Draw the red fabric panels directly into the cloth texture, so the
-  // borders follow the same surface and lighting without raised piping.
-  paint.strokeStyle = referenceColors.waistband
-  paint.lineWidth = 15
-  paint.lineCap = 'round'
-  paint.lineJoin = 'round'
-  function paintBriefSeam(points: number[][], side: number) {
-    const curve = new THREE.CatmullRomCurve3(points.map(([x, y]) => new THREE.Vector3(x!, y!, 0)))
-    paint.beginPath()
-    for (let i = 0; i <= 100; i++) {
-      const point = curve.getPoint(i / 100)
-      const x = point.x / 0.68, y = point.y / 0.28
-      const z = side * Math.sqrt(Math.max(0, 1 - x * x - y * y))
-      const angle = (Math.atan2(z, -x) + Math.PI * 2) % (Math.PI * 2)
-      const u = angle / (Math.PI * 2) * 512
-      const v = Math.acos(THREE.MathUtils.clamp(y, -1, 1)) / Math.PI * 512
-      if (i === 0) paint.moveTo(u, v)
-      else paint.lineTo(u, v)
-    }
-    paint.stroke()
-  }
-  for (const side of [-1, 1]) {
-    paintBriefSeam([[0, 0.18], [0, 0.05], [0, -0.1], [0, -0.24]], side)
-    for (const edge of [-1, 1]) {
-      paintBriefSeam([[edge * 0.47, 0.17], [edge * 0.4, 0.06], [edge * 0.29, -0.1], [edge * 0.13, -0.22]], side)
-    }
-    paintBriefSeam([[-0.52, -0.12], [-0.36, -0.2], [0, -0.255], [0.36, -0.2], [0.52, -0.12]], side)
-  }
   paint.fillStyle = referenceColors.waistband
   paint.fillRect(0, 132, 512, 28)
   const pattern = new THREE.CanvasTexture(cloth)
