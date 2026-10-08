@@ -15,12 +15,6 @@ export function createGlitterBackground() {
     const size = 0.4 + random() * 2
     ctx.fillRect(random() * 1024, random() * 1024, size, size)
   }
-  for (let i = 0; i < 650; i++) {
-    const x = random() * 1024, y = random() * 1024
-    const radius = 0.6 + random() * 1.3
-    ctx.fillStyle = '#f8dce8'
-    ctx.beginPath(); ctx.arc(x, y, radius, 0, Math.PI * 2); ctx.fill()
-  }
   const texture = new THREE.CanvasTexture(canvas)
   texture.colorSpace = THREE.SRGBColorSpace
   texture.wrapS = texture.wrapT = THREE.RepeatWrapping
