@@ -71,7 +71,9 @@ renderer.setAnimationLoop((time: number) => {
   walk = THREE.MathUtils.damp(walk, direction.moving ? 1 : 0, 12, dt)
   gait += dt * 11 * walk
   if (direction.moving) {
-    const target = Math.atan2(direction.x, -direction.y)
+    const target = direction.y > 0
+      ? Math.PI - direction.x * Math.PI / 9
+      : direction.x * Math.PI / 9
     const difference = Math.atan2(Math.sin(target - character.root.rotation.y), Math.cos(target - character.root.rotation.y))
     character.root.rotation.y += difference * (1 - Math.exp(-12 * dt))
   }
