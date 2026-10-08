@@ -76,14 +76,25 @@ export function createCharacter() {
     return mesh
   }
   function fuzzy(parent: THREE.Group, position: number[], scale: number[], count: number, squircle = false) {
-    const geometry = sphere.clone()
-    const power = (v: number) => Math.sign(v) * Math.abs(v) ** 0.72
+    const geometry = squircle ? new THREE.SphereGeometry(1, 64, 48) : sphere.clone()
+    const power = (v: number) => Math.abs(v) < 1e-7 ? 0 : Math.sign(v) * Math.abs(v) ** 0.72
     if (squircle) {
       const vertices = geometry.attributes.position!
-      for (let i = 0; i < vertices.count; i++) vertices.setXYZ(i, power(vertices.getX(i)), power(vertices.getY(i)), power(vertices.getZ(i)))
-      geometry.computeVertexNormals()
+      const normals = geometry.attributes.normal!
+      const normal = new THREE.Vector3()
+      const exponent = 2 / 0.72 - 1
+      for (let i = 0; i < vertices.count; i++) {
+        const x = power(vertices.getX(i)), y = power(vertices.getY(i)), z = power(vertices.getZ(i))
+        vertices.setXYZ(i, x, y, z)
+        // Analytic normals agree across duplicate UV edges and at the crown.
+        normal.set(Math.sign(x) * Math.abs(x) ** exponent,
+          Math.sign(y) * Math.abs(y) ** exponent,
+          Math.sign(z) * Math.abs(z) ** exponent).normalize()
+        normals.setXYZ(i, normal.x, normal.y, normal.z)
+      }
     }
-    const mesh = new THREE.Mesh(geometry, fur)
+    // The head's continuous base avoids a texture join on the back and top.
+    const mesh = new THREE.Mesh(geometry, squircle ? fibers : fur)
     mesh.position.set(position[0]!, position[1]!, position[2]!)
     mesh.scale.set(scale[0]!, scale[1]!, scale[2]!)
     parent.add(mesh)
