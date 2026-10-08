@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { createBedding } from './bedding'
 import { createCurtains } from './curtains'
+import { createAppleDesk } from './apple-desk'
 
 export const roomObstacles = [
   { minX: -5.7, maxX: -2.5, minZ: 0.1, maxZ: 4.2 },
@@ -56,7 +57,7 @@ export function createRoom() {
   box('#293a42', [0.48, 0.3, 0.34], [-4.91, 1.27, -0.13])
   for (let i = 0; i < 3; i++) box('#72ad67', [0.035, 0.05, 0.015], [-5.06 + i * 0.1, 1.25, 0.05])
 
-  // Desk and drawer cabinet, with a chunky retro computer and keyboard.
+  // Desk and drawer cabinet with a slim iMac, Apple keyboard and Magic Mouse.
   box('#bd8856', [3.7, 0.19, 1.65], [3.7, 1.45, -3.05])
   for (const x of [2.0, 5.35]) for (const z of [-3.65, -2.4]) box('#a16c42', [0.17, 1.35, 0.17], [x, 0.67, z])
   box('#bb8150', [0.95, 1.18, 1.42], [5.0, 0.64, -3.0])
@@ -64,20 +65,9 @@ export function createRoom() {
     box('#d59c68', [0.84, 0.31, 0.045], [5, 0.29 + i * 0.36, -2.27])
     box('#6e4d34', [0.29, 0.045, 0.03], [5, 0.29 + i * 0.36, -2.235])
   }
-  box('#dfded5', [1.28, 0.94, 0.55], [3.48, 2.11, -3.3])
-  box('#454b50', [1.08, 0.71, 0.025], [3.48, 2.15, -3.01])
-  box('#657b82', [0.99, 0.62, 0.012], [3.48, 2.15, -2.99])
-  box('#cadad6', [0.85, 0.024, 0.008], [3.48, 2.38, -2.978])
-  box('#dfded5', [0.34, 0.2, 0.3], [3.48, 1.65, -3.2])
-  box('#eae6da', [1.19, 0.09, 0.43], [3.46, 1.6, -2.5])
-  for (let row = 0; row < 4; row++) for (let col = 0; col < 11; col++) box('#7b8586', [0.063, 0.016, 0.055], [2.98 + col * 0.095, 1.65, -2.65 + row * 0.085])
-  box('#e8e5db', [0.53, 1.18, 0.76], [2.29, 2.13, -3.2])
-  box('#616d70', [0.35, 0.045, 0.018], [2.29, 2.4, -2.81])
-  box('#d85b7b', [0.07, 0.07, 0.019], [2.4, 1.79, -2.81])
-  const mouse = new THREE.Mesh(new THREE.SphereGeometry(1, 16, 12), material('#e6e7df'))
-  mouse.scale.set(0.13, 0.065, 0.2)
-  mouse.position.set(4.38, 1.61, -2.48)
-  room.add(mouse)
+  const computer = createAppleDesk()
+  computer.position.set(3.2, 1.55, -3.15)
+  room.add(computer)
 
   // Blue swivel chair, including a seat, backrest, post and five wheeled feet.
   cylinder('#65717a', 0.07, 0.62, [3.55, 0.43, -1.12])
