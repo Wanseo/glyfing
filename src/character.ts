@@ -14,7 +14,7 @@ const referenceColors = {
 export function createCharacter() {
   const root = new THREE.Group()
   const torso = new THREE.Group()
-  const eyelids: { upper: THREE.Mesh; lower: THREE.Mesh }[] = []
+  const eyelids: { upper: THREE.Mesh; lower: THREE.Mesh; eyeball: THREE.Group; closed: THREE.Mesh; crease: THREE.Mesh }[] = []
   root.add(torso)
   let seed = 37
   const random = () => {
@@ -146,10 +146,12 @@ export function createCharacter() {
     eye.position.set(x!, y!, 0.45)
     torso.add(eye)
     oval(eye, skin, [0, 0, 0], [0.29, 0.32, 0.09])
-    oval(eye, cream, [0, 0, 0.065], [0.235, 0.245, 0.105])
-    oval(eye, iris, [0.025, -0.035, 0.155], [0.115, 0.12, 0.036])
-    oval(eye, dark, [0.025, -0.035, 0.186], [0.057, 0.073, 0.014])
-    oval(eye, cream, [-0.006, 0.008, 0.199], [0.022, 0.023, 0.008])
+    const eyeball = new THREE.Group()
+    eye.add(eyeball)
+    oval(eyeball, cream, [0, 0, 0.065], [0.235, 0.245, 0.105])
+    oval(eyeball, iris, [0.025, -0.035, 0.155], [0.115, 0.12, 0.036])
+    oval(eyeball, dark, [0.025, -0.035, 0.186], [0.057, 0.073, 0.014])
+    oval(eyeball, cream, [-0.006, 0.008, 0.199], [0.022, 0.023, 0.008])
     const lid = new THREE.Mesh(new THREE.SphereGeometry(1, 32, 16, 0, Math.PI * 2, 0, Math.PI / 2), skin)
     lid.position.set(0, 0.01, 0.072)
     lid.scale.set(0.245, 0.257, 0.128)
@@ -160,7 +162,11 @@ export function createCharacter() {
     lowerLid.scale.set(0.247, 0.259, 0.13)
     lowerLid.rotation.z = x! * -0.12
     eye.add(lowerLid)
-    eyelids.push({ upper: lid, lower: lowerLid })
+    const closed = oval(eye, skin, [0, 0, 0.09], [0.244, 0.25, 0.15])
+    const crease = oval(eye, skin.clone(), [0, -0.018, 0.24], [0.17, 0.006, 0.007])
+    ;(crease.material as THREE.MeshStandardMaterial).color.set('#858684')
+    closed.visible = crease.visible = false
+    eyelids.push({ upper: lid, lower: lowerLid, eyeball, closed, crease })
     const rim = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.024, 8, 48), skin)
     rim.scale.y = 1.1
     rim.position.z = 0.045
@@ -207,9 +213,12 @@ export function createCharacter() {
   waistband.position.set(0, 1.24, 0.12)
   torso.add(waistband)
   function blink(amount: number) {
-    for (const { upper, lower } of eyelids) {
-      upper.rotation.x = amount * 0.95
-      lower.rotation.x = -amount * 0.7
+    for (const { upper, lower, eyeball, closed, crease } of eyelids) {
+      upper.rotation.x = amount * 1.2
+      lower.rotation.x = -amount * 0.9
+      eyeball.scale.y = 1 - amount * 0.95
+      eyeball.visible = amount < 0.9
+      closed.visible = crease.visible = amount >= 0.9
     }
   }
   return { root, torso, legs, arms, blink }

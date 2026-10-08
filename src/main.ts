@@ -65,18 +65,21 @@ let previous = 0, gait = 0, walk = 0
 let nextBlink = Number.POSITIVE_INFINITY
 let blinkStarted: number | null = null
 renderer.setAnimationLoop((time: number) => {
-  if (!previous) nextBlink = time + 2000 + Math.random() * 3000
+  if (!previous) nextBlink = time + 1200 + Math.random() * 1000
   const dt = previous ? Math.min((time - previous) / 1000, 0.05) : 0
   previous = time
   if (blinkStarted === null && time >= nextBlink) blinkStarted = time
   if (blinkStarted !== null) {
-    const progress = (time - blinkStarted) / 220
+    const elapsed = time - blinkStarted
+    const duration = 420
+    const amount = elapsed < 100 ? elapsed / 100 : elapsed < 230 ? 1 : 1 - (elapsed - 230) / 190
+    const progress = elapsed / duration
     if (progress >= 1) {
       character.blink(0)
       blinkStarted = null
-      nextBlink = time + 3000 + Math.random() * 4000
+      nextBlink = time + 2200 + Math.random() * 2200
     } else {
-      character.blink(Math.sin(progress * Math.PI) ** 0.7)
+      character.blink(THREE.MathUtils.smoothstep(amount, 0, 1))
     }
   }
   const direction = getDirection(keys)
