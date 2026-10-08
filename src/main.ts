@@ -1,7 +1,7 @@
 import './style.css'
 import * as THREE from 'three'
 import { createCharacter } from './character'
-import { getDirection, moveInRoom } from './movement'
+import { getCameraFollow, getDirection, moveInRoom } from './movement'
 import { createRoom, roomObstacles } from './room'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
@@ -47,11 +47,16 @@ const shadow = new THREE.Mesh(new THREE.PlaneGeometry(1.47, 0.77), new THREE.Mes
 shadow.rotation.x = -Math.PI / 2
 scene.add(shadow)
 
+let viewHalfWidth = 5.95, viewHalfHeight = 3.15
+const cameraPan = new THREE.Vector2()
+const cameraUp = new THREE.Vector3(0, 18, -2).normalize()
 function resize() {
   const aspect = window.innerWidth / window.innerHeight
   // Fill the viewport like background-size: cover instead of letterboxing.
   const halfHeight = Math.min(3.15, 5.95 / aspect)
   const halfWidth = halfHeight * aspect
+  viewHalfWidth = halfWidth
+  viewHalfHeight = halfHeight
   camera.left = -halfWidth
   camera.right = halfWidth
   camera.top = halfHeight
@@ -118,5 +123,13 @@ renderer.setAnimationLoop((time: number) => {
   })
   character.arms.forEach((arm, i) => { arm.rotation.x = Math.sin(gait + i * Math.PI) * 0.45 * walk })
   shadow.position.set(position.x, 0.014, -position.y)
+  const follow = getCameraFollow(position.x, -position.y, viewHalfWidth, viewHalfHeight)
+  cameraPan.x = THREE.MathUtils.damp(cameraPan.x, follow.x, 5, dt)
+  cameraPan.y = THREE.MathUtils.damp(cameraPan.y, follow.y, 5, dt)
+  // Translate camera and target together, preserving the frontal view.
+  const offsetY = cameraUp.y * cameraPan.y
+  const offsetZ = cameraUp.z * cameraPan.y
+  camera.position.set(cameraPan.x, 4.65 + offsetY, 18 + offsetZ)
+  camera.lookAt(cameraPan.x, 2.65 + offsetY, offsetZ)
   renderer.render(scene, camera)
 })

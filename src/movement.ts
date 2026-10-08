@@ -13,6 +13,16 @@ export function clampPosition(value: number, extent: number, padding: number) {
 
 type Obstacle = { minX: number; maxX: number; minZ: number; maxZ: number }
 
+export function getCameraFollow(x: number, z: number, halfWidth: number, halfHeight: number) {
+  const screenY = (1 - 2.65) * 18 / Math.hypot(18, 2) - z * 2 / Math.hypot(18, 2)
+  const minY = -3.17 + halfHeight
+  const maxY = 3.45 - halfHeight
+  return {
+    x: clampPosition(x, 5.95, halfWidth),
+    y: Math.max(minY, Math.min(maxY, screenY + 1.1)),
+  }
+}
+
 export function moveInRoom(x: number, z: number, dx: number, dz: number, obstacles: readonly Obstacle[]) {
   const radius = 0.6
   const blocked = (px: number, pz: number) => obstacles.some(o =>
