@@ -62,9 +62,23 @@ window.addEventListener('keyup', event => keys.delete(event.key))
 window.addEventListener('blur', () => keys.clear())
 document.addEventListener('visibilitychange', () => { if (document.hidden) keys.clear() })
 let previous = 0, gait = 0, walk = 0
+let nextBlink = Number.POSITIVE_INFINITY
+let blinkStarted: number | null = null
 renderer.setAnimationLoop((time: number) => {
+  if (!previous) nextBlink = time + 2000 + Math.random() * 3000
   const dt = previous ? Math.min((time - previous) / 1000, 0.05) : 0
   previous = time
+  if (blinkStarted === null && time >= nextBlink) blinkStarted = time
+  if (blinkStarted !== null) {
+    const progress = (time - blinkStarted) / 220
+    if (progress >= 1) {
+      character.blink(0)
+      blinkStarted = null
+      nextBlink = time + 3000 + Math.random() * 4000
+    } else {
+      character.blink(Math.sin(progress * Math.PI) ** 0.7)
+    }
+  }
   const direction = getDirection(keys)
   position.x = clampPosition(position.x + direction.x * dt * 3.1, halfWidth, 1.6)
   position.y = clampPosition(position.y + direction.y * dt * 3.1, halfHeight, 1.75)

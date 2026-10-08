@@ -14,6 +14,7 @@ const referenceColors = {
 export function createCharacter() {
   const root = new THREE.Group()
   const torso = new THREE.Group()
+  const eyelids: { upper: THREE.Mesh; lower: THREE.Mesh }[] = []
   root.add(torso)
   let seed = 37
   const random = () => {
@@ -159,6 +160,7 @@ export function createCharacter() {
     lowerLid.scale.set(0.247, 0.259, 0.13)
     lowerLid.rotation.z = x! * -0.12
     eye.add(lowerLid)
+    eyelids.push({ upper: lid, lower: lowerLid })
     const rim = new THREE.Mesh(new THREE.TorusGeometry(0.27, 0.024, 8, 48), skin)
     rim.scale.y = 1.1
     rim.position.z = 0.045
@@ -204,5 +206,11 @@ export function createCharacter() {
   waistband.scale.y = 0.75
   waistband.position.set(0, 1.24, 0.12)
   torso.add(waistband)
-  return { root, torso, legs, arms }
+  function blink(amount: number) {
+    for (const { upper, lower } of eyelids) {
+      upper.rotation.x = amount * 0.95
+      lower.rotation.x = -amount * 0.7
+    }
+  }
+  return { root, torso, legs, arms, blink }
 }
