@@ -124,7 +124,7 @@ export function createCharacter() {
     arm.position.set(side * 0.51, 1.5, 0)
     arm.rotation.z = side * 0.32
     torso.add(arm)
-    fuzzy(arm, [side * 0.12, -0.28, 0], [0.18, 0.38, 0.19], 700)
+    fuzzy(arm, [side * 0.12, -0.305, 0], [0.18, 0.405, 0.19], 700)
     return arm
   })
   for (const [x, y] of [[-0.62, 2.25], [0, 2.43], [0.62, 2.25]]) {
