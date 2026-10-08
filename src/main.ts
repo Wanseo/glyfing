@@ -6,8 +6,7 @@ import { createGlitterBackground } from './glitter'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 const scene = new THREE.Scene()
-const background = createGlitterBackground()
-scene.background = background
+scene.background = new THREE.Color('#e83796')
 const camera = new THREE.OrthographicCamera(-10, 10, 7, -7, 0.1, 100)
 camera.position.set(0, 0, 20)
 const renderer = new THREE.WebGLRenderer({ antialias: true })
@@ -47,6 +46,8 @@ const shadow = new THREE.Mesh(new THREE.PlaneGeometry(3.4125, 0.65), new THREE.M
 scene.add(shadow)
 
 let viewHalfWidth = 5.95, viewHalfHeight = 3.15
+let background: THREE.CanvasTexture | null = null
+let backgroundSize = ''
 function resize() {
   const aspect = window.innerWidth / window.innerHeight
   // Keep the character approximately 120 pixels tall on desktop screens.
@@ -55,7 +56,17 @@ function resize() {
   const halfWidth = halfHeight * aspect
   viewHalfWidth = halfWidth
   viewHalfHeight = halfHeight
-  background.repeat.set(window.innerWidth / 1024, window.innerHeight / 1024)
+  const pixelRatio = Math.min(window.devicePixelRatio, 2,
+    renderer.capabilities.maxTextureSize / Math.max(window.innerWidth, window.innerHeight))
+  renderer.setPixelRatio(pixelRatio)
+  const size = `${window.innerWidth}:${window.innerHeight}:${pixelRatio}`
+  if (size !== backgroundSize) {
+    const nextBackground = createGlitterBackground(window.innerWidth, window.innerHeight, pixelRatio)
+    scene.background = nextBackground
+    background?.dispose()
+    background = nextBackground
+    backgroundSize = size
+  }
   camera.left = -halfWidth
   camera.right = halfWidth
   camera.top = halfHeight
