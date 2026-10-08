@@ -25,24 +25,28 @@ export function createCharacter() {
   const ctx = fabric.getContext('2d')!
   ctx.fillStyle = referenceColors.fur
   ctx.fillRect(0, 0, 256, 256)
-  for (let i = 0; i < 13000; i++) {
-    const variation = random() * 42 - 21
+  ctx.lineWidth = 0.6
+  for (let i = 0; i < 24000; i++) {
+    const variation = random() * 16 - 8
     ctx.strokeStyle = `rgb(${182 + variation},${166 + variation},${156 + variation})`
+    const x = random() * 256, y = random() * 256
     ctx.beginPath()
-    ctx.arc(random() * 256, random() * 256, 1 + random() * 2, 0, Math.PI * 1.6)
+    ctx.moveTo(x, y)
+    ctx.quadraticCurveTo(x + 0.7, y - 1.2, x + 0.3, y - 2.5)
     ctx.stroke()
   }
   const texture = new THREE.CanvasTexture(fabric)
   texture.wrapS = texture.wrapT = THREE.RepeatWrapping
   texture.repeat.set(3, 2)
   texture.colorSpace = THREE.SRGBColorSpace
-  const fur = new THREE.MeshStandardMaterial({ color: '#ffffff', map: texture, bumpMap: texture, bumpScale: 0.035, roughness: 1 })
+  const fur = new THREE.MeshStandardMaterial({ color: '#ffffff', map: texture, bumpMap: texture, bumpScale: 0.008, roughness: 1 })
+  const fibers = new THREE.MeshStandardMaterial({ color: referenceColors.fur, roughness: 1 })
   const skin = new THREE.MeshStandardMaterial({ color: referenceColors.eyelids, roughness: 1 })
   const cream = new THREE.MeshStandardMaterial({ color: '#e0d6c8', roughness: 0.65 })
   const dark = new THREE.MeshStandardMaterial({ color: '#291c19', roughness: 0.65 })
   const iris = new THREE.MeshStandardMaterial({ color: '#684537', roughness: 0.4 })
   const sphere = new THREE.SphereGeometry(1, 32, 24)
-  const tuftGeometry = new THREE.SphereGeometry(1, 5, 4)
+  const tuftGeometry = new THREE.SphereGeometry(1, 6, 6)
   function oval(parent: THREE.Group, material: THREE.Material, position: number[], scale: number[]) {
     const mesh = new THREE.Mesh(sphere, material)
     mesh.position.set(position[0]!, position[1]!, position[2]!)
@@ -62,18 +66,20 @@ export function createCharacter() {
     mesh.position.set(position[0]!, position[1]!, position[2]!)
     mesh.scale.set(scale[0]!, scale[1]!, scale[2]!)
     parent.add(mesh)
-    const tufts = new THREE.InstancedMesh(tuftGeometry, fur, count)
+    // Dense, fine short fibers instead of separated, faceted lumps.
+    const fiberCount = count * 4
+    const tufts = new THREE.InstancedMesh(tuftGeometry, fibers, fiberCount)
     const dummy = new THREE.Object3D()
-    for (let i = 0; i < count; i++) {
-      const y = random() * 2 - 1
-      const angle = random() * Math.PI * 2
+    for (let i = 0; i < fiberCount; i++) {
+      const y = 1 - 2 * (i + 0.5) / fiberCount
+      const angle = i * Math.PI * (3 - Math.sqrt(5))
       const radius = Math.sqrt(1 - y * y)
       const v = new THREE.Vector3(radius * Math.cos(angle), y, radius * Math.sin(angle))
       if (squircle) v.set(power(v.x), power(v.y), power(v.z))
       dummy.position.set(position[0]! + v.x * scale[0]!, position[1]! + v.y * scale[1]!, position[2]! + v.z * scale[2]!)
       dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), v.clone().normalize())
-      const size = 0.012 + random() * 0.014
-      dummy.scale.set(size, size * 1.7, size)
+      const size = 0.006 + random() * 0.004
+      dummy.scale.set(size, 0.016 + random() * 0.012, size)
       dummy.updateMatrix()
       tufts.setMatrixAt(i, dummy.matrix)
     }
