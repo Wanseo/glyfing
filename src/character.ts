@@ -1,5 +1,15 @@
 import * as THREE from 'three'
 
+// Visually matched to the supplied photo; the original image file is not
+// available in the workspace for exact pixel sampling.
+const referenceColors = {
+  fur: '#b6a69c',
+  eyelids: '#b7a79e',
+  briefs: '#eee5de',
+  hearts: '#db5c88',
+  waistband: '#bd1733',
+}
+
 // A little sewn plush: three sleepy eyes, a broad head, and patterned briefs.
 export function createCharacter() {
   const root = new THREE.Group()
@@ -13,11 +23,11 @@ export function createCharacter() {
   const fabric = document.createElement('canvas')
   fabric.width = fabric.height = 256
   const ctx = fabric.getContext('2d')!
-  ctx.fillStyle = '#c9c9c9'
+  ctx.fillStyle = referenceColors.fur
   ctx.fillRect(0, 0, 256, 256)
   for (let i = 0; i < 13000; i++) {
-    const value = 178 + random() * 60
-    ctx.strokeStyle = `rgb(${value},${value},${value})`
+    const variation = random() * 42 - 21
+    ctx.strokeStyle = `rgb(${182 + variation},${166 + variation},${156 + variation})`
     ctx.beginPath()
     ctx.arc(random() * 256, random() * 256, 1 + random() * 2, 0, Math.PI * 1.6)
     ctx.stroke()
@@ -26,8 +36,8 @@ export function createCharacter() {
   texture.wrapS = texture.wrapT = THREE.RepeatWrapping
   texture.repeat.set(3, 2)
   texture.colorSpace = THREE.SRGBColorSpace
-  const fur = new THREE.MeshStandardMaterial({ color: '#f2f2f2', map: texture, bumpMap: texture, bumpScale: 0.035, roughness: 1 })
-  const skin = new THREE.MeshStandardMaterial({ color: '#c8c8c8', roughness: 1 })
+  const fur = new THREE.MeshStandardMaterial({ color: '#ffffff', map: texture, bumpMap: texture, bumpScale: 0.035, roughness: 1 })
+  const skin = new THREE.MeshStandardMaterial({ color: referenceColors.eyelids, roughness: 1 })
   const cream = new THREE.MeshStandardMaterial({ color: '#e0d6c8', roughness: 0.65 })
   const dark = new THREE.MeshStandardMaterial({ color: '#291c19', roughness: 0.65 })
   const iris = new THREE.MeshStandardMaterial({ color: '#684537', roughness: 0.4 })
@@ -120,9 +130,9 @@ export function createCharacter() {
   const cloth = document.createElement('canvas')
   cloth.width = cloth.height = 512
   const paint = cloth.getContext('2d')!
-  paint.fillStyle = '#fffdf9'
+  paint.fillStyle = referenceColors.briefs
   paint.fillRect(0, 0, 512, 512)
-  paint.fillStyle = '#ef78aa'
+  paint.fillStyle = referenceColors.hearts
   for (let row = -1; row < 6; row++) {
     for (let column = -1; column < 6; column++) {
       const x = column * 112 + (row % 2 === 0 ? 0 : 56)
@@ -145,7 +155,7 @@ export function createCharacter() {
   pattern.colorSpace = THREE.SRGBColorSpace
   const briefs = new THREE.MeshStandardMaterial({ map: pattern, roughness: 1 })
   oval(torso, briefs, [0, 0.69, 0.008], [0.655, 0.37, 0.445])
-  const waistband = new THREE.Mesh(new THREE.TorusGeometry(0.61, 0.047, 10, 48), new THREE.MeshStandardMaterial({ color: '#ef78aa', roughness: 1 }))
+  const waistband = new THREE.Mesh(new THREE.TorusGeometry(0.61, 0.047, 10, 48), new THREE.MeshStandardMaterial({ color: referenceColors.waistband, roughness: 1 }))
   waistband.rotation.x = Math.PI / 2
   waistband.scale.y = 0.7
   waistband.position.y = 0.92
