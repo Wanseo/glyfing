@@ -116,7 +116,7 @@ export function createCharacter() {
     const leg = new THREE.Group()
     leg.position.set(side * 0.27, 0.84, 0)
     root.add(leg)
-    fuzzy(leg, [0, -0.22, 0.03], [0.21, 0.25, 0.25], 550)
+    fuzzy(leg, [0, -0.17, 0.03], [0.21, 0.19, 0.25], 550)
     return leg
   })
   const arms = [-1, 1].map(side => {
@@ -124,7 +124,7 @@ export function createCharacter() {
     arm.position.set(side * 0.51, 1.5, 0)
     arm.rotation.z = side * 0.32
     torso.add(arm)
-    fuzzy(arm, [side * 0.12, -0.23, 0], [0.18, 0.32, 0.19], 700)
+    fuzzy(arm, [side * 0.12, -0.28, 0], [0.18, 0.38, 0.19], 700)
     return arm
   })
   for (const [x, y] of [[-0.62, 2.25], [0, 2.43], [0.62, 2.25]]) {
