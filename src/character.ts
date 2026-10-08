@@ -13,11 +13,11 @@ export function createCharacter() {
   const fabric = document.createElement('canvas')
   fabric.width = fabric.height = 256
   const ctx = fabric.getContext('2d')!
-  ctx.fillStyle = '#95877c'
+  ctx.fillStyle = '#b8b8b6'
   ctx.fillRect(0, 0, 256, 256)
   for (let i = 0; i < 13000; i++) {
-    const value = 110 + random() * 90
-    ctx.strokeStyle = `rgb(${value + 12},${value + 5},${value})`
+    const value = 155 + random() * 75
+    ctx.strokeStyle = `rgb(${value},${value},${value - 2})`
     ctx.beginPath()
     ctx.arc(random() * 256, random() * 256, 1 + random() * 2, 0, Math.PI * 1.6)
     ctx.stroke()
@@ -26,8 +26,8 @@ export function createCharacter() {
   texture.wrapS = texture.wrapT = THREE.RepeatWrapping
   texture.repeat.set(3, 2)
   texture.colorSpace = THREE.SRGBColorSpace
-  const fur = new THREE.MeshStandardMaterial({ color: '#c2b4a7', map: texture, bumpMap: texture, bumpScale: 0.035, roughness: 1 })
-  const skin = new THREE.MeshStandardMaterial({ color: '#a99c90', roughness: 1 })
+  const fur = new THREE.MeshStandardMaterial({ color: '#eeeeec', map: texture, bumpMap: texture, bumpScale: 0.035, roughness: 1 })
+  const skin = new THREE.MeshStandardMaterial({ color: '#bcbcb9', roughness: 1 })
   const cream = new THREE.MeshStandardMaterial({ color: '#e0d6c8', roughness: 0.65 })
   const dark = new THREE.MeshStandardMaterial({ color: '#291c19', roughness: 0.65 })
   const iris = new THREE.MeshStandardMaterial({ color: '#684537', roughness: 0.4 })
@@ -115,23 +115,32 @@ export function createCharacter() {
   const cloth = document.createElement('canvas')
   cloth.width = cloth.height = 512
   const paint = cloth.getContext('2d')!
-  paint.fillStyle = '#fff9ed'
+  paint.fillStyle = '#fffdf9'
   paint.fillRect(0, 0, 512, 512)
-  paint.strokeStyle = '#cf1734'
-  paint.lineWidth = 21
-  paint.lineCap = 'round'
-  for (let i = 0; i < 16; i++) {
-    const x = random() * 512, y = random() * 512
-    paint.beginPath()
-    paint.moveTo(x, y)
-    paint.bezierCurveTo(x + 65, y - 60, x - 50, y + 70, x + 80, y + 100)
-    paint.stroke()
+  paint.fillStyle = '#ef78aa'
+  for (let row = -1; row < 6; row++) {
+    for (let column = -1; column < 6; column++) {
+      const x = column * 112 + (row % 2 === 0 ? 0 : 56)
+      const y = row * 104 + 36
+      paint.save()
+      paint.translate(x, y)
+      paint.rotate(((row + column) % 3 - 1) * 0.16)
+      paint.beginPath()
+      paint.moveTo(0, 26)
+      paint.bezierCurveTo(-7, 17, -33, 0, -28, -15)
+      paint.bezierCurveTo(-23, -32, -7, -32, 0, -17)
+      paint.bezierCurveTo(7, -32, 23, -32, 28, -15)
+      paint.bezierCurveTo(33, 0, 7, 17, 0, 26)
+      paint.closePath()
+      paint.fill()
+      paint.restore()
+    }
   }
   const pattern = new THREE.CanvasTexture(cloth)
   pattern.colorSpace = THREE.SRGBColorSpace
   const briefs = new THREE.MeshStandardMaterial({ map: pattern, roughness: 1 })
   oval(torso, briefs, [0, 0.69, 0.008], [0.655, 0.37, 0.445])
-  const waistband = new THREE.Mesh(new THREE.TorusGeometry(0.61, 0.047, 10, 48), new THREE.MeshStandardMaterial({ color: '#c91935', roughness: 1 }))
+  const waistband = new THREE.Mesh(new THREE.TorusGeometry(0.61, 0.047, 10, 48), new THREE.MeshStandardMaterial({ color: '#ef78aa', roughness: 1 }))
   waistband.rotation.x = Math.PI / 2
   waistband.scale.y = 0.7
   waistband.position.y = 0.92
