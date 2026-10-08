@@ -43,6 +43,7 @@ export function createCharacter() {
   const fibers = new THREE.MeshStandardMaterial({ color: referenceColors.fur, roughness: 1 })
   const skin = new THREE.MeshStandardMaterial({ color: referenceColors.eyelids, roughness: 1 })
   const cream = new THREE.MeshStandardMaterial({ color: '#e0d6c8', roughness: 0.65 })
+  const toothMaterial = new THREE.MeshStandardMaterial({ color: '#ffffff', roughness: 0.65 })
   const dark = new THREE.MeshStandardMaterial({ color: '#291c19', roughness: 0.65 })
   const iris = new THREE.MeshStandardMaterial({ color: '#684537', roughness: 0.4 })
   const sphere = new THREE.SphereGeometry(1, 32, 24)
@@ -153,7 +154,7 @@ export function createCharacter() {
   }
   oval(torso, dark, [0, 1.83, 0.454], [0.4, 0.075, 0.045])
   for (let i = 0; i < 6; i++) {
-    const tooth = new THREE.Mesh(new THREE.BoxGeometry(0.068, 0.092 + (i % 2) * 0.018, 0.055), cream)
+    const tooth = new THREE.Mesh(new THREE.BoxGeometry(0.068, 0.092 + (i % 2) * 0.018, 0.055), toothMaterial)
     tooth.position.set((i - 2.5) * 0.112, 1.824, 0.49)
     tooth.rotation.z = (random() - 0.5) * 0.25
     torso.add(tooth)
