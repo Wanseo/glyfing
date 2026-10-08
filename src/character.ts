@@ -203,31 +203,40 @@ export function createCharacter() {
       paint.restore()
     }
   }
+  // Draw the red fabric panels directly into the cloth texture, so the
+  // borders follow the same surface and lighting without raised piping.
+  paint.strokeStyle = referenceColors.waistband
+  paint.lineWidth = 15
+  paint.lineCap = 'round'
+  paint.lineJoin = 'round'
+  function paintBriefSeam(points: number[][], side: number) {
+    const curve = new THREE.CatmullRomCurve3(points.map(([x, y]) => new THREE.Vector3(x!, y!, 0)))
+    paint.beginPath()
+    for (let i = 0; i <= 100; i++) {
+      const point = curve.getPoint(i / 100)
+      const x = point.x / 0.68, y = point.y / 0.28
+      const z = side * Math.sqrt(Math.max(0, 1 - x * x - y * y))
+      const angle = (Math.atan2(z, -x) + Math.PI * 2) % (Math.PI * 2)
+      const u = angle / (Math.PI * 2) * 512
+      const v = Math.acos(THREE.MathUtils.clamp(y, -1, 1)) / Math.PI * 512
+      if (i === 0) paint.moveTo(u, v)
+      else paint.lineTo(u, v)
+    }
+    paint.stroke()
+  }
+  for (const side of [-1, 1]) {
+    paintBriefSeam([[0, 0.18], [0, 0.05], [0, -0.1], [0, -0.24]], side)
+    for (const edge of [-1, 1]) {
+      paintBriefSeam([[edge * 0.47, 0.17], [edge * 0.4, 0.06], [edge * 0.29, -0.1], [edge * 0.13, -0.22]], side)
+    }
+    paintBriefSeam([[-0.52, -0.12], [-0.36, -0.2], [0, -0.255], [0.36, -0.2], [0.52, -0.12]], side)
+  }
+  paint.fillStyle = referenceColors.waistband
+  paint.fillRect(0, 132, 512, 28)
   const pattern = new THREE.CanvasTexture(cloth)
   pattern.colorSpace = THREE.SRGBColorSpace
   const briefs = new THREE.MeshStandardMaterial({ map: pattern, roughness: 1 })
   oval(torso, briefs, [0, 1.06, 0.12], [0.68, 0.28, 0.51])
-  const trimMaterial = new THREE.MeshStandardMaterial({ color: referenceColors.waistband, roughness: 1 })
-  function addBriefSeam(points: number[][], side: number) {
-    const surface = points.map(([x, y]) => {
-      const depth = 0.51 * Math.sqrt(Math.max(0, 1 - (x! / 0.68) ** 2 - (y! / 0.28) ** 2))
-      return new THREE.Vector3(x!, 1.06 + y!, 0.12 + side * (depth + 0.012))
-    })
-    const seam = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(surface), 32, 0.045, 8, false), trimMaterial)
-    torso.add(seam)
-  }
-  for (const side of [-1, 1]) {
-    addBriefSeam([[0, 0.18], [0, 0.05], [0, -0.1], [0, -0.24]], side)
-    for (const edge of [-1, 1]) {
-      addBriefSeam([[edge * 0.47, 0.17], [edge * 0.4, 0.06], [edge * 0.29, -0.1], [edge * 0.13, -0.22]], side)
-    }
-    addBriefSeam([[-0.52, -0.12], [-0.36, -0.2], [0, -0.255], [0.36, -0.2], [0.52, -0.12]], side)
-  }
-  const waistband = new THREE.Mesh(new THREE.TorusGeometry(0.65, 0.038, 10, 48), new THREE.MeshStandardMaterial({ color: referenceColors.waistband, roughness: 1 }))
-  waistband.rotation.x = Math.PI / 2
-  waistband.scale.y = 0.75
-  waistband.position.set(0, 1.24, 0.12)
-  torso.add(waistband)
   function blink(amount: number) {
     for (const { upper, lower, eyeball, closed, crease } of eyelids) {
       upper.rotation.x = amount * 1.2
