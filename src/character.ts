@@ -13,11 +13,11 @@ export function createCharacter() {
   const fabric = document.createElement('canvas')
   fabric.width = fabric.height = 256
   const ctx = fabric.getContext('2d')!
-  ctx.fillStyle = '#b8b8b6'
+  ctx.fillStyle = '#d4d4d4'
   ctx.fillRect(0, 0, 256, 256)
   for (let i = 0; i < 13000; i++) {
-    const value = 155 + random() * 75
-    ctx.strokeStyle = `rgb(${value},${value},${value - 2})`
+    const value = 190 + random() * 55
+    ctx.strokeStyle = `rgb(${value},${value},${value})`
     ctx.beginPath()
     ctx.arc(random() * 256, random() * 256, 1 + random() * 2, 0, Math.PI * 1.6)
     ctx.stroke()
@@ -26,8 +26,8 @@ export function createCharacter() {
   texture.wrapS = texture.wrapT = THREE.RepeatWrapping
   texture.repeat.set(3, 2)
   texture.colorSpace = THREE.SRGBColorSpace
-  const fur = new THREE.MeshStandardMaterial({ color: '#eeeeec', map: texture, bumpMap: texture, bumpScale: 0.035, roughness: 1 })
-  const skin = new THREE.MeshStandardMaterial({ color: '#bcbcb9', roughness: 1 })
+  const fur = new THREE.MeshStandardMaterial({ color: '#f8f8f8', map: texture, bumpMap: texture, bumpScale: 0.035, roughness: 1 })
+  const skin = new THREE.MeshStandardMaterial({ color: '#d0d0d0', roughness: 1 })
   const cream = new THREE.MeshStandardMaterial({ color: '#e0d6c8', roughness: 0.65 })
   const dark = new THREE.MeshStandardMaterial({ color: '#291c19', roughness: 0.65 })
   const iris = new THREE.MeshStandardMaterial({ color: '#684537', roughness: 0.4 })
