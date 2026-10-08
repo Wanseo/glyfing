@@ -207,6 +207,22 @@ export function createCharacter() {
   pattern.colorSpace = THREE.SRGBColorSpace
   const briefs = new THREE.MeshStandardMaterial({ map: pattern, roughness: 1 })
   oval(torso, briefs, [0, 1.06, 0.12], [0.68, 0.28, 0.51])
+  const trimMaterial = new THREE.MeshStandardMaterial({ color: referenceColors.waistband, roughness: 1 })
+  function addBriefSeam(points: number[][], side: number) {
+    const surface = points.map(([x, y]) => {
+      const depth = 0.51 * Math.sqrt(Math.max(0, 1 - (x! / 0.68) ** 2 - (y! / 0.28) ** 2))
+      return new THREE.Vector3(x!, 1.06 + y!, 0.12 + side * (depth + 0.012))
+    })
+    const seam = new THREE.Mesh(new THREE.TubeGeometry(new THREE.CatmullRomCurve3(surface), 32, 0.018, 6, false), trimMaterial)
+    torso.add(seam)
+  }
+  for (const side of [-1, 1]) {
+    addBriefSeam([[0, 0.18], [0, 0.05], [0, -0.1], [0, -0.24]], side)
+    for (const edge of [-1, 1]) {
+      addBriefSeam([[edge * 0.47, 0.17], [edge * 0.4, 0.06], [edge * 0.29, -0.1], [edge * 0.13, -0.22]], side)
+    }
+    addBriefSeam([[-0.52, -0.12], [-0.36, -0.2], [0, -0.255], [0.36, -0.2], [0.52, -0.12]], side)
+  }
   const waistband = new THREE.Mesh(new THREE.TorusGeometry(0.65, 0.038, 10, 48), new THREE.MeshStandardMaterial({ color: referenceColors.waistband, roughness: 1 }))
   waistband.rotation.x = Math.PI / 2
   waistband.scale.y = 0.75
