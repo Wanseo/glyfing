@@ -141,8 +141,9 @@ export function createCharacter() {
       const aroundEyes = squircle && pz > 0.2 && [[-0.62, 2.25], [0, 2.43], [0.62, 2.25]].some(([ex, ey]) =>
         ((px - ex!) / 0.33) ** 2 + ((py - ey!) / 0.35) ** 2 < 1)
       const aroundMouth = squircle && pz > 0.2 && Math.abs(px) < 0.47 && Math.abs(py - 1.83) < 0.14
-      const overBriefs = !squircle && position[1] === 1.38 &&
-        (px / 0.7) ** 2 + ((py - 1.06) / 0.3) ** 2 + ((pz - 0.03) / 0.62) ** 2 < 1.3
+      // Hide fibers only inside the actual garment, leaving fleece along the flanks.
+      const overBriefs = isBody && py < 1.3 &&
+        (px / 0.68) ** 2 + ((py - 1.06) / 0.28) ** 2 + ((pz - 0.03) / 0.6) ** 2 < 1.03
       if (aroundEyes || aroundMouth || overBriefs) {
         dummy.scale.setScalar(0)
         dummy.updateMatrix()
