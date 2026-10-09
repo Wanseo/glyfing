@@ -54,7 +54,25 @@ export function createCharacter() {
     weaveContext.fillRect(col, row, 1, 2)
   }
   const weave = new THREE.CanvasTexture(weaveCanvas)
-  const skin = new THREE.MeshStandardMaterial({ color: referenceColors.eyelids, bumpMap: weave, bumpScale: 0.0015, roughness: 1 })
+  weave.wrapS = weave.wrapT = THREE.RepeatWrapping
+  weave.repeat.set(2, 2)
+  const feltCanvas = document.createElement('canvas')
+  feltCanvas.width = feltCanvas.height = 128
+  const feltContext = feltCanvas.getContext('2d')!
+  feltContext.fillStyle = referenceColors.eyelids
+  feltContext.fillRect(0, 0, 128, 128)
+  for (let y = 0; y < 128; y += 2) for (let x = 0; x < 128; x += 2) {
+    feltContext.fillStyle = (x + y) % 4 ? 'rgba(255,255,255,0.07)' : 'rgba(66,61,52,0.06)'
+    feltContext.fillRect(x, y, 1, 2)
+  }
+  const feltTexture = new THREE.CanvasTexture(feltCanvas)
+  feltTexture.colorSpace = THREE.SRGBColorSpace
+  feltTexture.wrapS = feltTexture.wrapT = THREE.RepeatWrapping
+  feltTexture.repeat.set(2, 2)
+  const skin = new THREE.MeshPhysicalMaterial({
+    map: feltTexture, bumpMap: weave, bumpScale: 0.0035, roughness: 1,
+    sheen: 0.55, sheenColor: new THREE.Color('#ddd6c9'), sheenRoughness: 1,
+  })
   const thread = new THREE.MeshStandardMaterial({ color: '#e2d9c9', roughness: 1 })
   const cream = new THREE.MeshStandardMaterial({ color: '#e0d6c8', roughness: 0.65 })
   const toothMaterial = new THREE.MeshPhysicalMaterial({ color: '#fffdf6', roughness: 0.24, clearcoat: 0.35, clearcoatRoughness: 0.25 })
