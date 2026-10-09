@@ -84,8 +84,8 @@ export function createCharacter() {
   tuftGeometry.computeVertexNormals()
   tuftGeometry.computeBoundingBox()
   const mouthClearance = new THREE.Box3(
-    new THREE.Vector3(-0.405, 1.757, 0.425),
-    new THREE.Vector3(0.405, 1.894, 1),
+    new THREE.Vector3(-0.325, 1.755, 0.445),
+    new THREE.Vector3(0.325, 1.893, 1),
   )
   const tuftBounds = new THREE.Box3()
   function oval(parent: THREE.Group, material: THREE.Material, position: number[], scale: number[]) {
@@ -173,6 +173,11 @@ export function createCharacter() {
       dummy.scale.set(0.9 + random() * 0.4, 0.7 + random() * 0.6, 0.9 + random() * 0.4)
       // Gentle variation separates soft clumps without harsh dark strands.
       tufts.setColorAt(i, new THREE.Color().setScalar(0.93 + random() * 0.1))
+      // Shorter fleece near the teeth fills the mouth border without long overhangs.
+      if ((squircle || isBody) && pz > 0.2 &&
+        Math.abs(px) < 0.52 && Math.abs(py - 1.83) < 0.24) {
+        dummy.scale.multiplyScalar(0.45)
+      }
       dummy.updateMatrix()
       // Check the whole transformed curl, including tips that reach in from outside.
       tuftBounds.copy(tuftGeometry.boundingBox!).applyMatrix4(dummy.matrix)
