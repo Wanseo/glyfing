@@ -111,7 +111,7 @@ export function createCharacter() {
     const isBody = !squircle && position[1] === 1.38
     const neckWidth = (y: number) => {
       const t = THREE.MathUtils.clamp((y + 0.15) / 1.15, 0, 1)
-      return 1 - 0.28 * t * t * (3 - 2 * t)
+      return 1 - 0.42 * t * t * (3 - 2 * t)
     }
     if (isBody) {
       const vertices = geometry.attributes.position!
@@ -157,7 +157,7 @@ export function createCharacter() {
       ).normalize()
       if (isBody) {
         const t = THREE.MathUtils.clamp((v.y + 0.15) / 1.15, 0, 1)
-        const widthDerivative = -0.28 * 6 * t * (1 - t) / 1.15
+        const widthDerivative = -0.42 * 6 * t * (1 - t) / 1.15
         normal.set(v.x / (bodyWidth * scale[0]!),
           (v.y - v.x * v.x * widthDerivative / bodyWidth) / scale[1]!,
           v.z / scale[2]!).normalize()
