@@ -75,7 +75,11 @@ export function createCharacter() {
   })
   const thread = new THREE.MeshStandardMaterial({ color: '#e2d9c9', roughness: 1 })
   const cream = new THREE.MeshStandardMaterial({ color: '#e0d6c8', roughness: 0.65 })
-  const toothMaterial = new THREE.MeshPhysicalMaterial({ color: '#ffffff', roughness: 0.12, clearcoat: 0.65, clearcoatRoughness: 0.12 })
+  const toothMaterial = new THREE.MeshPhysicalMaterial({
+    color: '#ffffff', emissive: '#ffffff', emissiveIntensity: 0.16,
+    roughness: 0.04, clearcoat: 1, clearcoatRoughness: 0.035,
+    specularIntensity: 1, ior: 1.5,
+  })
   const dark = new THREE.MeshStandardMaterial({ color: '#291c19', roughness: 0.65 })
   const iris = new THREE.MeshStandardMaterial({ color: '#684537', roughness: 0.4 })
   const sphere = new THREE.SphereGeometry(1, 32, 24)
