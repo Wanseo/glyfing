@@ -283,9 +283,33 @@ export function createCharacter() {
   }
   paint.fillStyle = referenceColors.waistband
   paint.fillRect(0, 132, 512, 28)
+  // Printed hearts share the same fine cotton grain as the white cloth.
+  for (let y = 0; y < 512; y += 2) for (let x = 0; x < 512; x += 2) {
+    paint.fillStyle = (x + y) % 4 ? 'rgba(255,255,255,0.08)' : 'rgba(74,58,49,0.06)'
+    paint.fillRect(x, y, 1, 2)
+  }
+  const cottonCanvas = document.createElement('canvas')
+  cottonCanvas.width = cottonCanvas.height = 512
+  const cottonContext = cottonCanvas.getContext('2d')!
+  const cottonPixels = cottonContext.createImageData(512, 512)
+  for (let y = 0; y < 512; y++) for (let x = 0; x < 512; x++) {
+    const weaveHeight = ((x % 4 < 2) !== (y % 4 < 2)) ? 12 : -12
+    const folds = 7 * Math.sin(x * 0.065 + 1.2 * Math.sin(y * 0.025))
+    const value = 128 + weaveHeight + folds + random() * 8 - 4
+    const index = (y * 512 + x) * 4
+    cottonPixels.data[index] = cottonPixels.data[index + 1] = cottonPixels.data[index + 2] = value
+    cottonPixels.data[index + 3] = 255
+  }
+  cottonContext.putImageData(cottonPixels, 0, 0)
+  const cottonBump = new THREE.CanvasTexture(cottonCanvas)
+  cottonBump.wrapS = cottonBump.wrapT = THREE.RepeatWrapping
+  cottonBump.repeat.set(3, 2)
   const pattern = new THREE.CanvasTexture(cloth)
   pattern.colorSpace = THREE.SRGBColorSpace
-  const briefs = new THREE.MeshStandardMaterial({ map: pattern, roughness: 1 })
+  const briefs = new THREE.MeshPhysicalMaterial({
+    map: pattern, bumpMap: cottonBump, bumpScale: 0.004,
+    roughness: 1, sheen: 0.35, sheenColor: new THREE.Color('#efe5dc'), sheenRoughness: 1,
+  })
   oval(torso, briefs, [0, 1.06, 0.03], [0.68, 0.28, 0.6])
   function blink(amount: number) {
     for (const { upper, lower, eyeball, closed, crease } of eyelids) {
