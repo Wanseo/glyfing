@@ -84,8 +84,8 @@ export function createCharacter() {
   tuftGeometry.computeVertexNormals()
   tuftGeometry.computeBoundingBox()
   const mouthClearance = new THREE.Box3(
-    new THREE.Vector3(-0.44, 1.725, 0.425),
-    new THREE.Vector3(0.44, 1.935, 1),
+    new THREE.Vector3(-0.405, 1.757, 0.425),
+    new THREE.Vector3(0.405, 1.894, 1),
   )
   const tuftBounds = new THREE.Box3()
   function oval(parent: THREE.Group, material: THREE.Material, position: number[], scale: number[]) {
@@ -146,13 +146,10 @@ export function createCharacter() {
       const px = dummy.position.x, py = dummy.position.y, pz = dummy.position.z
       const aroundEyes = squircle && pz > 0.2 && [[-0.62, 2.25], [0, 2.43], [0.62, 2.25]].some(([ex, ey]) =>
         ((px - ex!) / 0.33) ** 2 + ((py - ey!) / 0.35) ** 2 < 1)
-      // Both the head and upper torso border the mouth; leave room for curl tips.
-      const aroundMouth = (squircle || isBody) && pz > 0.2 &&
-        Math.abs(px) < 0.5 && Math.abs(py - 1.83) < 0.22
       // Hide fibers only inside the actual garment, leaving fleece along the flanks.
       const overBriefs = isBody && py < 1.3 &&
         (px / 0.68) ** 2 + ((py - 1.06) / 0.28) ** 2 + ((pz - 0.03) / 0.6) ** 2 < 1.03
-      if (aroundEyes || aroundMouth || overBriefs) {
+      if (aroundEyes || overBriefs) {
         dummy.scale.setScalar(0)
         dummy.updateMatrix()
         tufts.setMatrixAt(i, dummy.matrix)
