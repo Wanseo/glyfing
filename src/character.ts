@@ -61,21 +61,21 @@ export function createCharacter() {
   const dark = new THREE.MeshStandardMaterial({ color: '#291c19', roughness: 0.65 })
   const iris = new THREE.MeshStandardMaterial({ color: '#684537', roughness: 0.4 })
   const sphere = new THREE.SphereGeometry(1, 32, 24)
-  // Short, thick, softly hooked curls overlap into a plush fleece surface.
+  // Soft, overlapping fleece locks give the plush a fluffy, tufted silhouette.
   const strandCurve = new THREE.CatmullRomCurve3([
     new THREE.Vector3(0, -0.008, 0),
-    new THREE.Vector3(-0.008, 0.035, 0.008),
-    new THREE.Vector3(0.005, 0.081, 0.015),
-    new THREE.Vector3(0.031, 0.105, 0.008),
-    new THREE.Vector3(0.052, 0.089, -0.005),
-    new THREE.Vector3(0.042, 0.065, -0.009),
+    new THREE.Vector3(-0.012, 0.043, 0.01),
+    new THREE.Vector3(0.007, 0.092, 0.02),
+    new THREE.Vector3(0.032, 0.135, 0.015),
+    new THREE.Vector3(0.053, 0.143, 0.003),
+    new THREE.Vector3(0.065, 0.121, -0.009),
   ])
-  const tuftGeometry = new THREE.TubeGeometry(strandCurve, 10, 0.0075, 5, false)
+  const tuftGeometry = new THREE.TubeGeometry(strandCurve, 10, 0.012, 5, false)
   const strandVertices = tuftGeometry.attributes.position!
   for (let i = 0; i < strandVertices.count; i++) {
     const t = Math.floor(i / 6) / 10
     const center = strandCurve.getPointAt(t)
-    const taper = 1 - t * 0.55
+    const taper = 1 - t * 0.72
     strandVertices.setXYZ(i,
       center.x + (strandVertices.getX(i) - center.x) * taper,
       center.y + (strandVertices.getY(i) - center.y) * taper,
@@ -164,7 +164,9 @@ export function createCharacter() {
       }
       dummy.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), normal)
       dummy.rotateY(random() * Math.PI * 2)
-      dummy.scale.set(0.85 + random() * 0.45, 0.75 + random() * 0.55, 0.85 + random() * 0.45)
+      dummy.scale.set(0.9 + random() * 0.4, 0.7 + random() * 0.6, 0.9 + random() * 0.4)
+      // Gentle variation separates soft clumps without harsh dark strands.
+      tufts.setColorAt(i, new THREE.Color().setScalar(0.93 + random() * 0.1))
       dummy.updateMatrix()
       tufts.setMatrixAt(i, dummy.matrix)
     }
