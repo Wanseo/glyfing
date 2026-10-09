@@ -197,9 +197,9 @@ export function createCharacter() {
     eye.add(eyeball)
     oval(eyeball, cream, [0, 0, 0.065], [0.235, 0.245, 0.075])
     // Keep the iris and pupil behind the cloth lids so their edges occlude them.
-    oval(eyeball, iris, [0.025, -0.035, 0.146], [0.115, 0.12, 0.014])
-    oval(eyeball, dark, [0.025, -0.035, 0.158], [0.057, 0.073, 0.008])
-    oval(eyeball, cream, [-0.006, 0.008, 0.166], [0.022, 0.023, 0.004])
+    oval(eyeball, iris, [0, 0.008, 0.146], [0.115, 0.12, 0.014])
+    oval(eyeball, dark, [0, 0.008, 0.158], [0.057, 0.073, 0.008])
+    oval(eyeball, cream, [-0.031, 0.051, 0.166], [0.022, 0.023, 0.004])
     const upperGeometry = new THREE.SphereGeometry(1, 48, 24, 0, Math.PI * 2, 0, Math.PI / 2)
     const upperVertices = upperGeometry.attributes.position!
     for (let i = 0; i < upperVertices.count; i++) {
