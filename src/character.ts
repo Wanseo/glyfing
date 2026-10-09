@@ -82,6 +82,12 @@ export function createCharacter() {
       center.z + (strandVertices.getZ(i) - center.z) * taper)
   }
   tuftGeometry.computeVertexNormals()
+  tuftGeometry.computeBoundingBox()
+  const mouthClearance = new THREE.Box3(
+    new THREE.Vector3(-0.44, 1.725, 0.425),
+    new THREE.Vector3(0.44, 1.935, 1),
+  )
+  const tuftBounds = new THREE.Box3()
   function oval(parent: THREE.Group, material: THREE.Material, position: number[], scale: number[]) {
     const mesh = new THREE.Mesh(sphere, material)
     mesh.castShadow = true
@@ -171,6 +177,12 @@ export function createCharacter() {
       // Gentle variation separates soft clumps without harsh dark strands.
       tufts.setColorAt(i, new THREE.Color().setScalar(0.93 + random() * 0.1))
       dummy.updateMatrix()
+      // Check the whole transformed curl, including tips that reach in from outside.
+      tuftBounds.copy(tuftGeometry.boundingBox!).applyMatrix4(dummy.matrix)
+      if ((squircle || isBody) && tuftBounds.intersectsBox(mouthClearance)) {
+        dummy.scale.setScalar(0)
+        dummy.updateMatrix()
+      }
       tufts.setMatrixAt(i, dummy.matrix)
     }
     parent.add(tufts)
