@@ -3,6 +3,7 @@ import * as THREE from 'three'
 import { createCharacter } from './character'
 import { clampPosition, getDirection } from './movement'
 import { createGlitterBackground } from './glitter'
+import { createGlossProps } from './gloss-props'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 const scene = new THREE.Scene()
@@ -13,7 +14,7 @@ const renderer = new THREE.WebGLRenderer({ antialias: true })
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
 renderer.shadowMap.enabled = false
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
-renderer.domElement.setAttribute('aria-label', '핑크 글리터 배경 위의 작은 3D 캐릭터. 방향키로 움직일 수 있습니다.')
+renderer.domElement.setAttribute('aria-label', '핑크 글리터 배경 위의 3D 캐릭터와 Glue Gloss 패키지, 크롬 튜브, 치아와 팬티 참. 방향키로 움직일 수 있습니다.')
 renderer.domElement.setAttribute('role', 'img')
 app.appendChild(renderer.domElement)
 scene.add(new THREE.HemisphereLight('#fff9ec', '#b19373', 1.8))
@@ -32,6 +33,8 @@ const character = createCharacter()
 character.root.scale.setScalar(1.86875)
 const position = new THREE.Vector2(0, 0)
 scene.add(character.root)
+const glossProps = createGlossProps(renderer)
+scene.add(glossProps.root)
 
 const shadowCanvas = document.createElement('canvas')
 shadowCanvas.width = shadowCanvas.height = 128
@@ -56,6 +59,7 @@ function resize() {
   const halfWidth = halfHeight * aspect
   viewHalfWidth = halfWidth
   viewHalfHeight = halfHeight
+  glossProps.layout(halfWidth, halfHeight)
   const pixelRatio = Math.min(window.devicePixelRatio, 2,
     renderer.capabilities.maxTextureSize / Math.max(window.innerWidth, window.innerHeight))
   renderer.setPixelRatio(pixelRatio)
