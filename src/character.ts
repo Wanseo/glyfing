@@ -208,7 +208,7 @@ export function createCharacter() {
     }
     upperGeometry.computeVertexNormals()
     const lid = new THREE.Mesh(upperGeometry, skin)
-    lid.position.set(0, 0.01, 0.072)
+    lid.position.set(0, 0.045, 0.072)
     lid.scale.set(0.245, 0.257, 0.128)
     lid.rotation.z = x! * -0.12
     eye.add(lid)
