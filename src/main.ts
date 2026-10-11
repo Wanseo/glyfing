@@ -26,8 +26,11 @@ brandLogo.className = 'brand-logo'
 brandLogo.src = brandLogoUrl
 brandLogo.alt = 'GLYF'
 brandLogo.draggable = false
-app.appendChild(brandLogo)
-createMusic(app)
+const brandBar = document.createElement('div')
+brandBar.className = 'brand-bar'
+app.appendChild(brandBar)
+brandBar.appendChild(brandLogo)
+createMusic(brandBar)
 scene.add(new THREE.HemisphereLight('#fff9ec', '#b19373', 1.8))
 const light = new THREE.DirectionalLight('#fff4df', 2.2)
 light.position.set(-3, 10, 6)
