@@ -77,7 +77,7 @@ export function createBadgeCandies() {
       [.49, -.79], [.87, -.67], [-.88, .18], [.9, .22]]
     const mobile = [[-.78, .32], [.8, .32], [-.83, .02], [.85, -.02],
       [-.83, -.36], [-.64, -.63], [-.68, -.85], [.73, -.88],
-      [0, -.89], [.82, .89], [-.78, .9], [0, .9]]
+      [0, -.89], [.82, .89], [-.8, .46], [0, .9]]
     candies.forEach((candy, index) => {
       const [x, y] = (wide ? desktop : mobile)[index % desktop.length]!
       const aspect = (candy.geometry as THREE.PlaneGeometry).parameters.width

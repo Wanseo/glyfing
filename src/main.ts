@@ -1,4 +1,5 @@
 import './style.css'
+import brandLogoUrl from './assets/glyf-logo.png'
 import * as THREE from 'three'
 import { createCharacter } from './character'
 import { clampPosition, getDirection } from './movement'
@@ -18,6 +19,12 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap
 renderer.domElement.setAttribute('aria-label', '핑크 글리터 배경 위의 3D 캐릭터와 Glue Gloss 패키지, 크롬 튜브, 사원증과 알록달록한 젤리들. 방향키로 움직일 수 있습니다.')
 renderer.domElement.setAttribute('role', 'img')
 app.appendChild(renderer.domElement)
+const brandLogo = document.createElement('img')
+brandLogo.className = 'brand-logo'
+brandLogo.src = brandLogoUrl
+brandLogo.alt = 'GLYF'
+brandLogo.draggable = false
+app.appendChild(brandLogo)
 scene.add(new THREE.HemisphereLight('#fff9ec', '#b19373', 1.8))
 const light = new THREE.DirectionalLight('#fff4df', 2.2)
 light.position.set(-3, 10, 6)
