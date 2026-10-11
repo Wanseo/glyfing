@@ -100,7 +100,7 @@ canvas {
 .music-toggle {
   position: fixed;
   right: max(16px, env(safe-area-inset-right));
-  bottom: max(16px, env(safe-area-inset-bottom));
+  top: max(16px, env(safe-area-inset-top));
   z-index: 3;
   min-height: 44px;
   padding: 10px 14px;
