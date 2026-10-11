@@ -22,6 +22,8 @@ export function createSpeech(app: HTMLElement) {
   const anchor = new THREE.Vector3()
   let countdown = .35, greeting = 0
   let remaining: string[] = []
+  const placements = ['top', 'middle', 'upper-left', 'upper-right'] as const
+  let placementIndex = -1
   function nextPhrase() {
     if (greeting < greetings.length) return greetings[greeting++]!
     if (!remaining.length) {
@@ -40,6 +42,7 @@ export function createSpeech(app: HTMLElement) {
       if (countdown <= 0) {
         if (bubble.hidden) {
           text.textContent = nextPhrase()
+          placementIndex = (placementIndex + 1) % placements.length
           bubble.hidden = false
           countdown = 3
         } else {
@@ -51,16 +54,30 @@ export function createSpeech(app: HTMLElement) {
       anchor.set(x, y, 0).project(camera)
       const screenX = (anchor.x + 1) * window.innerWidth / 2
       const screenY = (1 - anchor.y) * window.innerHeight / 2
-      const desiredLeft = screenX + 48
-      bubble.style.maxWidth = `${Math.min(300, Math.max(156, window.innerWidth - desiredLeft - 12))}px`
+      const placement = placements[placementIndex]!
+      const sideRoom = window.innerWidth - screenX - 132 - 12
+      const beside = placement === 'middle' && sideRoom >= 156
+      const room = placement === 'upper-left' ? screenX - 60
+        : placement === 'upper-right' ? window.innerWidth - screenX - 60
+        : beside ? sideRoom : 300
+      bubble.style.maxWidth = `${Math.min(300, window.innerWidth - 24, Math.max(156, room))}px`
       const width = bubble.offsetWidth, height = bubble.offsetHeight
+      const desiredLeft = placement === 'upper-left' ? screenX - width - 48
+        : placement === 'upper-right' ? screenX + 48
+        : beside ? screenX + 132 : screenX - width / 2
+      const gap = placement === 'top' ? 112 : placement === 'middle' ? 48 : 64
+      const desiredTop = beside ? screenY + 65 - height / 2 : screenY - height - gap
       const left = THREE.MathUtils.clamp(desiredLeft, 12,
         Math.max(12, window.innerWidth - width - 12))
-      const top = THREE.MathUtils.clamp(screenY - height - 64, 12,
+      const top = THREE.MathUtils.clamp(desiredTop, 12,
         Math.max(12, window.innerHeight - height - 44))
+      bubble.dataset.placement = placement
+      bubble.dataset.tail = beside ? 'left' : placement === 'upper-left' ? 'down-right'
+        : placement === 'upper-right' ? 'down-left' : 'down'
       bubble.style.left = `${left}px`
       bubble.style.top = `${top}px`
-      bubble.style.setProperty('--tail-left', `${THREE.MathUtils.clamp(screenX - left - 20, 8, width - 46)}px`)
+      bubble.style.setProperty('--tail-left', `${THREE.MathUtils.clamp(screenX - left - 23, 8, width - 46)}px`)
+
     },
   }
 }
