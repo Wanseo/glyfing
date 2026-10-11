@@ -78,3 +78,19 @@ canvas {
   height: 46px;
   clip-path: polygon(100% 20%, 100% 80%, 62% 55%, 62% 78%, 0 40%, 55% 44%, 55% 22%);
 }
+
+.character-speech[data-tail='right']::after {
+  left: auto;
+  right: -36px;
+  bottom: auto;
+  top: calc(50% - 23px);
+  width: 42px;
+  height: 46px;
+  transform: scaleX(-1);
+  clip-path: polygon(100% 20%, 100% 80%, 62% 55%, 62% 78%, 0 40%, 55% 44%, 55% 22%);
+}
+.character-speech[data-tail='up']::after {
+  bottom: auto;
+  top: -36px;
+  transform: scaleY(-1);
+}

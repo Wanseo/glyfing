@@ -20,6 +20,7 @@ export function createSpeech(app: HTMLElement) {
   bubble.appendChild(text)
   app.appendChild(bubble)
   const anchor = new THREE.Vector3()
+  const corner = new THREE.Vector3()
   let countdown = .35, greeting = 0
   let remaining: string[] = []
   const placements = ['middle', 'upper-left', 'upper-right'] as const
@@ -37,7 +38,7 @@ export function createSpeech(app: HTMLElement) {
     return remaining.pop()!
   }
   return {
-    update(dt: number, x: number, y: number, camera: THREE.Camera) {
+    update(dt: number, x: number, y: number, camera: THREE.Camera, halfWidth: number, halfHeight: number) {
       countdown -= dt
       if (countdown <= 0) {
         if (bubble.hidden) {
@@ -54,26 +55,46 @@ export function createSpeech(app: HTMLElement) {
       anchor.set(x, y, 0).project(camera)
       const screenX = (anchor.x + 1) * window.innerWidth / 2
       const screenY = (1 - anchor.y) * window.innerHeight / 2
+      corner.set(x + halfWidth, y + halfHeight, 0).project(camera)
+      const radiusX = Math.abs(corner.x - anchor.x) * window.innerWidth / 2
+      const radiusY = Math.abs(corner.y - anchor.y) * window.innerHeight / 2
+      const character = { left: screenX - radiusX, right: screenX + radiusX,
+        top: screenY - radiusY, bottom: screenY + radiusY }
+      const gap = 32, tail = 36, margin = 12
+      const leftRoom = character.left - gap - tail - margin
+      const rightRoom = window.innerWidth - character.right - gap - tail - margin
       const placement = placements[placementIndex]!
-      const sideRoom = window.innerWidth - screenX - 132 - 12
-      const beside = placement === 'middle' && sideRoom >= 156
-      const leftRoom = screenX - 60
-      const rightRoom = window.innerWidth - screenX - 60
       let onLeft = placement === 'upper-left'
-      if (!beside && (onLeft ? leftRoom : rightRoom) < 100) onLeft = leftRoom > rightRoom
-      const room = beside ? sideRoom : onLeft ? leftRoom : rightRoom
-      bubble.style.maxWidth = `${Math.min(300, window.innerWidth - 24, Math.max(80, room))}px`
-      const width = bubble.offsetWidth, height = bubble.offsetHeight
-      const desiredLeft = beside ? screenX + 132
-        : onLeft ? screenX - width - 48 : screenX + 48
-      const gap = placement === 'middle' ? 48 : 64
-      const desiredTop = beside ? screenY + 65 - height / 2 : screenY - height - gap
-      const left = THREE.MathUtils.clamp(desiredLeft, 12,
-        Math.max(12, window.innerWidth - width - 12))
-      const top = THREE.MathUtils.clamp(desiredTop, 12,
-        Math.max(12, window.innerHeight - height - 44))
+      if ((onLeft ? leftRoom : rightRoom) < 156 && (onLeft ? rightRoom : leftRoom) >= 156) onLeft = !onLeft
+      const sideRoom = onLeft ? leftRoom : rightRoom
+      const canUseSide = sideRoom >= 156
+      const upperRoom = onLeft ? screenX - 60 : window.innerWidth - screenX - 60
+      bubble.style.maxWidth = `${Math.min(300, window.innerWidth - margin * 2, Math.max(156, upperRoom))}px`
+      let width = bubble.offsetWidth, height = bubble.offsetHeight
+      const fitsAbove = character.top - gap - tail - height >= margin
+      const fitsBelow = character.bottom + gap + tail + height <= window.innerHeight - margin
+      const beside = canUseSide && (placement === 'middle' || !fitsAbove)
+      let left: number, top: number, direction: string
+      if (beside) {
+        bubble.style.maxWidth = `${Math.min(300, sideRoom)}px`
+        width = bubble.offsetWidth; height = bubble.offsetHeight
+        left = onLeft ? character.left - gap - tail - width : character.right + gap + tail
+        top = THREE.MathUtils.clamp(screenY - height / 2, margin, window.innerHeight - height - margin)
+        direction = onLeft ? 'right' : 'left'
+      } else if (fitsAbove || fitsBelow) {
+        // Keep the complete lightning tail outside the character's bounds.
+        left = THREE.MathUtils.clamp(onLeft ? screenX - width - 48 : screenX + 48,
+          margin, Math.max(margin, window.innerWidth - width - margin))
+        top = fitsAbove ? character.top - gap - tail - height : character.bottom + gap + tail
+        direction = fitsAbove ? (onLeft ? 'down-right' : 'down-left') : 'up'
+      } else {
+        // On very small screens wait for room rather than overlap the character.
+        bubble.style.visibility = 'hidden'
+        return
+      }
+      bubble.style.visibility = 'visible'
       bubble.dataset.placement = placement
-      bubble.dataset.tail = beside ? 'left' : onLeft ? 'down-right' : 'down-left'
+      bubble.dataset.tail = direction
       bubble.style.left = `${left}px`
       bubble.style.top = `${top}px`
       bubble.style.setProperty('--tail-left', `${THREE.MathUtils.clamp(screenX - left - 23, 8, width - 46)}px`)

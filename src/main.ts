@@ -153,6 +153,7 @@ renderer.setAnimationLoop((time: number) => {
   })
   character.arms.forEach((arm, i) => { arm.rotation.x = Math.sin(gait + i * Math.PI) * 0.45 * walk })
   shadow.position.set(position.x, position.y - 2.23315625 * characterSize, -0.8)
-  speech.update(dt, position.x, position.y + 2.15 * characterSize, camera)
+  speech.update(dt, position.x, position.y, camera,
+    2.429375 * characterSize, 2.803125 * characterSize)
   renderer.render(scene, camera)
 })
