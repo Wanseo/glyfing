@@ -40,13 +40,14 @@ export function createGlossProps() {
   const root = new THREE.Group()
   const carton = new THREE.Group(), product = new THREE.Group()
   root.add(carton, product)
+  carton.rotation.z = -Math.PI / 3
   let viewWidth = 0, viewHeight = 0
   function layout(halfWidth: number, halfHeight: number) {
     viewWidth = halfWidth; viewHeight = halfHeight
     const wide = halfWidth > 7
     const width = wide ? Math.min(6, halfWidth * .65, halfHeight * 1.2)
       : Math.min(halfWidth * .8, halfHeight * .38)
-    carton.scale.setScalar(width)
+    carton.scale.setScalar(width * .8)
     product.scale.setScalar(width * .8)
     carton.position.set(wide ? -halfWidth * .62 : halfWidth * .47,
       wide ? .9 : halfHeight * .68, -2.3)
