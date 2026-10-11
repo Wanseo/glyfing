@@ -97,7 +97,7 @@ export function createSpeech(app: HTMLElement) {
       bubble.dataset.tail = direction
       bubble.style.left = `${left}px`
       bubble.style.top = `${top}px`
-      bubble.style.setProperty('--tail-left', `${THREE.MathUtils.clamp(screenX - left - 21, 8, width - 42)}px`)
+      bubble.style.setProperty('--tail-left', `${THREE.MathUtils.clamp(screenX - left - 21, 8, width - 50)}px`)
 
     },
   }

@@ -74,9 +74,10 @@ canvas {
 .character-speech[data-tail='left']::after {
   left: -48px;
   bottom: auto;
-  top: calc(50% - 21px);
+  top: 50%;
   width: 54px;
-  height: 42px;
+  height: 24px;
+  transform: translateY(-50%);
   clip-path: polygon(100% 40%, 100% 100%, 70% 58%, 70% 78%, 0 0, 56% 42%, 56% 20%);
 }
 
@@ -84,10 +85,10 @@ canvas {
   left: auto;
   right: -48px;
   bottom: auto;
-  top: calc(50% - 21px);
+  top: 50%;
   width: 54px;
-  height: 42px;
-  transform: scaleX(-1);
+  height: 24px;
+  transform: translateY(-50%) scaleX(-1);
   clip-path: polygon(100% 40%, 100% 100%, 70% 58%, 70% 78%, 0 0, 56% 42%, 56% 20%);
 }
 .character-speech[data-tail='up']::after {
