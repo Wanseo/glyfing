@@ -143,7 +143,7 @@ export function createBadgeCandies() {
     layout,
     update(dt: number) {
       swingTime += dt
-      hanger.rotation.z = reducedMotion.matches ? 0 : Math.sin(swingTime * Math.PI * 2 / 3.8) * .14
+      hanger.rotation.z = reducedMotion.matches ? 0 : Math.sin(swingTime * Math.PI * 2 / 3.8) * .09
     },
   }
 }
