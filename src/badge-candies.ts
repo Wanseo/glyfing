@@ -83,6 +83,10 @@ function cutout(image: HTMLImageElement, region: Crop, singleObject = true, outl
 export function createBadgeCandies() {
   const root = new THREE.Group(), badge = new THREE.Group()
   const candies: THREE.Mesh[] = []
+  const hanger = new THREE.Group()
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+  let swingTime = 0
+  badge.add(hanger)
   root.add(badge)
   let viewWidth = 0, viewHeight = 0
   function layout(halfWidth: number, halfHeight: number) {
@@ -115,7 +119,14 @@ export function createBadgeCandies() {
   ]
   new THREE.TextureLoader().load(cutoutsUrl, source => {
     const badgeMesh = cutout(source.image, [0, 0, .56, 1], false)
-    if (badgeMesh) badge.add(badgeMesh)
+    if (badgeMesh) {
+      // Anchor the swing at the top of the lanyard loop, above the hanging card.
+      const pivotX = badgeMesh.geometry.parameters.width * .32
+      const pivotY = .48
+      hanger.position.set(pivotX, pivotY, 0)
+      badgeMesh.position.set(-pivotX, -pivotY, 0)
+      hanger.add(badgeMesh)
+    }
     const stripOutlines: Record<number, Outline> = {
       2: [[.694, .191], [.762, .35], [.687, .43], [.598, .266]],
       3: [[.79, .208], [.959, .289], [.938, .427], [.766, .357]],
@@ -127,5 +138,12 @@ export function createBadgeCandies() {
     source.dispose()
     layout(viewWidth, viewHeight)
   }, undefined, error => console.error('사원증과 젤리 이미지를 불러오지 못했습니다.', error))
-  return { root, layout }
+  return {
+    root,
+    layout,
+    update(dt: number) {
+      swingTime += dt
+      hanger.rotation.z = reducedMotion.matches ? 0 : Math.sin(swingTime * Math.PI * 2 / 3.8) * .14
+    },
+  }
 }
