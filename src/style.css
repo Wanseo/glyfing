@@ -42,14 +42,12 @@ canvas {
   padding: 6px 10px;
   background: #fff;
   color: #171717;
-  font: italic 800 clamp(15px, 1.5vw, 19px)/1.2 Arial, sans-serif;
-  transform: rotate(6deg);
-  box-shadow: 1px 2px 0 #00000012;
+  font: 800 clamp(15px, 1.5vw, 19px)/1.2 Arial, sans-serif;
 }
 .character-speech::after {
   content: '';
   position: absolute;
-  top: calc(100% - 2px);
+  top: calc(100% - 3px);
   left: var(--tail-left, 16px);
   width: 40px;
   height: 36px;
