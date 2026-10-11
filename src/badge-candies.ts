@@ -97,10 +97,10 @@ export function createBadgeCandies() {
     badge.position.set(wide ? 0 : -halfWidth * .5, halfHeight * .69, -2.2)
     const desktop = [[-.83, .72], [-.42, .78], [.43, .8], [.85, .69],
       [-.88, -.55], [-.5, -.76], [-.18, -.79], [.18, -.74],
-      [.49, -.79], [.87, -.67], [-.88, .18], [.9, .22], [-.62, .49]]
+      [.49, -.79], [.77, -.62], [-.88, .18], [.9, .22], [-.62, .49]]
     const mobile = [[-.78, .32], [.8, .32], [-.83, .02], [.85, -.02],
       [-.83, -.36], [-.64, -.63], [-.68, -.85], [.73, -.88],
-      [0, -.89], [.82, .89], [-.8, .46], [0, .9], [-.84, -.5]]
+      [0, -.89], [.72, .83], [-.8, .46], [0, .9], [-.84, -.5]]
     candies.forEach((candy, index) => {
       const [x, y] = (wide ? desktop : mobile)[index]!
       const aspect = (candy.geometry as THREE.PlaneGeometry).parameters.width
