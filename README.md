@@ -39,3 +39,7 @@ npm run build
 예: `public/icons.svg`는 `${import.meta.env.BASE_URL}icons.svg`로 참조합니다. 문자열 안에 `/icons.svg`처럼 루트 경로를 직접 쓰면 저장소 하위 경로가 빠집니다.
 
 공식 안내: [Vite GitHub Pages](https://vite.dev/guide/static-deploy.html#github-pages)
+
+## 제품 이미지
+
+Glue Gloss 상자와 참이 달린 크롬 튜브는 `src/assets/gloss-cutouts.png`의 투명 이미지를 사용합니다. 첨부 레퍼런스를 이미지 편집 도구로 배경 제거한 결과이며, 원본 픽셀을 그대로 추출한 파일은 아닙니다. `src/gloss-props.ts`에서 두 제품을 분리해 조명 영향을 받지 않는 평면으로 표시하고, 데스크톱에서는 캐릭터 양옆에, 좁은 화면에서는 위아래에 배치합니다.

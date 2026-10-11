@@ -33,7 +33,7 @@ const character = createCharacter()
 character.root.scale.setScalar(1.86875)
 const position = new THREE.Vector2(0, 0)
 scene.add(character.root)
-const glossProps = createGlossProps(renderer)
+const glossProps = createGlossProps()
 scene.add(glossProps.root)
 
 const shadowCanvas = document.createElement('canvas')
