@@ -26,3 +26,40 @@ canvas {
   pointer-events: none;
   user-select: none;
 }
+
+.character-speech {
+  position: fixed;
+  z-index: 2;
+  max-width: min(260px, calc(100vw - 32px));
+  pointer-events: none;
+  animation: speech-appear 100ms ease-out;
+}
+.character-speech[hidden] {
+  display: none;
+}
+.character-speech__text {
+  display: block;
+  padding: 6px 10px;
+  background: #fff;
+  color: #171717;
+  font: italic 800 clamp(15px, 1.5vw, 19px)/1.2 Arial, sans-serif;
+  transform: rotate(6deg);
+  box-shadow: 1px 2px 0 #00000012;
+}
+.character-speech::after {
+  content: '';
+  position: absolute;
+  top: calc(100% - 2px);
+  left: var(--tail-left, 16px);
+  width: 40px;
+  height: 36px;
+  background: #fff;
+  clip-path: polygon(45% 0, 100% 0, 55% 37%, 80% 37%, 0 100%, 38% 32%, 17% 32%);
+}
+@keyframes speech-appear {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .character-speech { animation: none; }
+}

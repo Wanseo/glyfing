@@ -6,6 +6,7 @@ import { clampPosition, getDirection } from './movement'
 import { createGlitterBackground } from './glitter'
 import { createGlossProps } from './gloss-props'
 import { createBadgeCandies } from './badge-candies'
+import { createSpeech } from './speech'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 const scene = new THREE.Scene()
@@ -46,6 +47,7 @@ const glossProps = createGlossProps()
 scene.add(glossProps.root)
 const badgeCandies = createBadgeCandies()
 scene.add(badgeCandies.root)
+const speech = createSpeech(app)
 
 const shadowCanvas = document.createElement('canvas')
 shadowCanvas.width = shadowCanvas.height = 128
@@ -151,5 +153,6 @@ renderer.setAnimationLoop((time: number) => {
   })
   character.arms.forEach((arm, i) => { arm.rotation.x = Math.sin(gait + i * Math.PI) * 0.45 * walk })
   shadow.position.set(position.x, position.y - 2.23315625 * characterSize, -0.8)
+  speech.update(dt, position.x, position.y + 2.15 * characterSize, camera)
   renderer.render(scene, camera)
 })
