@@ -2,14 +2,28 @@ import * as THREE from 'three'
 import cutoutsUrl from './assets/badge-candies.png'
 
 type Crop = readonly [number, number, number, number]
+type Outline = ReadonlyArray<readonly [number, number]>
 
 // Regions are normalized so the source can retain its original resolution.
-function cutout(image: HTMLImageElement, region: Crop, singleObject = true) {
+function cutout(image: HTMLImageElement, region: Crop, singleObject = true, outline?: Outline) {
   const [x, y, width, height] = region
   const canvas = document.createElement('canvas')
   canvas.width = Math.round(image.naturalWidth * width)
   canvas.height = Math.round(image.naturalHeight * height)
   const context = canvas.getContext('2d')!
+  if (outline) {
+    // Clip to the physical strip: faint alpha can connect a neighboring worm
+    // fragment to the strip and defeat connected-component filtering.
+    context.beginPath()
+    outline.forEach(([px, py], index) => {
+      const localX = (px - x) * image.naturalWidth
+      const localY = (py - y) * image.naturalHeight
+      if (index === 0) context.moveTo(localX, localY)
+      else context.lineTo(localX, localY)
+    })
+    context.closePath()
+    context.clip()
+  }
   context.drawImage(image, image.naturalWidth * x, image.naturalHeight * y,
     canvas.width, canvas.height, 0, 0, canvas.width, canvas.height)
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
@@ -102,8 +116,12 @@ export function createBadgeCandies() {
   new THREE.TextureLoader().load(cutoutsUrl, source => {
     const badgeMesh = cutout(source.image, [0, 0, .56, 1], false)
     if (badgeMesh) badge.add(badgeMesh)
-    for (const region of regions) {
-      const candy = cutout(source.image, region)
+    const stripOutlines: Record<number, Outline> = {
+      2: [[.694, .191], [.762, .35], [.687, .43], [.598, .266]],
+      3: [[.79, .208], [.959, .289], [.938, .427], [.766, .357]],
+    }
+    for (const [index, region] of regions.entries()) {
+      const candy = cutout(source.image, region, true, stripOutlines[index])
       if (candy) { candies.push(candy); root.add(candy) }
     }
     source.dispose()
