@@ -52,7 +52,7 @@ export function createSpeech(app: HTMLElement) {
       const screenX = (anchor.x + 1) * window.innerWidth / 2
       const screenY = (1 - anchor.y) * window.innerHeight / 2
       const desiredLeft = screenX + 48
-      bubble.style.maxWidth = `${Math.min(260, Math.max(140, window.innerWidth - desiredLeft - 12))}px`
+      bubble.style.maxWidth = `${Math.min(300, Math.max(156, window.innerWidth - desiredLeft - 12))}px`
       const width = bubble.offsetWidth, height = bubble.offsetHeight
       const left = THREE.MathUtils.clamp(desiredLeft, 12,
         Math.max(12, window.innerWidth - width - 12))
@@ -60,7 +60,7 @@ export function createSpeech(app: HTMLElement) {
         Math.max(12, window.innerHeight - height - 44))
       bubble.style.left = `${left}px`
       bubble.style.top = `${top}px`
-      bubble.style.setProperty('--tail-left', `${THREE.MathUtils.clamp(screenX - left - 20, 8, width - 40)}px`)
+      bubble.style.setProperty('--tail-left', `${THREE.MathUtils.clamp(screenX - left - 20, 8, width - 46)}px`)
     },
   }
 }

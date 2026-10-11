@@ -30,7 +30,13 @@ canvas {
 .character-speech {
   position: fixed;
   z-index: 2;
-  max-width: min(260px, calc(100vw - 32px));
+  width: max-content;
+  max-width: min(300px, calc(100vw - 32px));
+  box-sizing: border-box;
+  padding: 8px 12px;
+  background: #fff;
+  color: #171717;
+  font: 800 clamp(17px, 1.7vw, 22px)/1.2 Arial, sans-serif;
   pointer-events: none;
   animation: speech-appear 100ms ease-out;
 }
@@ -39,18 +45,14 @@ canvas {
 }
 .character-speech__text {
   display: block;
-  padding: 6px 10px;
-  background: #fff;
-  color: #171717;
-  font: 800 clamp(15px, 1.5vw, 19px)/1.2 Arial, sans-serif;
 }
 .character-speech::after {
   content: '';
   position: absolute;
-  top: calc(100% - 3px);
+  bottom: -36px;
   left: var(--tail-left, 16px);
-  width: 40px;
-  height: 36px;
+  width: 46px;
+  height: 42px;
   background: #fff;
   clip-path: polygon(45% 0, 100% 0, 55% 37%, 80% 37%, 0 100%, 38% 32%, 17% 32%);
 }
