@@ -109,6 +109,7 @@ renderer.setAnimationLoop((time: number) => {
   const dt = previous ? Math.min((time - previous) / 1000, 0.05) : 0
   previous = time
   badgeCandies.update(dt)
+  glossProps.update(dt)
   if (blinkStarted === null && time >= nextBlink) blinkStarted = time
   if (blinkStarted !== null) {
     const elapsed = time - blinkStarted

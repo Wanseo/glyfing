@@ -41,6 +41,9 @@ export function createGlossProps() {
   const carton = new THREE.Group(), product = new THREE.Group()
   root.add(carton, product)
   carton.rotation.z = -Math.PI / 3
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+  let floatTime = 0, floatAmount = .18
+  let cartonBaseY = 0, productBaseY = 0
   let viewWidth = 0, viewHeight = 0
   function layout(halfWidth: number, halfHeight: number) {
     viewWidth = halfWidth; viewHeight = halfHeight
@@ -53,6 +56,9 @@ export function createGlossProps() {
       wide ? .9 : halfHeight * .68, -2.3)
     product.position.set(wide ? halfWidth * .62 : halfWidth * .35,
       wide ? -.6 : -halfHeight * .65, -2.3)
+    cartonBaseY = carton.position.y
+    productBaseY = product.position.y
+    floatAmount = Math.min(.18, width * .045)
   }
   new THREE.TextureLoader().load(cutoutsUrl, source => {
     for (const [group, isCarton] of [[carton, true], [product, false]] as const) {
@@ -65,5 +71,18 @@ export function createGlossProps() {
     source.dispose()
     layout(viewWidth, viewHeight)
   }, undefined, error => console.error('제품 이미지를 불러오지 못했습니다.', error))
-  return { root, layout }
+  return {
+    root,
+    layout,
+    update(dt: number) {
+      floatTime += dt
+      const amount = reducedMotion.matches ? 0 : 1
+      const cartonPhase = floatTime * Math.PI * 2 / 4.8
+      const productPhase = floatTime * Math.PI * 2 / 5.6 + 1.2
+      carton.position.y = cartonBaseY + Math.sin(cartonPhase) * floatAmount * amount
+      product.position.y = productBaseY + Math.sin(productPhase) * floatAmount * amount
+      carton.rotation.z = -Math.PI / 3 + Math.sin(cartonPhase + .6) * .025 * amount
+      product.rotation.z = Math.sin(productPhase + .5) * .03 * amount
+    },
+  }
 }
