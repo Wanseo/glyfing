@@ -83,6 +83,7 @@ function cutout(image: HTMLImageElement, region: Crop, singleObject = true, outl
 export function createBadgeCandies() {
   const root = new THREE.Group(), badge = new THREE.Group()
   const candies: THREE.Mesh[] = []
+  const sparkles: THREE.Mesh<THREE.ShapeGeometry, THREE.MeshBasicMaterial>[] = []
   const hanger = new THREE.Group()
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
   let swingTime = 0
@@ -96,12 +97,12 @@ export function createBadgeCandies() {
     badge.position.set(wide ? 0 : -halfWidth * .5, halfHeight * .69, -2.2)
     const desktop = [[-.83, .72], [-.42, .78], [.43, .8], [.85, .69],
       [-.88, -.55], [-.5, -.76], [-.18, -.79], [.18, -.74],
-      [.49, -.79], [.87, -.67], [-.88, .18], [.9, .22]]
+      [.49, -.79], [.87, -.67], [-.88, .18], [.9, .22], [-.62, .49], [.57, -.43]]
     const mobile = [[-.78, .32], [.8, .32], [-.83, .02], [.85, -.02],
       [-.83, -.36], [-.64, -.63], [-.68, -.85], [.73, -.88],
-      [0, -.89], [.82, .89], [-.8, .46], [0, .9]]
+      [0, -.89], [.82, .89], [-.8, .46], [0, .9], [-.84, -.5], [.81, .46]]
     candies.forEach((candy, index) => {
-      const [x, y] = (wide ? desktop : mobile)[index % desktop.length]!
+      const [x, y] = (wide ? desktop : mobile)[index]!
       const aspect = (candy.geometry as THREE.PlaneGeometry).parameters.width
       const maxWidth = wide ? Math.min(1.6, halfWidth * .11) * 1.18 : halfWidth * .24 * 1.18
       const height = Math.min((wide ? 1.35 : .85) * 1.18, maxWidth / aspect)
@@ -135,6 +136,35 @@ export function createBadgeCandies() {
       const candy = cutout(source.image, region, true, stripOutlines[index])
       if (candy) { candies.push(candy); root.add(candy) }
     }
+    const tooth = candies[9]
+    if (tooth) {
+      for (const angle of [-.25, .3]) {
+        const extra = tooth.clone()
+        extra.rotation.z = angle
+        candies.push(extra)
+        root.add(extra)
+      }
+      const star = new THREE.Shape()
+      for (let point = 0; point < 8; point++) {
+        const angle = point * Math.PI / 4
+        const radius = point % 2 ? .14 : 1
+        const x = Math.cos(angle) * radius, y = Math.sin(angle) * radius
+        if (point === 0) star.moveTo(x, y)
+        else star.lineTo(x, y)
+      }
+      star.closePath()
+      const geometry = new THREE.ShapeGeometry(star)
+      for (const item of [tooth, candies[12]!, candies[13]!]) {
+        for (const [x, y] of [[.31, .3], [-.23, -.22]]) {
+          const sparkle = new THREE.Mesh(geometry,
+            new THREE.MeshBasicMaterial({ color: '#fffdf2', transparent: true,
+              depthWrite: false, toneMapped: false }))
+          sparkle.position.set(x!, y!, .05)
+          item.add(sparkle)
+          sparkles.push(sparkle)
+        }
+      }
+    }
     source.dispose()
     layout(viewWidth, viewHeight)
   }, undefined, error => console.error('사원증과 젤리 이미지를 불러오지 못했습니다.', error))
@@ -144,6 +174,12 @@ export function createBadgeCandies() {
     update(dt: number) {
       swingTime += dt
       hanger.rotation.z = reducedMotion.matches ? 0 : Math.sin(swingTime * Math.PI * 2 / 3.8) * .09
+      sparkles.forEach((sparkle, index) => {
+        const glint = reducedMotion.matches ? .5
+          : Math.pow((Math.sin(swingTime * Math.PI * 2 / 2.8 + index * 1.3) + 1) / 2, 6)
+        sparkle.material.opacity = .15 + glint * .85
+        sparkle.scale.setScalar((index % 2 ? .09 : .14) * (.5 + glint * .9))
+      })
     },
   }
 }
