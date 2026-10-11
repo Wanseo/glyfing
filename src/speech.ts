@@ -60,7 +60,7 @@ export function createSpeech(app: HTMLElement) {
       const radiusY = Math.abs(corner.y - anchor.y) * window.innerHeight / 2
       const character = { left: screenX - radiusX, right: screenX + radiusX,
         top: screenY - radiusY, bottom: screenY + radiusY }
-      const gap = 20, tail = 36, margin = 12
+      const gap = 20, tail = 48, margin = 12
       const leftRoom = character.left - gap - tail - margin
       const rightRoom = window.innerWidth - character.right - gap - tail - margin
       const placement = placements[placementIndex]!
@@ -97,7 +97,7 @@ export function createSpeech(app: HTMLElement) {
       bubble.dataset.tail = direction
       bubble.style.left = `${left}px`
       bubble.style.top = `${top}px`
-      bubble.style.setProperty('--tail-left', `${THREE.MathUtils.clamp(screenX - left - 23, 8, width - 46)}px`)
+      bubble.style.setProperty('--tail-left', `${THREE.MathUtils.clamp(screenX - left - 21, 8, width - 42)}px`)
 
     },
   }

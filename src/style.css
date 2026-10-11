@@ -50,12 +50,12 @@ canvas {
 .character-speech::after {
   content: '';
   position: absolute;
-  bottom: -36px;
+  bottom: -48px;
   left: var(--tail-left, 16px);
-  width: 46px;
-  height: 42px;
+  width: 42px;
+  height: 54px;
   background: #fff;
-  clip-path: polygon(45% 0, 100% 0, 55% 37%, 80% 37%, 0 100%, 38% 32%, 17% 32%);
+  clip-path: polygon(40% 0, 100% 0, 58% 30%, 78% 30%, 0 100%, 42% 44%, 20% 44%);
 }
 @keyframes speech-appear {
   from { opacity: 0; }
@@ -72,26 +72,26 @@ canvas {
   clip-path: polygon(20% 0, 80% 0, 55% 38%, 78% 38%, 40% 100%, 44% 45%, 22% 45%);
 }
 .character-speech[data-tail='left']::after {
-  left: -36px;
+  left: -48px;
   bottom: auto;
-  top: calc(50% - 23px);
-  width: 42px;
-  height: 46px;
-  clip-path: polygon(100% 20%, 100% 80%, 62% 55%, 62% 78%, 0 40%, 55% 44%, 55% 22%);
+  top: calc(50% - 21px);
+  width: 54px;
+  height: 42px;
+  clip-path: polygon(100% 40%, 100% 100%, 70% 58%, 70% 78%, 0 0, 56% 42%, 56% 20%);
 }
 
 .character-speech[data-tail='right']::after {
   left: auto;
-  right: -36px;
+  right: -48px;
   bottom: auto;
-  top: calc(50% - 23px);
-  width: 42px;
-  height: 46px;
+  top: calc(50% - 21px);
+  width: 54px;
+  height: 42px;
   transform: scaleX(-1);
-  clip-path: polygon(100% 20%, 100% 80%, 62% 55%, 62% 78%, 0 40%, 55% 44%, 55% 22%);
+  clip-path: polygon(100% 40%, 100% 100%, 70% 58%, 70% 78%, 0 0, 56% 42%, 56% 20%);
 }
 .character-speech[data-tail='up']::after {
   bottom: auto;
-  top: -36px;
+  top: -48px;
   transform: scaleY(-1);
 }
