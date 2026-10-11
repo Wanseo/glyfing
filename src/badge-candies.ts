@@ -4,7 +4,7 @@ import cutoutsUrl from './assets/badge-candies.png'
 type Crop = readonly [number, number, number, number]
 
 // Regions are normalized so the source can retain its original resolution.
-function cutout(image: HTMLImageElement, region: Crop) {
+function cutout(image: HTMLImageElement, region: Crop, singleObject = true) {
   const [x, y, width, height] = region
   const canvas = document.createElement('canvas')
   canvas.width = Math.round(image.naturalWidth * width)
@@ -15,7 +15,7 @@ function cutout(image: HTMLImageElement, region: Crop) {
   const imageData = context.getImageData(0, 0, canvas.width, canvas.height)
   const pixels = imageData.data
   // A crop can include a tiny edge of a neighboring candy. Keep the main
-  // connected object and its small details, excluding these detached scraps.
+  // connected object. The badge also keeps its separate attached details.
   const labels = new Int32Array(canvas.width * canvas.height)
   const queue = new Int32Array(labels.length)
   const sizes = [0]
@@ -38,8 +38,12 @@ function cutout(image: HTMLImageElement, region: Crop) {
     sizes.push(tail)
   }
   const largest = sizes.reduce((max, size) => Math.max(max, size), 0)
+  const mainLabel = sizes.indexOf(largest)
   for (let index = 0; index < labels.length; index++) {
-    if (!labels[index] || sizes[labels[index]!]! < largest * .01) pixels[index * 4 + 3] = 0
+    const label = labels[index]!
+    if (!label || (singleObject ? label !== mainLabel : sizes[label]! < largest * .01)) {
+      pixels[index * 4 + 3] = 0
+    }
   }
   context.putImageData(imageData, 0, 0)
   let left = canvas.width, top = canvas.height, right = -1, bottom = -1
@@ -81,8 +85,8 @@ export function createBadgeCandies() {
     candies.forEach((candy, index) => {
       const [x, y] = (wide ? desktop : mobile)[index % desktop.length]!
       const aspect = (candy.geometry as THREE.PlaneGeometry).parameters.width
-      const maxWidth = wide ? Math.min(1.6, halfWidth * .11) : halfWidth * .24
-      const height = Math.min(wide ? 1.35 : .85, maxWidth / aspect)
+      const maxWidth = wide ? Math.min(1.6, halfWidth * .11) * 1.18 : halfWidth * .24 * 1.18
+      const height = Math.min((wide ? 1.35 : .85) * 1.18, maxWidth / aspect)
       candy.scale.setScalar(height)
       candy.position.set(x! * halfWidth, y! * halfHeight, -2.1)
     })
@@ -96,7 +100,7 @@ export function createBadgeCandies() {
     [.54, .84, .24, .16], [.78, .845, .22, .155],
   ]
   new THREE.TextureLoader().load(cutoutsUrl, source => {
-    const badgeMesh = cutout(source.image, [0, 0, .56, 1])
+    const badgeMesh = cutout(source.image, [0, 0, .56, 1], false)
     if (badgeMesh) badge.add(badgeMesh)
     for (const region of regions) {
       const candy = cutout(source.image, region)
