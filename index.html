@@ -6,6 +6,19 @@
     <title>glyfing — 작은 세 눈 친구</title>
   </head>
   <body>
+    <svg width="0" height="0" aria-hidden="true" focusable="false" style="position: absolute">
+      <defs>
+        <filter id="speech-outline" x="-100%" y="-200%" width="300%" height="500%" color-interpolation-filters="sRGB">
+          <feMorphology in="SourceAlpha" operator="dilate" radius="2" result="outline" />
+          <feFlood flood-color="#000" result="black" />
+          <feComposite in="black" in2="outline" operator="in" result="border" />
+          <feMerge>
+            <feMergeNode in="border" />
+            <feMergeNode in="SourceGraphic" />
+          </feMerge>
+        </filter>
+      </defs>
+    </svg>
     <div id="app"></div>
     <script type="module" src="/src/main.ts"></script>
   </body>

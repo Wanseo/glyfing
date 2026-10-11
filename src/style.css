@@ -39,6 +39,7 @@ canvas {
   font: 800 clamp(17px, 1.7vw, 22px)/1.2 Arial, sans-serif;
   pointer-events: none;
   animation: speech-appear 100ms ease-out;
+  filter: url(#speech-outline);
 }
 .character-speech[hidden] {
   display: none;
