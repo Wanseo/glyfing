@@ -7,6 +7,7 @@ import { createGlitterBackground } from './glitter'
 import { createGlossProps } from './gloss-props'
 import { createBadgeCandies } from './badge-candies'
 import { createSpeech } from './speech'
+import { createMusic } from './music'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 const scene = new THREE.Scene()
@@ -26,6 +27,7 @@ brandLogo.src = brandLogoUrl
 brandLogo.alt = 'GLYF'
 brandLogo.draggable = false
 app.appendChild(brandLogo)
+createMusic(app)
 scene.add(new THREE.HemisphereLight('#fff9ec', '#b19373', 1.8))
 const light = new THREE.DirectionalLight('#fff4df', 2.2)
 light.position.set(-3, 10, 6)
