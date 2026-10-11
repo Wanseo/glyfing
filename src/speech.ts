@@ -41,7 +41,7 @@ export function createSpeech(app: HTMLElement) {
         if (bubble.hidden) {
           text.textContent = nextPhrase()
           bubble.hidden = false
-          countdown = 1
+          countdown = 3
         } else {
           bubble.hidden = true
           countdown = .45
@@ -51,10 +51,12 @@ export function createSpeech(app: HTMLElement) {
       anchor.set(x, y, 0).project(camera)
       const screenX = (anchor.x + 1) * window.innerWidth / 2
       const screenY = (1 - anchor.y) * window.innerHeight / 2
+      const desiredLeft = screenX + 48
+      bubble.style.maxWidth = `${Math.min(260, Math.max(140, window.innerWidth - desiredLeft - 12))}px`
       const width = bubble.offsetWidth, height = bubble.offsetHeight
-      const left = THREE.MathUtils.clamp(screenX - width * .3, 12,
+      const left = THREE.MathUtils.clamp(desiredLeft, 12,
         Math.max(12, window.innerWidth - width - 12))
-      const top = THREE.MathUtils.clamp(screenY - height - 28, 12,
+      const top = THREE.MathUtils.clamp(screenY - height - 64, 12,
         Math.max(12, window.innerHeight - height - 44))
       bubble.style.left = `${left}px`
       bubble.style.top = `${top}px`
