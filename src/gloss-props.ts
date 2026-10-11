@@ -45,12 +45,12 @@ export function createGlossProps() {
     viewWidth = halfWidth; viewHeight = halfHeight
     const wide = halfWidth > 7
     const width = wide ? Math.min(6, halfWidth * .65, halfHeight * 1.2)
-      : Math.min(halfWidth * 1.45, halfHeight * .5)
+      : Math.min(halfWidth * .8, halfHeight * .38)
     carton.scale.setScalar(width)
     product.scale.setScalar(width * .8)
-    carton.position.set(wide ? -halfWidth * .62 : 0,
+    carton.position.set(wide ? -halfWidth * .62 : halfWidth * .47,
       wide ? .9 : halfHeight * .68, -2.3)
-    product.position.set(wide ? halfWidth * .62 : 0,
+    product.position.set(wide ? halfWidth * .62 : halfWidth * .35,
       wide ? -.6 : -halfHeight * .65, -2.3)
   }
   new THREE.TextureLoader().load(cutoutsUrl, source => {
