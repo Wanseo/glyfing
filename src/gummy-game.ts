@@ -14,14 +14,14 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
   host.innerHTML = `
     <section class="rain-game" aria-label="젤리와 인형 수집 게임">
       <a class="play-button rain-home" href="#home">메인으로 ↗</a>
-      <canvas class="game-canvas" aria-label="방향키 또는 드래그로 목표 아이템을 받으세요"></canvas>
+      <canvas class="game-canvas" aria-label="방향키 또는 A와 D 키로 목표 아이템을 받으세요"></canvas>
       <b class="rain-level" data-level></b>
       <div class="rain-timer" role="timer" aria-label="남은 시간"><small>TIME LEFT</small><span data-time></span></div>
       <aside class="rain-goal"><h1>GUMMY RUSH</h1>
         <div class="rain-goal-images"><img class="rain-mascot" alt="움직이는 GLYF 캐릭터"><span>→</span><canvas data-target width="100" height="100" role="img" aria-label="이번 단계에서 받을 아이템"></canvas></div>
         <div><b data-count></b></div><p data-feedback role="status"></p>
       </aside>
-      <div class="rain-help">← → / A·D · 모바일은 터치로 이동<br>목표만 받아요! 다른 아이템은 −2초</div>
+      <div class="rain-help">← → / A·D 키로 이동<br>목표만 받아요! 다른 아이템은 −2초</div>
       <button class="text-button rain-restart" data-restart>다시 시작 ↻</button>
       <div class="game-message rain-message" hidden></div>
     </section>`
@@ -99,18 +99,6 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
   function visibility() { if (document.hidden) clearKeys() }
   window.addEventListener('keydown', keydown); window.addEventListener('keyup', keyup)
   window.addEventListener('blur', clearKeys); document.addEventListener('visibilitychange', visibility)
-  function move(event: PointerEvent) {
-    if (!running || event.pointerType !== 'touch') return
-    const rect = canvas.getBoundingClientRect()
-    player = Math.max(.07, Math.min(.93, (event.clientX - rect.left) / rect.width))
-  }
-  canvas.addEventListener('pointerdown', event => {
-    if (event.pointerType !== 'touch') return
-    canvas.setPointerCapture(event.pointerId); move(event)
-  })
-  canvas.addEventListener('pointermove', event => {
-    if (canvas.hasPointerCapture(event.pointerId)) move(event)
-  })
   function loop(time: number) {
     if (disposed) return
     const dt = previous && !document.hidden ? Math.min((time - previous) / 1000, .05) : 0
