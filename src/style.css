@@ -143,10 +143,10 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 .home-tagline .eyebrow { color: #fff; text-shadow: 0 1px 3px #9b2365; }
 .home-tagline h1 { margin: 7px 0 0; color: #fff; font: 900 clamp(23px, 2.5vw, 34px)/1.03 Arial, sans-serif; text-shadow: 2px 2px 0 #171717; }
 .home-tagline h1 em { font-style: normal; }
-.home-doors { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-.home-door { color: #171717; background: #fff; border: 2px solid #171717; box-shadow: 5px 5px 0 #171717; text-align: left; padding: 15px 18px; text-decoration: none; transition: transform 160ms ease; }
+.home-doors { display: flex; justify-content: center; align-items: flex-start; gap: 16px; }
+.home-door { color: #171717; background: #fff; border: 2px solid #171717; box-shadow: 5px 5px 0 #171717; text-align: left; width: max-content; flex: 0 1 auto; padding: 10px 12px; text-decoration: none; transition: transform 160ms ease; }
 .home-door span { display: block; font: 800 8px/1.4 Arial; letter-spacing: 1px; }
-.home-door strong { display: block; margin: 8px 0 6px; font: 900 clamp(17px, 1.8vw, 23px)/1 Arial; }
+.home-door strong { display: block; margin: 5px 0 4px; font: 900 clamp(17px, 1.8vw, 23px)/1 Arial; }
 .home-door small { font-size: 11px; }
 .game-door { transform: rotate(-2deg); background: #fff; }
 .photo-door { transform: rotate(2deg); background: #fff; }
@@ -211,7 +211,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   .home-tagline { margin-bottom: 15px; }
   .home-tagline h1 { font-size: 25px; }
   .home-doors { gap: 12px; }
-  .home-door { padding: 13px 12px; }
+  .home-door { padding: 9px 10px; }
   .home-door strong { font-size: 16px; }
   .home-door span { font-size: 7px; }
   .home-door small { font-size: 10px; }
