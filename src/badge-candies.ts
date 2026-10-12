@@ -201,6 +201,7 @@ export function createBadgeCandies(app: HTMLElement) {
     ready: Promise.all([badgeReady, candiesReady]),
     layout,
     syncInteraction(camera: THREE.OrthographicCamera) { viewer.sync(interactiveBadge, camera, root.visible) },
+    hoveredBounds() { return root.visible ? viewer.hoveredBounds() : [] },
     update(dt: number) {
       swingTime += dt
       const target = root.visible && viewer.isHovered() ? 1 : 0

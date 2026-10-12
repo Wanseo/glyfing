@@ -83,7 +83,7 @@ export function createSpeech(app: HTMLElement) {
       let width = bubble.offsetWidth, height = bubble.offsetHeight
       const fitsAbove = character.top - gap - tail - height >= margin
       const fitsBelow = character.bottom + gap + tail + height <= window.innerHeight - margin
-      const beside = canUseSide && (placement === 'middle' || !fitsAbove)
+      const beside = canUseSide && (blocked.length > 0 || placement === 'middle' || !fitsAbove)
       let left: number, top: number, direction: string
       if (beside) {
         bubble.style.maxWidth = `${Math.min(300, sideRoom)}px`
@@ -102,14 +102,23 @@ export function createSpeech(app: HTMLElement) {
         bubble.style.visibility = 'hidden'
         return
       }
-      const bounds = {
-        left: left - (direction === 'left' ? tail : 0),
-        right: left + width + (direction === 'right' ? tail : 0),
-        top: top - (direction === 'up' ? tail : 0),
-        bottom: top + height + (direction.startsWith('down') ? tail : 0),
+      const overlapsBlocked = () => {
+        const bounds = {
+          left: left - (direction === 'left' ? tail : 0),
+          right: left + width + (direction === 'right' ? tail : 0),
+          top: top - (direction === 'up' ? tail : 0),
+          bottom: top + height + (direction.startsWith('down') ? tail : 0),
+        }
+        return blocked.some(rect => bounds.left < rect.right + 12 && bounds.right > rect.left - 12
+          && bounds.top < rect.bottom + 12 && bounds.bottom > rect.top - 12)
       }
-      if (blocked.some(rect => bounds.left < rect.right + 12 && bounds.right > rect.left - 12
-        && bounds.top < rect.bottom + 12 && bounds.bottom > rect.top - 12)) {
+      // On narrow screens move below the mascot if the hovered object blocks the top.
+      if (overlapsBlocked() && character.bottom + gap + tail + height <= window.innerHeight - margin) {
+        left = THREE.MathUtils.clamp(screenX - width / 2, margin, Math.max(margin, window.innerWidth - width - margin))
+        top = character.bottom + gap + tail
+        direction = 'up'
+      }
+      if (overlapsBlocked()) {
         bubble.style.visibility = 'hidden'
         return
       }

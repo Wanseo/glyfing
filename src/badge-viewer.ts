@@ -28,6 +28,10 @@ export function createBadgeViewer(app: HTMLElement) {
   return {
     setImage(canvas: HTMLCanvasElement, url?: string) { image.src = url ?? canvas.toDataURL('image/png'); outline.src = canvas.toDataURL('image/png'); return image.decode() },
     isHovered() { return !button.hidden && !dialog.open && button.classList.contains('is-hovered') },
+    hoveredBounds() {
+      return !button.hidden && !dialog.open && (button.classList.contains('is-hovered')
+        || button.matches(':focus-visible')) ? [button.getBoundingClientRect()] : []
+    },
     sync(mesh: THREE.Mesh | null, camera: THREE.OrthographicCamera, visible: boolean) {
       button.hidden = !visible || !mesh
       if (!visible) button.classList.remove('is-hovered')

@@ -209,7 +209,8 @@ renderer.setAnimationLoop((time: number) => {
   glossProps.syncLinks(camera)
   badgeCandies.syncInteraction(camera)
   if (currentView === 'home') speech.update(dt, position.x, position.y + hop, camera,
-    2.429375 * characterSize, 2.803125 * characterSize, glossProps.hoveredBounds())
+    2.429375 * characterSize, 2.803125 * characterSize,
+    [...glossProps.hoveredBounds(), ...badgeCandies.hoveredBounds()])
   renderer.render(scene, camera)
 })
 
