@@ -1,7 +1,7 @@
 import * as THREE from 'three'
 import { createBadgeViewer } from './badge-viewer'
 import cutoutsUrl from './assets/badge-candies.png'
-import badgeUrl from './assets/badge-nameless.png'
+import badgeUrl from './assets/badge-reference.png'
 
 type Crop = readonly [number, number, number, number]
 type Outline = ReadonlyArray<readonly [number, number]>

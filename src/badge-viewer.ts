@@ -8,7 +8,7 @@ export function createBadgeViewer(app: HTMLElement) {
   const dialog = document.createElement('dialog')
   dialog.className = 'badge-viewer'; dialog.setAttribute('aria-label', 'GLYF 사원증 확대 보기')
   const image = document.createElement('img')
-  image.className = 'badge-viewer-image'; image.alt = '세 눈 캐릭터의 GLYF 사원증, 흰 목줄과 참 장식'
+  image.className = 'badge-viewer-image'; image.alt = 'MONSTER 퍼글러. HEIGHT 20CM. WEIGHT BIMIL. FUR GREY. EYES THREE. GLYF FUGGLER. HUMAN-LIKE TEETH. THREE GREY EYES. RED AND WHITE UNDERWEAR. GLOSS MADE THICK. SHINE THAT STICKS.'
   const close = document.createElement('button')
   close.className = 'badge-close'; close.type = 'button'; close.textContent = '✕'
   close.setAttribute('aria-label', '사원증 닫기')
