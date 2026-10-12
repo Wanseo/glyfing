@@ -124,7 +124,9 @@ function captureCharacter() {
   stickerScene.add(model, new THREE.HemisphereLight('#fff9ec', '#b19373', 1.8))
   const key = new THREE.DirectionalLight('#fff4df', 2.2)
   key.position.set(-3, 10, 6); stickerScene.add(key)
-  const stickerCamera = new THREE.OrthographicCamera(-2.7, 2.7, 3.2, -3.2, .1, 100)
+  const stickerFrameScale = characterSize / .9
+  const stickerCamera = new THREE.OrthographicCamera(-2.7 * stickerFrameScale, 2.7 * stickerFrameScale,
+    3.2 * stickerFrameScale, -3.2 * stickerFrameScale, .1, 100)
   stickerCamera.position.set(0, 0, 20)
   const stickerRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
   stickerRenderer.setSize(432, 512); stickerRenderer.setClearColor(0, 0)
