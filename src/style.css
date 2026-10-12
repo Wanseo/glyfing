@@ -244,3 +244,24 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   -webkit-tap-highlight-color: transparent;
 }
 .character-play:focus-visible { outline: none; }
+
+.badge-trigger {
+  position: fixed; z-index: 2; background: transparent; border: 0; padding: 0;
+  cursor: zoom-in; -webkit-tap-highlight-color: transparent;
+}
+.badge-trigger:focus-visible { outline: 2px solid #ffff00; outline-offset: 5px; }
+.badge-viewer {
+  border: 0; padding: 0; background: transparent; color: #fff;
+  overflow: visible; max-width: calc(100vw - 48px); max-height: calc(100dvh - 64px);
+}
+.badge-viewer::backdrop { background: #12050fc4; backdrop-filter: blur(4px); }
+.badge-viewer-image {
+  display: block; width: auto; height: min(78dvh, 760px); max-width: calc(100vw - 70px);
+  object-fit: contain; transform-origin: 82% 2%; animation: badge-closeup-sway 5s ease-in-out infinite;
+}
+.badge-close {
+  position: absolute; top: -12px; right: -16px; width: 44px; height: 44px;
+  border: 2px solid #171717; background: #fff; color: #171717; font-size: 19px; cursor: pointer;
+}
+@keyframes badge-closeup-sway { 0%, 100% { transform: rotate(-1.5deg); } 50% { transform: rotate(1.5deg); } }
+@media (prefers-reduced-motion: reduce) { .badge-viewer-image { animation: none; } }

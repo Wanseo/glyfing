@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import { createBadgeViewer } from './badge-viewer'
 import cutoutsUrl from './assets/badge-candies.png'
 
 type Crop = readonly [number, number, number, number]
@@ -80,7 +81,9 @@ export function cutout(image: HTMLImageElement, region: Crop, singleObject = tru
       depthWrite: false, toneMapped: false }))
 }
 
-export function createBadgeCandies() {
+export function createBadgeCandies(app: HTMLElement) {
+  const viewer = createBadgeViewer(app)
+  let interactiveBadge: THREE.Mesh | null = null
   const root = new THREE.Group(), badge = new THREE.Group()
   const candies: THREE.Mesh[] = []
   const sparkles: THREE.Mesh<THREE.ShapeGeometry, THREE.MeshBasicMaterial>[] = []
@@ -127,6 +130,8 @@ export function createBadgeCandies() {
       hanger.position.set(pivotX, pivotY, 0)
       badgeMesh.position.set(-pivotX, -pivotY, 0)
       hanger.add(badgeMesh)
+      interactiveBadge = badgeMesh
+      viewer.setImage(badgeMesh.material.map!.image as HTMLCanvasElement)
     }
     const stripOutlines: Record<number, Outline> = {
       2: [[.694, .191], [.762, .35], [.687, .43], [.598, .266]],
@@ -171,6 +176,7 @@ export function createBadgeCandies() {
   return {
     root,
     layout,
+    syncInteraction(camera: THREE.OrthographicCamera) { viewer.sync(interactiveBadge, camera, root.visible) },
     update(dt: number) {
       swingTime += dt
       hanger.rotation.z = reducedMotion.matches ? 0 : Math.sin(swingTime * Math.PI * 2 / 3.8) * .09

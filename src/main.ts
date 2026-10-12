@@ -52,7 +52,7 @@ const position = new THREE.Vector2(0, 0)
 scene.add(character.root)
 const glossProps = createGlossProps(app)
 scene.add(glossProps.root)
-const badgeCandies = createBadgeCandies()
+const badgeCandies = createBadgeCandies(app)
 scene.add(badgeCandies.root)
 const speech = createSpeech(app)
 const characterPlay = createCharacterPlay(app, scene, speech.say)
@@ -128,11 +128,12 @@ createExperiences(app, captureCharacter, route => {
   character.root.visible = home; shadow.visible = home
   glossProps.root.visible = home; badgeCandies.root.visible = home
   glossProps.syncLinks(camera)
+  badgeCandies.syncInteraction(camera)
   const bubble = app.querySelector<HTMLElement>('.character-speech')!
   bubble.hidden = true
 })
 window.addEventListener('keydown', event => {
-  if (currentView !== 'home' || !event.key.startsWith('Arrow')) return
+  if (currentView !== 'home' || document.querySelector('dialog[open]') || !event.key.startsWith('Arrow')) return
   event.preventDefault()
   keys.add(event.key)
 })
@@ -162,6 +163,7 @@ renderer.setAnimationLoop((time: number) => {
       character.blink(THREE.MathUtils.smoothstep(amount, 0, 1))
     }
   }
+  if (document.querySelector('dialog[open]')) keys.clear()
   const direction = getDirection(keys)
   const previousX = position.x, previousY = position.y
   position.x = clampPosition(position.x + direction.x * dt * 2.4, viewHalfWidth, 2.429375 * characterSize)
@@ -191,6 +193,7 @@ renderer.setAnimationLoop((time: number) => {
   character.arms.forEach((arm, i) => { arm.rotation.x = Math.sin(gait + i * Math.PI) * 0.45 * walk })
   shadow.position.set(position.x, position.y - 2.23315625 * characterSize, -0.8)
   glossProps.syncLinks(camera)
+  badgeCandies.syncInteraction(camera)
   if (currentView === 'home') speech.update(dt, position.x, position.y + hop, camera,
     2.429375 * characterSize, 2.803125 * characterSize, glossProps.hoveredBounds())
   renderer.render(scene, camera)
