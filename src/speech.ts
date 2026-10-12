@@ -38,6 +38,12 @@ export function createSpeech(app: HTMLElement) {
     return remaining.pop()!
   }
   return {
+    say(message: string) {
+      text.textContent = message
+      bubble.hidden = false
+      countdown = 3
+      placementIndex = (placementIndex + 1) % placements.length
+    },
     update(dt: number, x: number, y: number, camera: THREE.Camera, halfWidth: number, halfHeight: number, blocked: DOMRect[] = []) {
       countdown -= dt
       if (countdown <= 0) {

@@ -9,6 +9,7 @@ import { createBadgeCandies } from './badge-candies'
 import { createSpeech } from './speech'
 import { createMusic } from './music'
 import { createExperiences } from './experiences'
+import { createCharacterPlay } from './character-play'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 const scene = new THREE.Scene()
@@ -54,6 +55,7 @@ scene.add(glossProps.root)
 const badgeCandies = createBadgeCandies()
 scene.add(badgeCandies.root)
 const speech = createSpeech(app)
+const characterPlay = createCharacterPlay(app, scene, speech.say)
 
 const shadowCanvas = document.createElement('canvas')
 shadowCanvas.width = shadowCanvas.height = 128
@@ -121,6 +123,7 @@ function captureCharacter() {
 }
 createExperiences(app, captureCharacter, route => {
   currentView = route; keys.clear()
+  characterPlay.update(0, position.x, position.y, camera, route === 'home')
   const home = route === 'home'
   character.root.visible = home; shadow.visible = home
   glossProps.root.visible = home; badgeCandies.root.visible = home
@@ -171,7 +174,8 @@ renderer.setAnimationLoop((time: number) => {
     const target = Math.atan2(direction.x, -direction.y)
     character.root.rotation.y = target
   }
-  character.root.position.set(position.x, position.y - 3.37309375 * characterSize + Math.abs(Math.sin(gait)) * 0.04671875 * characterSize * walk, 0)
+  const hop = characterPlay.update(dt, position.x, position.y, camera, currentView === 'home')
+  character.root.position.set(position.x, position.y + hop - 3.37309375 * characterSize + Math.abs(Math.sin(gait)) * 0.04671875 * characterSize * walk, 0)
   character.torso.rotation.z = Math.cos(gait) * 0.05 * walk
   character.torso.position.x = Math.cos(gait) * 0.035 * walk
   character.legs.forEach((leg, i) => {
@@ -187,7 +191,7 @@ renderer.setAnimationLoop((time: number) => {
   character.arms.forEach((arm, i) => { arm.rotation.x = Math.sin(gait + i * Math.PI) * 0.45 * walk })
   shadow.position.set(position.x, position.y - 2.23315625 * characterSize, -0.8)
   glossProps.syncLinks(camera)
-  if (currentView === 'home') speech.update(dt, position.x, position.y, camera,
+  if (currentView === 'home') speech.update(dt, position.x, position.y + hop, camera,
     2.429375 * characterSize, 2.803125 * characterSize, glossProps.hoveredBounds())
   renderer.render(scene, camera)
 })
