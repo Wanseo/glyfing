@@ -21,7 +21,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
         <div class="rain-goal-images"><img class="rain-mascot" alt="움직이는 GLYF 캐릭터"><span>→</span><canvas data-target width="100" height="100" role="img" aria-label="이번 단계에서 받을 아이템"></canvas></div>
         <div><b data-count></b></div><p data-feedback role="status"></p>
       </aside>
-      <div class="rain-help">← → / A·D 키로 이동<br>목표만 받아요! 다른 아이템은 −2초</div>
+      <div class="rain-help">← → / A·D 키로 이동<br>목표만 받아요! 다른 아이템은 -2sec</div>
       <button class="text-button rain-restart" data-restart>다시 시작 ↻</button>
       <div class="game-message rain-message" hidden></div>
     </section>`
@@ -131,7 +131,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
             if (caught >= levels[level]!.count) { updateHud(); clearLevel(); break }
           } else {
             catchEffect(false, playerY + 20)
-            remaining = Math.max(0, remaining - 2); feedback.textContent = '✕ −2초'
+            remaining = Math.max(0, remaining - 2); feedback.textContent = '✕ -2sec'
           }
         } else if (drop.y > height + 50) drops.splice(i, 1)
       }
@@ -176,7 +176,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
       ctx.textAlign = 'center'; ctx.font = '900 21px Arial'
       ctx.lineWidth = 5; ctx.strokeStyle = effect.correct ? '#875000' : '#fff'
       ctx.fillStyle = effect.correct ? '#fff9a0' : '#d90035'
-      const label = effect.correct ? '✦ +1' : '✕ −2초'
+      const label = effect.correct ? '✦ +1' : '✕ -2sec'
       const labelY = y - 28 - (reducedMotion.matches ? 0 : progress * 35)
       ctx.strokeText(label, x, labelY); ctx.fillText(label, x, labelY)
       ctx.restore()
