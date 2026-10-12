@@ -103,17 +103,23 @@ export function createBadgeCandies(app: HTMLElement) {
     badge.position.set(wide ? 0 : -halfWidth * .5, halfHeight * .69, -2.2)
     const desktop = [[-.83, .72], [-.42, .78], [.43, .8], [.85, .69],
       [-.88, -.55], [-.5, -.76], [-.18, -.79], [.18, -.74],
-      [.49, -.79], [.77, -.62], [-.88, .18], [.9, .22], [-.62, .49]]
+      [.49, -.79], [.77, -.62], [-.88, .18], [.9, .22], [-.62, .49],
+      [-.33, -.48], [.48, -.29], [-.05, -.64], [-.45, -.87], [.87, -.84],
+      [.34, -.88], [-.91, -.37], [.65, .15], [-.2, .24], [.18, .34]]
     const mobile = [[-.78, .32], [.8, .32], [-.83, .02], [.85, -.02],
       [-.83, -.36], [-.64, -.63], [-.68, -.85], [.73, -.88],
-      [0, -.89], [.72, .83], [-.8, .46], [0, .9], [-.84, -.5]]
+      [0, -.89], [.72, .83], [-.8, .46], [0, .9], [-.84, -.5],
+      [-.28, -.43], [.75, -.58], [-.07, -.66], [-.43, -.89], [.89, -.71],
+      [.36, -.91], [-.89, -.67], [.83, .17], [-.22, .39], [.18, .59]]
     candies.forEach((candy, index) => {
       const [x, y] = (wide ? desktop : mobile)[index]!
       const aspect = (candy.geometry as THREE.PlaneGeometry).parameters.width
       const maxWidth = wide ? Math.min(1.6, halfWidth * .11) * 1.18 : halfWidth * .24 * 1.18
       const height = Math.min((wide ? 1.35 : .85) * 1.18, maxWidth / aspect)
-      candy.scale.setScalar(height)
+      const extraSize = index < 13 ? 1 : [.74, .9, .68, .82, .63, .78, .7, .62, .65, .72][index - 13]!
+      candy.scale.setScalar(height * extraSize)
       candy.position.set(x! * halfWidth, y! * halfHeight, -2.1)
+      if (index >= 13) candy.rotation.z = [-.4, .32, -.17, .5, -.28, .2, -.52, .37, -.25, .46][index - 13]!
     })
   }
   const regions: Crop[] = [
@@ -177,6 +183,14 @@ export function createBadgeCandies(app: HTMLElement) {
           sparkles.push(sparkle)
         }
       }
+    }
+    // Reuse existing jelly textures to fill gaps without loading another image.
+    for (const index of [0, 4, 6, 2, 7, 1, 5, 8, 3, 4]) {
+      const original = candies[index]
+      if (!original) continue
+      const extra = original.clone()
+      candies.push(extra)
+      root.add(extra)
     }
     source.dispose()
     layout(viewWidth, viewHeight)

@@ -7,12 +7,13 @@ export function createPlushProps() {
   const root = new THREE.Group()
   const toys: { mesh: THREE.Mesh; y: number; angle: number; size: number }[] = []
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
-  const desktop = [[-.35, .4], [.35, .42], [-.36, -.35], [.36, -.38],
-    [-.82, -.25], [.82, .44], [-.28, -.66], [.28, -.65]]
-  const mobile = [[-.65, .29], [.61, .43], [-.66, -.25], [.6, -.19],
-    [-.3, -.57], [.28, -.66], [-.62, .67], [.76, .02]]
-  const angles = [-.16, .13, .12, -.12, -.2, .18, .15, -.16]
-  const sizes = [1, .85, .92, 1, .82, .88, .95, .84]
+  // Stagger the toys across the scene instead of pairing them around the mascot.
+  const desktop = [[-.35, .4], [.43, .51], [-.56, -.35], [.2, -.57],
+    [-.83, -.14], [.83, .32], [-.72, -.78], [.61, -.82]]
+  const mobile = [[-.65, .29], [.61, .43], [-.7, -.23], [.27, -.55],
+    [-.35, -.73], [.77, .02], [-.62, .67], [.67, -.82]]
+  const angles = [-.16, .13, .28, -.23, -.2, .18, -.32, .21]
+  const sizes = [1, .85, .74, .86, .68, .88, .64, .72]
   let halfWidth = 0, halfHeight = 0, elapsed = 0
   function layout(width: number, height: number) {
     halfWidth = width; halfHeight = height
