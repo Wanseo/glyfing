@@ -138,7 +138,7 @@ function captureCharacter() {
 createExperiences(app, captureCharacter, route => {
   currentView = route; keys.clear()
   characterPlay.update(0, position.x, position.y, camera, route === 'home')
-  const home = route === 'home'
+  const home = route === 'home' || route === 'camera'
   character.root.visible = home; shadow.visible = home
   glossProps.root.visible = home; badgeCandies.root.visible = home
   plushProps.root.visible = home

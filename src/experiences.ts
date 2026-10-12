@@ -1,8 +1,9 @@
 import { loadPlayAssets } from './play-assets'
 import { createGummyGame } from './gummy-game'
 import { createPhotoBooth } from './photo-booth'
+import { createHomeCamera } from './home-camera'
 
-type Route = 'home' | 'game' | 'photo'
+type Route = 'home' | 'game' | 'photo' | 'camera'
 export function createExperiences(app: HTMLElement, captureCharacter: () => string, onRoute: (route: Route) => void) {
   const nav = document.createElement('nav')
   nav.className = 'world-nav'; nav.setAttribute('aria-label', 'GLYF 화면 이동')
@@ -18,13 +19,18 @@ export function createExperiences(app: HTMLElement, captureCharacter: () => stri
     dispose?.(); dispose = undefined
     onRoute(route)
     document.documentElement.dataset.view = route
-    screen.hidden = route === 'home'; nav.hidden = route === 'home'
+    screen.hidden = route === 'home'; nav.hidden = route === 'home' || route === 'camera'
     links.forEach(link => {
       if (link.dataset.route === route) link.setAttribute('aria-current', 'page')
       else link.removeAttribute('aria-current')
     })
     if (route === 'home') return
     screen.scrollTop = 0
+    if (route === 'camera') {
+      dispose = createHomeCamera(screen)
+      screen.querySelector<HTMLAnchorElement>('.camera-close')!.focus({ preventScroll: true })
+      return
+    }
     screen.innerHTML = '<div class="loading-card" role="status">A little weirdness is loading… ✦</div>'
     try {
       const images = await (assets ??= loadPlayAssets(captureCharacter()))
@@ -42,7 +48,7 @@ export function createExperiences(app: HTMLElement, captureCharacter: () => stri
       screen.querySelector('[data-retry]')!.addEventListener('click', () => location.reload())
     }
   }
-  function readRoute(): Route { return location.hash === '#game' ? 'game' : location.hash === '#photo' ? 'photo' : 'home' }
+  function readRoute(): Route { return location.hash === '#camera' ? 'camera' : location.hash === '#game' ? 'game' : location.hash === '#photo' ? 'photo' : 'home' }
   window.addEventListener('hashchange', () => { void show(readRoute()) })
   void show(readRoute())
 }

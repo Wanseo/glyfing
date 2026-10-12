@@ -71,7 +71,7 @@ export function createGlossProps(app: HTMLElement) {
       group.add(mesh)
       const element = document.createElement('a')
       element.className = 'product-link'
-      element.href = isCarton ? '#game' : '#photo'
+      element.href = isCarton ? '#game' : '#camera'
       element.setAttribute('aria-label', isCarton ? 'GUMMY RUSH 게임으로 이동' : 'PHOTOBOOTH 포토부스로 이동')
       element.title = isCarton ? 'GUMMY RUSH ↗' : 'PHOTOBOOTH ↗'
       const image = document.createElement('img')

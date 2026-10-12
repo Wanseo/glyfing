@@ -324,3 +324,14 @@ html[data-view='game'] .world-nav { display: none; }
   100% { opacity: 0; transform: rotate(-5deg) scale(1.05); }
 }
 @media (prefers-reduced-motion: reduce) { .level-up-announcement { animation: none; } }
+
+html[data-view='camera'] .play-screen { display: grid; place-items: center; padding: 80px 16px 20px; pointer-events: none; }
+html[data-view='camera'] .play-screen::before { display: none; }
+.home-camera { position: relative; pointer-events: auto; width: min(420px, calc(100vw - 64px)); padding: 18px; background: #ff38cf; border: 3px solid #f5ff00; box-shadow: 6px 6px #171717; text-align: center; }
+.home-camera h1 { margin: 0 0 12px; color: #f5ff00; font: 900 28px Arial; }
+.home-camera-view { height: min(48dvh, 440px); background: #171717; overflow: hidden; }
+.home-camera-view video, .home-camera-view img { display: block; width: 100%; height: 100%; object-fit: cover; }
+.home-camera-view video { transform: scaleX(-1); }
+.home-camera p { color: #fff; font-size: 12px; }
+.camera-actions { display: flex; justify-content: center; gap: 10px; }
+.camera-close { position: absolute; top: -16px; right: -16px; display: grid; place-items: center; width: 40px; height: 40px; background: #fff; border: 2px solid #171717; color: #171717; text-decoration: none; }
