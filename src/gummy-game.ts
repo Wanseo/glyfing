@@ -4,11 +4,11 @@ import type { PlayAssets } from './play-assets'
 type Drop = { x: number; y: number; speed: number; kind: number; angle: number }
 type CatchEffect = { x: number; y: number; age: number; correct: boolean }
 const levels = [
-  { target: 0, count: 5, seconds: 45 },
-  { target: 4, count: 7, seconds: 43 },
-  { target: 1, count: 9, seconds: 40 },
-  { target: 11, count: 11, seconds: 38 },
-  { target: 6, count: 13, seconds: 35 },
+  { target: 0, count: 7, seconds: 35 },
+  { target: 4, count: 9, seconds: 33 },
+  { target: 1, count: 11, seconds: 31 },
+  { target: 11, count: 13, seconds: 29 },
+  { target: 6, count: 15, seconds: 27 },
 ]
 export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto: (score: number) => void) {
   host.innerHTML = `
@@ -112,12 +112,12 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
       player = Math.max(.07, Math.min(.93, player + direction * dt * .8))
       spawn -= dt
       if (spawn <= 0) {
-        spawn = .65 - level * .09
+        spawn = .48 - level * .065
         const target = levels[level]!.target
         const others = items.map((_, index) => index).filter(index => index !== target)
-        const kind = Math.random() < .65 - level * .055 ? target : others[Math.floor(Math.random() * others.length)]!
+        const kind = Math.random() < .5 - level * .045 ? target : others[Math.floor(Math.random() * others.length)]!
         drops.push({ x: 30 + Math.random() * (width - 60), y: -50,
-          speed: height * (.17 + level * .045 + Math.random() * .09), kind, angle: (Math.random() - .5) * .6 })
+          speed: height * (.26 + level * .065 + Math.random() * .13), kind, angle: (Math.random() - .5) * .6 })
       }
       for (let i = drops.length - 1; i >= 0; i--) {
         const drop = drops[i]!
