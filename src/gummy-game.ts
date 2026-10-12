@@ -19,7 +19,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
         <div class="rain-goal-images"><img class="rain-mascot" alt="움직이는 GLYF 캐릭터"><span>→</span><canvas data-target width="100" height="100" role="img" aria-label="이번 단계에서 받을 아이템"></canvas></div>
         <div><b data-count></b><span data-time></span></div><p data-feedback role="status"></p>
       </aside>
-      <div class="rain-help">← → / A·D · 마우스 / 터치로 이동<br>목표만 받아요! 다른 아이템은 −2초</div>
+      <div class="rain-help">← → / A·D · 모바일은 터치로 이동<br>목표만 받아요! 다른 아이템은 −2초</div>
       <button class="text-button rain-restart" data-restart>다시 시작 ↻</button>
       <div class="game-message rain-message" hidden></div>
     </section>`
@@ -98,12 +98,17 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
   window.addEventListener('keydown', keydown); window.addEventListener('keyup', keyup)
   window.addEventListener('blur', clearKeys); document.addEventListener('visibilitychange', visibility)
   function move(event: PointerEvent) {
-    if (!running) return
+    if (!running || event.pointerType !== 'touch') return
     const rect = canvas.getBoundingClientRect()
     player = Math.max(.07, Math.min(.93, (event.clientX - rect.left) / rect.width))
   }
-  canvas.addEventListener('pointerdown', event => { canvas.setPointerCapture(event.pointerId); move(event) })
-  canvas.addEventListener('pointermove', event => { if (event.buttons || event.pointerType === 'mouse') move(event) })
+  canvas.addEventListener('pointerdown', event => {
+    if (event.pointerType !== 'touch') return
+    canvas.setPointerCapture(event.pointerId); move(event)
+  })
+  canvas.addEventListener('pointermove', event => {
+    if (canvas.hasPointerCapture(event.pointerId)) move(event)
+  })
   function loop(time: number) {
     if (disposed) return
     const dt = previous && !document.hidden ? Math.min((time - previous) / 1000, .05) : 0
