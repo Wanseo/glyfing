@@ -64,7 +64,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
     caught = 0; remaining = levels[level]!.seconds; spawn = 0; drops.length = 0
     targetCtx.clearRect(0, 0, 100, 100)
     drawFit(targetCtx, items[levels[level]!.target]!, 5, 5, 90, 90)
-    updateHud(); message.hidden = true; running = true; keys.clear(); previous = 0
+    updateHud(); message.hidden = true; message.classList.remove('is-level-up'); running = true; keys.clear(); previous = 0
     feedback.textContent = '이 아이템을 모아 다음 단계로!'
   }
   function start() {
@@ -72,6 +72,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
   }
   function finish(won: boolean) {
     running = false; keys.clear()
+    message.classList.remove('is-level-up')
     try {
       const best = Number(localStorage.getItem('glyf-gummy-best')) || 0
       if (score > best) localStorage.setItem('glyf-gummy-best', String(score))
@@ -86,7 +87,8 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
   function clearLevel() {
     running = false; drops.length = 0; keys.clear()
     if (level === levels.length - 1) { finish(true); return }
-    message.innerHTML = `<h2>LEVEL ${level + 1} CLEAR! ✦</h2><p>다음 목표를 준비해요…</p>`
+    message.classList.add('is-level-up')
+    message.innerHTML = `<div class="level-up-announcement" role="status"><span class="level-up-next">LEVEL ${level + 2}</span><h2><span>LEVEL</span><strong>UP!</strong></h2><p>새로운 목표에 도전해요!</p></div>`
     message.hidden = false
     transition = window.setTimeout(() => { if (!disposed) { level++; beginLevel() } }, 1400)
   }

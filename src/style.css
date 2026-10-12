@@ -313,3 +313,18 @@ html[data-view='game'] .world-nav { display: none; }
   .rain-home { top: 62px; }
   .rain-restart { top: 205px; }
 }
+
+.rain-message.is-level-up { background: transparent; pointer-events: none; }
+.level-up-announcement { color: #f5ff00; text-align: center; transform: rotate(-5deg); animation: level-up-pop 1.4s ease-out both; }
+.level-up-next { display: inline-block; padding: 6px 14px; background: #f5ff00; color: #171717; font: 900 14px monospace; letter-spacing: 3px; box-shadow: 5px 5px 0 #171717; }
+.level-up-announcement h2 { margin: 18px 0 16px; max-width: none; font: 900 clamp(45px, 9vw, 100px)/1 monospace; letter-spacing: 3px; text-shadow: 4px 0 #171717, 0 4px #171717, 8px 8px #171717; }
+.level-up-announcement h2 span { display: block; }
+.level-up-announcement h2 strong { display: block; margin-top: 6px; font-size: 1.55em; letter-spacing: 8px; }
+.level-up-announcement p { display: inline-block; margin: 0; padding: 5px 10px; background: #171717; color: #f5ff00; font-weight: 800; }
+@keyframes level-up-pop {
+  0% { opacity: 0; transform: rotate(-9deg) scale(.55); }
+  18% { opacity: 1; transform: rotate(-3deg) scale(1.08); }
+  30%, 82% { opacity: 1; transform: rotate(-5deg) scale(1); }
+  100% { opacity: 0; transform: rotate(-5deg) scale(1.05); }
+}
+@media (prefers-reduced-motion: reduce) { .level-up-announcement { animation: none; } }
