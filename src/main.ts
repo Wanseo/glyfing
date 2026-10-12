@@ -54,7 +54,7 @@ const fill = new THREE.DirectionalLight('#ffffff', 0.8)
 fill.position.set(4, 1, -3)
 scene.add(fill)
 const character = createCharacter()
-const characterSize = .9
+const characterSize = 1.15
 character.root.scale.setScalar(1.86875 * characterSize)
 const position = new THREE.Vector2(0, 0)
 scene.add(character.root)
