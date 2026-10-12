@@ -51,13 +51,13 @@ export function createGlossProps(app: HTMLElement) {
     viewWidth = halfWidth; viewHeight = halfHeight
     const wide = halfWidth > 7
     const width = wide ? Math.min(6, halfWidth * .65, halfHeight * 1.2)
-      : Math.min(halfWidth * .8, halfHeight * .38)
+      : Math.min(halfWidth * 1.08, halfHeight * .5)
     carton.scale.setScalar(width * .8)
-    product.scale.setScalar(width * (wide ? .8 : .62))
-    carton.position.set(wide ? -halfWidth * .62 : halfWidth * .47,
-      wide ? .9 : halfHeight * .68, -2.3)
-    product.position.set(wide ? halfWidth * .62 : halfWidth * .66,
-      wide ? -.6 : -halfHeight * .42, -2.3)
+    product.scale.setScalar(width * (wide ? .8 : .72))
+    carton.position.set(wide ? -halfWidth * .62 : -halfWidth * .43,
+      wide ? .9 : -halfHeight * .34, -2.3)
+    product.position.set(wide ? halfWidth * .62 : halfWidth * .43,
+      wide ? -.6 : -halfHeight * .38, -2.3)
     cartonBaseY = carton.position.y
     productBaseY = product.position.y
     floatAmount = Math.min(.18, width * .045)

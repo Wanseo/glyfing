@@ -99,8 +99,8 @@ export function createBadgeCandies(app: HTMLElement) {
   function layout(halfWidth: number, halfHeight: number) {
     viewWidth = halfWidth; viewHeight = halfHeight
     const wide = halfWidth > 7
-    badge.scale.setScalar(halfHeight * (wide ? .52 : .4))
-    badge.position.set(wide ? 0 : -halfWidth * .5, halfHeight * .69, -2.2)
+    badge.scale.setScalar(wide ? halfHeight * .52 : Math.min(halfHeight * .54, halfWidth * 1.2))
+    badge.position.set(wide ? 0 : -halfWidth * .12, halfHeight * (wide ? .69 : .5), -2.2)
     const desktop = [[-.83, .72], [-.42, .78], [.43, .8], [.85, .69],
       [-.88, -.55], [-.5, -.76], [-.18, -.79], [.18, -.74],
       [.49, -.79], [.77, -.62], [-.88, .18], [.9, .22], [-.62, .49],
