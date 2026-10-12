@@ -1,5 +1,6 @@
 import { drawFit } from './play-assets'
 import type { PlayAssets } from './play-assets'
+import levelUpUrl from './assets/level-up.png'
 
 type Drop = { x: number; y: number; speed: number; kind: number; angle: number }
 type CatchEffect = { x: number; y: number; age: number; correct: boolean }
@@ -37,6 +38,8 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
   const feedback = host.querySelector<HTMLElement>('[data-feedback]')!
   host.querySelector<HTMLImageElement>('.rain-mascot')!.src = assets.character.src
   const items = [...assets.candies, ...assets.toys]
+  const levelUpImage = new Image()
+  levelUpImage.src = levelUpUrl
   let width = 900, height = 600, player = .5, score = 0, level = 0, caught = 0, remaining = 45
   let running = false, spawn = 0, previous = 0, frame = 0, transition = 0, disposed = false
   const keys = new Set<string>(), drops: Drop[] = []
@@ -88,7 +91,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
     running = false; drops.length = 0; keys.clear()
     if (level === levels.length - 1) { finish(true); return }
     message.classList.add('is-level-up')
-    message.innerHTML = `<div class="level-up-announcement" role="status"><span class="level-up-next">LEVEL ${level + 2}</span><h2><span>LEVEL</span><strong>UP!</strong></h2><p>새로운 목표에 도전해요!</p></div>`
+    message.innerHTML = `<div class="level-up-announcement" role="status"><img class="level-up-art" src="${levelUpUrl}" alt="LEVEL UP"></div>`
     message.hidden = false
     transition = window.setTimeout(() => { if (!disposed) { level++; beginLevel() } }, 1400)
   }
