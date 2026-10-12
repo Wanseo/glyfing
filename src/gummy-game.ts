@@ -106,7 +106,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
     const dt = previous && !document.hidden ? Math.min((time - previous) / 1000, .05) : 0
     previous = time
     ctx.clearRect(0, 0, width, height)
-    const playerSize = Math.min(116, width * .24)
+    const playerSize = Math.min(152, width * .31)
     const playerY = height - playerSize - 20
     if (running) {
       remaining = Math.max(0, remaining - dt)
