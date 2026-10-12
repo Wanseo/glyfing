@@ -243,4 +243,4 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   background: transparent; border: 0; padding: 0; border-radius: 50%; cursor: pointer;
   -webkit-tap-highlight-color: transparent;
 }
-.character-play:focus-visible { outline: 2px dashed #ffff00; outline-offset: 4px; }
+.character-play:focus-visible { outline: none; }
