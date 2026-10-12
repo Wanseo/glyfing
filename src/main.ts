@@ -10,6 +10,7 @@ import { createSpeech } from './speech'
 import { createMusic } from './music'
 import { createExperiences } from './experiences'
 import { createCharacterPlay } from './character-play'
+import { createPlushProps } from './plush-props'
 
 THREE.Cache.enabled = true
 document.documentElement.classList.add('is-loading')
@@ -61,6 +62,8 @@ const glossProps = createGlossProps(app)
 scene.add(glossProps.root)
 const badgeCandies = createBadgeCandies(app)
 scene.add(badgeCandies.root)
+const plushProps = createPlushProps()
+scene.add(plushProps.root)
 const speech = createSpeech(app)
 const characterPlay = createCharacterPlay(app, scene, speech.say)
 
@@ -89,6 +92,7 @@ function resize() {
   viewHalfHeight = halfHeight
   glossProps.layout(halfWidth, halfHeight)
   badgeCandies.layout(halfWidth, halfHeight)
+  plushProps.layout(halfWidth, halfHeight)
   const pixelRatio = Math.min(window.devicePixelRatio, 2,
     renderer.capabilities.maxTextureSize / Math.max(window.innerWidth, window.innerHeight))
   renderer.setPixelRatio(pixelRatio)
@@ -135,6 +139,7 @@ createExperiences(app, captureCharacter, route => {
   const home = route === 'home'
   character.root.visible = home; shadow.visible = home
   glossProps.root.visible = home; badgeCandies.root.visible = home
+  plushProps.root.visible = home
   glossProps.syncLinks(camera)
   badgeCandies.syncInteraction(camera)
   const bubble = app.querySelector<HTMLElement>('.character-speech')!
@@ -157,6 +162,7 @@ renderer.setAnimationLoop((time: number) => {
   previous = time
   badgeCandies.update(dt)
   glossProps.update(dt)
+  plushProps.update(dt)
   if (blinkStarted === null && time >= nextBlink) blinkStarted = time
   if (blinkStarted !== null) {
     const elapsed = time - blinkStarted
@@ -207,7 +213,7 @@ renderer.setAnimationLoop((time: number) => {
   renderer.render(scene, camera)
 })
 
-Promise.all([glossProps.ready, badgeCandies.ready, brandLogo.decode()]).then(() => {
+Promise.all([glossProps.ready, badgeCandies.ready, plushProps.ready, brandLogo.decode()]).then(() => {
   renderer.compile(scene, camera)
   requestAnimationFrame(() => document.documentElement.classList.remove('is-loading'))
 }).catch(() => {

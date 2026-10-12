@@ -57,6 +57,10 @@ Glue Gloss 상자와 참이 달린 크롬 튜브는 `src/assets/gloss-cutouts.pn
 
 게임과 카드에 쓰는 캐릭터는 기존 Three.js 모델을 투명 배경으로 렌더링하며, 젤리·제품 이미지는 기존 에셋을 재사용합니다. 관련 코드는 `src/experiences.ts`, `src/gummy-game.ts`, `src/photo-booth.ts`, `src/play-assets.ts`에 있습니다.
 
+## 배경 봉제 캐릭터
+
+`src/plush-props.ts`는 참고 이미지의 가운데 패키지를 제외한 8개 봉제 캐릭터를 메인 화면의 빈 공간에 배치합니다. `src/assets/plush-cutouts.png`는 이미지 편집 도구로 재구성한 투명 배경 4×2 시트이며 원본 픽셀을 그대로 추출한 파일은 아닙니다. 각 셀의 가장 큰 연결된 실루엣을 분리해 사용합니다. 데스크톱과 모바일에서 별도 위치와 크기를 적용하고, 기존 제품과 젤리 뒤에서 부드럽게 떠다닙니다. 모션 감소 설정에서는 움직임을 멈추고 게임·포토부스에서는 숨깁니다.
+
 ## 초기 로딩
 
 메인은 최적화된 WebP 에셋(`glyf-logo.webp`, `gloss-cutouts.webp`, `badge-candies.webp`, `badge-ready.webp`)을 병렬로 미리 불러오고, 이미지 디코딩과 장면 준비를 마친 뒤 한 번에 표시합니다. 최종 사원증은 `badge-ready.webp`에 미리 합성해 매 접속 시의 합성 작업을 없앴습니다. 기존 PNG는 편집 원본으로 보관하며 현재 빌드에는 포함되지 않습니다. 게임·포토부스용 캐릭터 렌더링과 에셋 준비는 해당 화면에 들어갈 때만 실행합니다.
