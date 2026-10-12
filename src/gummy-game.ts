@@ -15,11 +15,11 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
     <section class="rain-game" aria-label="젤리와 인형 수집 게임">
       <a class="play-button rain-home" href="#home">메인으로 ↗</a>
       <canvas class="game-canvas" aria-label="방향키 또는 A와 D 키로 목표 아이템을 받으세요"></canvas>
-      <b class="rain-level" data-level></b>
+      <div class="rain-level"><b data-level></b><span data-count></span></div>
       <div class="rain-timer" role="timer" aria-label="남은 시간"><small>TIME LEFT</small><span data-time></span></div>
-      <aside class="rain-goal"><h1>GUMMY RUSH</h1>
+      <aside class="rain-goal"><h1 class="rain-title"><span>GUMMY</span><span>RUSH</span></h1>
         <div class="rain-goal-images"><img class="rain-mascot" alt="움직이는 GLYF 캐릭터"><span>→</span><canvas data-target width="100" height="100" role="img" aria-label="이번 단계에서 받을 아이템"></canvas></div>
-        <div><b data-count></b></div><p data-feedback role="status"></p>
+        <p data-feedback role="status"></p>
       </aside>
       <div class="rain-help">← → / A·D 키로 이동<br>목표만 받아요! 다른 아이템은 -2sec</div>
       <button class="text-button rain-restart" data-restart>다시 시작 ↻</button>
