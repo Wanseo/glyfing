@@ -247,8 +247,13 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 
 .badge-trigger {
   position: fixed; z-index: 2; background: transparent; border: 0; padding: 0;
-  cursor: zoom-in; -webkit-tap-highlight-color: transparent;
+  cursor: pointer; -webkit-tap-highlight-color: transparent;
 }
+.badge-trigger img {
+  width: 100%; height: 100%; display: block; opacity: 0;
+  filter: url(#product-hover-outline); pointer-events: none;
+}
+.badge-trigger.is-hovered img { opacity: 1; }
 .badge-trigger:focus-visible { outline: none; }
 .badge-viewer {
   border: 0; padding: 0; background: transparent; color: #fff;

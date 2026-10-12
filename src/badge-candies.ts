@@ -91,6 +91,8 @@ export function createBadgeCandies(app: HTMLElement) {
   const hanger = new THREE.Group()
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
   let swingTime = 0
+  let hover = 0
+  const badgeRestPosition = new THREE.Vector3()
   badge.add(hanger)
   root.add(badge)
   let viewWidth = 0, viewHeight = 0
@@ -131,6 +133,7 @@ export function createBadgeCandies(app: HTMLElement) {
       const pivotY = .48
       hanger.position.set(pivotX, pivotY, 0)
       badgeMesh.position.set(-pivotX, -pivotY, 0)
+      badgeRestPosition.copy(badgeMesh.position)
       hanger.add(badgeMesh)
       interactiveBadge = badgeMesh
       await viewer.setImage(badgeMesh.material.map!.image as HTMLCanvasElement, badgeUrl)
@@ -185,6 +188,13 @@ export function createBadgeCandies(app: HTMLElement) {
     syncInteraction(camera: THREE.OrthographicCamera) { viewer.sync(interactiveBadge, camera, root.visible) },
     update(dt: number) {
       swingTime += dt
+      const target = root.visible && viewer.isHovered() ? 1 : 0
+      hover = reducedMotion.matches ? target : THREE.MathUtils.damp(hover, target, 12, dt)
+      if (interactiveBadge) {
+        interactiveBadge.scale.setScalar(1 + hover * .08)
+        interactiveBadge.position.copy(badgeRestPosition)
+        interactiveBadge.position.y += hover * .04
+      }
       hanger.rotation.z = reducedMotion.matches ? 0 : Math.sin(swingTime * Math.PI * 2 / 3.8) * .09
       sparkles.forEach((sparkle, index) => {
         const glint = reducedMotion.matches ? .5

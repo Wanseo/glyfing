@@ -5,6 +5,11 @@ export function createBadgeViewer(app: HTMLElement) {
   button.type = 'button'; button.className = 'badge-trigger'; button.hidden = true
   button.setAttribute('aria-label', 'GLYF 사원증 크게 보기')
   button.setAttribute('aria-haspopup', 'dialog')
+  const outline = document.createElement('img')
+  outline.alt = ''; outline.setAttribute('aria-hidden', 'true'); button.append(outline)
+  button.addEventListener('pointerenter', () => button.classList.add('is-hovered'))
+  button.addEventListener('pointerleave', () => button.classList.remove('is-hovered'))
+  button.addEventListener('pointercancel', () => button.classList.remove('is-hovered'))
   const dialog = document.createElement('dialog')
   dialog.className = 'badge-viewer'; dialog.setAttribute('aria-label', 'GLYF 사원증 확대 보기')
   const image = document.createElement('img')
@@ -21,9 +26,11 @@ export function createBadgeViewer(app: HTMLElement) {
   const position = new THREE.Vector3(), scale = new THREE.Vector3(), rotation = new THREE.Quaternion()
   const euler = new THREE.Euler()
   return {
-    setImage(canvas: HTMLCanvasElement, url?: string) { image.src = url ?? canvas.toDataURL('image/png'); return image.decode() },
+    setImage(canvas: HTMLCanvasElement, url?: string) { image.src = url ?? canvas.toDataURL('image/png'); outline.src = canvas.toDataURL('image/png'); return image.decode() },
+    isHovered() { return !button.hidden && !dialog.open && button.classList.contains('is-hovered') },
     sync(mesh: THREE.Mesh | null, camera: THREE.OrthographicCamera, visible: boolean) {
       button.hidden = !visible || !mesh
+      if (!visible) button.classList.remove('is-hovered')
       if (!visible && dialog.open) dialog.close()
       if (!visible || !mesh) return
       mesh.getWorldPosition(position); mesh.getWorldScale(scale); mesh.getWorldQuaternion(rotation)
