@@ -315,13 +315,13 @@ html[data-view='game'] .world-nav { display: none; }
 }
 
 .rain-message.is-level-up { background: transparent; pointer-events: none; }
-.level-up-announcement { color: #f5ff00; text-align: center; transform: rotate(-5deg); animation: level-up-pop 1.4s ease-out both; }
-.level-up-art { display: block; width: min(780px, 92vw, 150dvh); height: auto; }
+.level-up-announcement { color: #f5ff00; text-align: center; animation: level-up-pop 1.4s ease-out both; }
+.level-up-art { display: block; width: min(560px, 76vw, 110dvh); height: auto; }
 @keyframes level-up-pop {
-  0% { opacity: 0; transform: rotate(-9deg) scale(.55); }
-  18% { opacity: 1; transform: rotate(-3deg) scale(1.08); }
-  30%, 82% { opacity: 1; transform: rotate(-5deg) scale(1); }
-  100% { opacity: 0; transform: rotate(-5deg) scale(1.05); }
+  0% { opacity: 0; transform: scale(.55); }
+  18% { opacity: 1; transform: scale(1.08); }
+  30%, 82% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.05); }
 }
 @media (prefers-reduced-motion: reduce) { .level-up-announcement { animation: none; } }
 
