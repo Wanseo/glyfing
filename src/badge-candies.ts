@@ -118,7 +118,8 @@ export function createBadgeCandies(app: HTMLElement) {
       const height = Math.min((wide ? 1.35 : .85) * 1.18, maxWidth / aspect)
       const extraSize = index < 13 ? 1 : [.74, .9, .68, .82, .63, .78, .7, .62, .65, .72][index - 13]!
       candy.scale.setScalar(height * extraSize)
-      candy.position.set(x! * halfWidth, y! * halfHeight, -2.1)
+      // Keep right-side jellies behind the chrome tube (z = -2.3).
+      candy.position.set(x! * halfWidth, y! * halfHeight, x! > 0 ? -2.6 : -2.1)
       if (index >= 13) candy.rotation.z = [-.4, .32, -.17, .5, -.28, .2, -.52, .37, -.25, .46][index - 13]!
     })
   }
