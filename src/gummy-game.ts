@@ -2,6 +2,7 @@ import { drawFit } from './play-assets'
 import type { PlayAssets } from './play-assets'
 
 type Drop = { x: number; y: number; speed: number; kind: number; angle: number }
+type CatchEffect = { x: number; y: number; age: number; correct: boolean }
 const levels = [
   { target: 0, count: 5, seconds: 45 },
   { target: 4, count: 7, seconds: 43 },
@@ -37,6 +38,12 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
   let width = 900, height = 600, player = .5, score = 0, level = 0, caught = 0, remaining = 45
   let running = false, spawn = 0, previous = 0, frame = 0, transition = 0, disposed = false
   const keys = new Set<string>(), drops: Drop[] = []
+  const effects: CatchEffect[] = []
+  const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+  function catchEffect(correct: boolean, y: number) {
+    effects.push({ x: player, y, age: 0, correct })
+    if (effects.length > 12) effects.shift()
+  }
   function resize() {
     width = stage.clientWidth; height = stage.clientHeight
     const ratio = Math.min(devicePixelRatio, 2)
@@ -57,7 +64,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
     feedback.textContent = '이 아이템을 모아 다음 단계로!'
   }
   function start() {
-    clearTimeout(transition); level = 0; score = 0; player = .5; beginLevel()
+    clearTimeout(transition); effects.length = 0; level = 0; score = 0; player = .5; beginLevel()
   }
   function finish(won: boolean) {
     running = false; keys.clear()
@@ -124,9 +131,13 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
         if (Math.abs(drop.x - player * width) < playerSize * .45 + 15 && drop.y >= playerY + 20 && lastY < height - 30) {
           drops.splice(i, 1)
           if (drop.kind === levels[level]!.target) {
+            catchEffect(true, playerY + 20)
             caught++; score += 10 * (level + 1); feedback.textContent = '맞아요! +1 ✦'
             if (caught >= levels[level]!.count) { updateHud(); clearLevel(); break }
-          } else { remaining = Math.max(0, remaining - 2); feedback.textContent = '다른 아이템이에요! −2초' }
+          } else {
+            catchEffect(false, playerY + 20)
+            remaining = Math.max(0, remaining - 2); feedback.textContent = '다른 아이템이에요! −2초'
+          }
         } else if (drop.y > height + 50) drops.splice(i, 1)
       }
       updateHud()
@@ -139,6 +150,42 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
     }
     const bob = running ? Math.sin(time / 150) * 3 : 0
     drawFit(ctx, assets.character, player * width - playerSize / 2, playerY + bob, playerSize, playerSize)
+    for (let i = effects.length - 1; i >= 0; i--) {
+      const effect = effects[i]!
+      effect.age += dt
+      if (effect.age >= .9) { effects.splice(i, 1); continue }
+      const progress = effect.age / .9
+      const x = effect.x * width, y = effect.y
+      ctx.save()
+      ctx.globalAlpha = Math.min(1, (1 - progress) * 2)
+      if (effect.correct) {
+        ctx.fillStyle = '#fff9a0'; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2
+        for (let star = 0; star < 9; star++) {
+          const angle = star * Math.PI * 2 / 9
+          const radius = reducedMotion.matches ? 38 : 18 + progress * 75
+          const sx = x + Math.cos(angle) * radius, sy = y + Math.sin(angle) * radius
+          const size = (star % 2 ? 7 : 11) * (1 - progress * .5)
+          ctx.beginPath()
+          for (let point = 0; point < 8; point++) {
+            const a = point * Math.PI / 4, r = point % 2 ? size * .25 : size
+            const px = sx + Math.cos(a) * r, py = sy + Math.sin(a) * r
+            if (point === 0) ctx.moveTo(px, py)
+            else ctx.lineTo(px, py)
+          }
+          ctx.closePath(); ctx.fill(); ctx.stroke()
+        }
+      } else {
+        ctx.strokeStyle = '#ff2456'; ctx.lineWidth = 4
+        ctx.beginPath(); ctx.arc(x, y + playerSize * .25, playerSize * .55, 0, Math.PI * 2); ctx.stroke()
+      }
+      ctx.textAlign = 'center'; ctx.font = '900 21px Arial'
+      ctx.lineWidth = 5; ctx.strokeStyle = effect.correct ? '#875000' : '#fff'
+      ctx.fillStyle = effect.correct ? '#fff9a0' : '#d90035'
+      const label = effect.correct ? '✦ +1' : '✕ 다른 아이템! −2초'
+      const labelY = y - 28 - (reducedMotion.matches ? 0 : progress * 35)
+      ctx.strokeText(label, x, labelY); ctx.fillText(label, x, labelY)
+      ctx.restore()
+    }
     frame = requestAnimationFrame(loop)
   }
   resize(); start(); frame = requestAnimationFrame(loop)
