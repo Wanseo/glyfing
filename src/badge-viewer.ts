@@ -21,7 +21,7 @@ export function createBadgeViewer(app: HTMLElement) {
   const position = new THREE.Vector3(), scale = new THREE.Vector3(), rotation = new THREE.Quaternion()
   const euler = new THREE.Euler()
   return {
-    setImage(canvas: HTMLCanvasElement) { image.src = canvas.toDataURL('image/png') },
+    setImage(canvas: HTMLCanvasElement, url?: string) { image.src = url ?? canvas.toDataURL('image/png'); return image.decode() },
     sync(mesh: THREE.Mesh | null, camera: THREE.OrthographicCamera, visible: boolean) {
       button.hidden = !visible || !mesh
       if (!visible && dialog.open) dialog.close()

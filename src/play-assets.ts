@@ -1,6 +1,6 @@
-import badgeUrl from './assets/badge-candies.png'
-import glossUrl from './assets/gloss-cutouts.png'
-import logoUrl from './assets/glyf-logo.png'
+import badgeUrl from './assets/badge-candies.webp'
+import glossUrl from './assets/gloss-cutouts.webp'
+import logoUrl from './assets/glyf-logo.webp'
 import { cutout } from './badge-candies'
 import { productTexture } from './gloss-props'
 

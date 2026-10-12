@@ -267,3 +267,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 @media (prefers-reduced-motion: reduce) { .badge-viewer-image { animation: none; } }
 
 .brand-home { display: block; pointer-events: auto; cursor: pointer; line-height: 0; }
+
+.is-loading #app { visibility: hidden; }
+.startup-error { position: fixed; inset: 35% 20px auto; max-width: 420px; margin: auto; padding: 24px; background: #fff; color: #171717; border: 2px solid #171717; text-align: center; }
+.startup-error button { display: block; margin: 14px auto 0; padding: 10px 16px; cursor: pointer; }

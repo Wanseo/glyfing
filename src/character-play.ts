@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import candyUrl from './assets/badge-candies.png'
+import candyUrl from './assets/badge-candies.webp'
 import { cutout } from './badge-candies'
 
 export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (message: string) => void) {

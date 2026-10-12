@@ -11,9 +11,7 @@ export function createExperiences(app: HTMLElement, captureCharacter: () => stri
   screen.className = 'play-screen'; screen.hidden = true
   app.append(nav, screen)
   let dispose: (() => void) | undefined, request = 0
-  const assets = loadPlayAssets(captureCharacter())
-  // Retain a handled promise even if users stay on the home screen.
-  assets.catch(() => undefined)
+  let assets: ReturnType<typeof loadPlayAssets> | undefined
   const links = nav.querySelectorAll<HTMLAnchorElement>('a')
   async function show(route: Route, score?: number) {
     const current = ++request
@@ -29,7 +27,7 @@ export function createExperiences(app: HTMLElement, captureCharacter: () => stri
     screen.scrollTop = 0
     screen.innerHTML = '<div class="loading-card" role="status">A little weirdness is loading… ✦</div>'
     try {
-      const images = await assets
+      const images = await (assets ??= loadPlayAssets(captureCharacter()))
       if (request !== current) return
       if (route === 'game') dispose = createGummyGame(screen, images, points => {
         history.pushState(null, '', '#photo')

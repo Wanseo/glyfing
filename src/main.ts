@@ -1,5 +1,5 @@
 import './style.css'
-import brandLogoUrl from './assets/glyf-logo.png'
+import brandLogoUrl from './assets/glyf-logo.webp'
 import * as THREE from 'three'
 import { createCharacter } from './character'
 import { clampPosition, getDirection } from './movement'
@@ -11,6 +11,8 @@ import { createMusic } from './music'
 import { createExperiences } from './experiences'
 import { createCharacterPlay } from './character-play'
 
+THREE.Cache.enabled = true
+document.documentElement.classList.add('is-loading')
 const app = document.querySelector<HTMLDivElement>('#app')!
 const scene = new THREE.Scene()
 scene.background = new THREE.Color('#e83796')
@@ -202,4 +204,16 @@ renderer.setAnimationLoop((time: number) => {
   if (currentView === 'home') speech.update(dt, position.x, position.y + hop, camera,
     2.429375 * characterSize, 2.803125 * characterSize, glossProps.hoveredBounds())
   renderer.render(scene, camera)
+})
+
+Promise.all([glossProps.ready, badgeCandies.ready, brandLogo.decode()]).then(() => {
+  renderer.compile(scene, camera)
+  requestAnimationFrame(() => document.documentElement.classList.remove('is-loading'))
+}).catch(() => {
+  const message = document.createElement('div')
+  message.className = 'startup-error'
+  message.setAttribute('role', 'alert')
+  message.innerHTML = '이미지를 불러오지 못했어요. <button type="button">다시 시도 ↻</button>'
+  message.querySelector('button')!.addEventListener('click', () => location.reload())
+  document.body.appendChild(message)
 })

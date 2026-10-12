@@ -1,5 +1,5 @@
 import * as THREE from 'three'
-import cutoutsUrl from './assets/gloss-cutouts.png'
+import cutoutsUrl from './assets/gloss-cutouts.webp'
 
 // Both products share an alpha image. The diagonal gap separates the carton
 // from the tube without clipping its attached tooth and underwear charms.
@@ -62,7 +62,7 @@ export function createGlossProps(app: HTMLElement) {
     productBaseY = product.position.y
     floatAmount = Math.min(.18, width * .045)
   }
-  new THREE.TextureLoader().load(cutoutsUrl, source => {
+  const ready = new THREE.TextureLoader().loadAsync(cutoutsUrl).then(async source => {
     for (const [group, isCarton] of [[carton, true], [product, false]] as const) {
       const { texture, aspect } = productTexture(source.image, isCarton)
       const mesh = new THREE.Mesh(new THREE.PlaneGeometry(1, 1 / aspect),
@@ -103,9 +103,11 @@ export function createGlossProps(app: HTMLElement) {
     }
     source.dispose()
     layout(viewWidth, viewHeight)
-  }, undefined, error => console.error('제품 이미지를 불러오지 못했습니다.', error))
+    await Promise.all(links.map(link => link.element.querySelector('img')!.decode()))
+  })
   return {
     root,
+    ready,
     layout,
     hoveredBounds() {
       if (!root.visible) return []
