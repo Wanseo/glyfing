@@ -37,7 +37,7 @@ export function productTexture(image: HTMLImageElement, carton: boolean) {
 }
 
 export function createGlossProps(app: HTMLElement) {
-  const links: { group: THREE.Group; element: HTMLAnchorElement; aspect: number }[] = []
+  const links: { group: THREE.Group; mesh: THREE.Mesh; element: HTMLAnchorElement; aspect: number; hover: number }[] = []
   const projected = new THREE.Vector3()
   const root = new THREE.Group()
   const carton = new THREE.Group(), product = new THREE.Group()
@@ -99,7 +99,7 @@ export function createGlossProps(app: HTMLElement) {
       element.addEventListener('click', event => {
         if (event.detail && !overProduct(event)) event.preventDefault()
       })
-      links.push({ group, element, aspect })
+      links.push({ group, mesh, element, aspect, hover: 0 })
     }
     source.dispose()
     layout(viewWidth, viewHeight)
@@ -110,14 +110,14 @@ export function createGlossProps(app: HTMLElement) {
     syncLinks(camera: THREE.OrthographicCamera) {
       root.updateMatrixWorld(true)
       const pixelsPerUnit = window.innerWidth / (camera.right - camera.left)
-      for (const { group, element, aspect } of links) {
+      for (const { group, mesh, element, aspect } of links) {
         element.hidden = !root.visible
         if (!root.visible) { element.classList.remove('is-hovered'); continue }
         projected.copy(group.position).project(camera)
         element.style.left = `${(projected.x + 1) * window.innerWidth / 2}px`
         element.style.top = `${(1 - projected.y) * window.innerHeight / 2}px`
-        element.style.width = `${group.scale.x * pixelsPerUnit}px`
-        element.style.height = `${group.scale.y * pixelsPerUnit / aspect}px`
+        element.style.width = `${group.scale.x * mesh.scale.x * pixelsPerUnit}px`
+        element.style.height = `${group.scale.y * mesh.scale.y * pixelsPerUnit / aspect}px`
         element.style.transform = `translate(-50%, -50%) rotate(${-group.rotation.z}rad)`
       }
     },
@@ -130,6 +130,13 @@ export function createGlossProps(app: HTMLElement) {
       product.position.y = productBaseY + Math.sin(productPhase) * floatAmount * amount
       carton.rotation.z = -Math.PI / 3 + Math.sin(cartonPhase + .6) * .025 * amount
       product.rotation.z = Math.sin(productPhase + .5) * .03 * amount
+      for (const link of links) {
+        const target = root.visible && (link.element.classList.contains('is-hovered')
+          || link.element.matches(':focus-visible')) ? 1 : 0
+        link.hover = reducedMotion.matches ? target : THREE.MathUtils.damp(link.hover, target, 12, dt)
+        link.mesh.scale.setScalar(1 + link.hover * .08)
+        link.group.position.y += link.hover * .15
+      }
     },
   }
 }
