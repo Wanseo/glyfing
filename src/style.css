@@ -265,3 +265,5 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 @keyframes badge-closeup-sway { 0%, 100% { transform: rotate(-29.5deg); } 50% { transform: rotate(-26.5deg); } }
 @media (prefers-reduced-motion: reduce) { .badge-viewer-image { animation: none; } }
+
+.brand-home { display: block; pointer-events: auto; cursor: pointer; line-height: 0; }

@@ -31,7 +31,12 @@ brandLogo.draggable = false
 const brandBar = document.createElement('div')
 brandBar.className = 'brand-bar'
 app.appendChild(brandBar)
-brandBar.appendChild(brandLogo)
+const brandHome = document.createElement('a')
+brandHome.className = 'brand-home'
+brandHome.href = '#home'
+brandHome.setAttribute('aria-label', 'GLYF 메인 화면으로 돌아가기')
+brandHome.appendChild(brandLogo)
+brandBar.appendChild(brandHome)
 createMusic(brandBar)
 scene.add(new THREE.HemisphereLight('#fff9ec', '#b19373', 1.8))
 const light = new THREE.DirectionalLight('#fff4df', 2.2)
