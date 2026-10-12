@@ -65,7 +65,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
     targetCtx.clearRect(0, 0, 100, 100)
     drawFit(targetCtx, items[levels[level]!.target]!, 5, 5, 90, 90)
     updateHud(); message.hidden = true; message.classList.remove('is-level-up'); running = true; keys.clear(); previous = 0
-    feedback.textContent = '이 아이템을 모아 다음 단계로!'
+    feedback.textContent = ''
   }
   function start() {
     clearTimeout(transition); effects.length = 0; shakeRemaining = 0; level = 0; score = 0; player = .5; beginLevel()
