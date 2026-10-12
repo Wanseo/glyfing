@@ -131,7 +131,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
             if (caught >= levels[level]!.count) { updateHud(); clearLevel(); break }
           } else {
             catchEffect(false, playerY + 20)
-            remaining = Math.max(0, remaining - 2); feedback.textContent = '다른 아이템이에요! −2초'
+            remaining = Math.max(0, remaining - 2); feedback.textContent = '✕ −2초'
           }
         } else if (drop.y > height + 50) drops.splice(i, 1)
       }
@@ -176,7 +176,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
       ctx.textAlign = 'center'; ctx.font = '900 21px Arial'
       ctx.lineWidth = 5; ctx.strokeStyle = effect.correct ? '#875000' : '#fff'
       ctx.fillStyle = effect.correct ? '#fff9a0' : '#d90035'
-      const label = effect.correct ? '✦ +1' : '✕ 다른 아이템! −2초'
+      const label = effect.correct ? '✦ +1' : '✕ −2초'
       const labelY = y - 28 - (reducedMotion.matches ? 0 : progress * 35)
       ctx.strokeText(label, x, labelY); ctx.fillText(label, x, labelY)
       ctx.restore()
