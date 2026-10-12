@@ -42,7 +42,9 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
   const keys = new Set<string>(), drops: Drop[] = []
   const effects: CatchEffect[] = []
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+  let shakeRemaining = 0
   function catchEffect(correct: boolean, y: number) {
+    if (!correct) shakeRemaining = .65
     effects.push({ x: player, y, age: 0, correct })
     if (effects.length > 12) effects.shift()
   }
@@ -66,7 +68,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
     feedback.textContent = '이 아이템을 모아 다음 단계로!'
   }
   function start() {
-    clearTimeout(transition); effects.length = 0; level = 0; score = 0; player = .5; beginLevel()
+    clearTimeout(transition); effects.length = 0; shakeRemaining = 0; level = 0; score = 0; player = .5; beginLevel()
   }
   function finish(won: boolean) {
     running = false; keys.clear()
@@ -144,7 +146,13 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
       drawFit(ctx, items[drop.kind]!, -size / 2, -size / 2, size, size); ctx.restore()
     }
     const bob = running ? Math.sin(time / 150) * 3 : 0
-    drawFit(ctx, assets.character, player * width - playerSize / 2, playerY + bob, playerSize, playerSize)
+    shakeRemaining = Math.max(0, shakeRemaining - dt)
+    const shake = reducedMotion.matches ? 0 : Math.sin(shakeRemaining * 65) * (shakeRemaining / .65)
+    ctx.save()
+    ctx.translate(player * width + shake * 20, playerY + bob + playerSize / 2)
+    ctx.rotate(shake * .23)
+    drawFit(ctx, assets.character, -playerSize / 2, -playerSize / 2, playerSize, playerSize)
+    ctx.restore()
     for (let i = effects.length - 1; i >= 0; i--) {
       const effect = effects[i]!
       effect.age += dt
@@ -169,9 +177,6 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
           }
           ctx.closePath(); ctx.fill(); ctx.stroke()
         }
-      } else {
-        ctx.strokeStyle = '#ff2456'; ctx.lineWidth = 4
-        ctx.beginPath(); ctx.arc(x, y + playerSize * .25, playerSize * .55, 0, Math.PI * 2); ctx.stroke()
       }
       ctx.textAlign = 'center'; ctx.font = '900 21px Arial'
       ctx.lineWidth = 5; ctx.strokeStyle = effect.correct ? '#875000' : '#fff'
