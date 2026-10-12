@@ -114,6 +114,7 @@ const keys = new Set<string>()
 function captureCharacter() {
   const stickerScene = new THREE.Scene()
   const model = character.root.clone(true)
+  model.visible = true
   model.position.set(0, -3.37309375 * characterSize, 0)
   model.rotation.set(0, 0, 0)
   stickerScene.add(model, new THREE.HemisphereLight('#fff9ec', '#b19373', 1.8))
