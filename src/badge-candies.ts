@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { createBadgeViewer } from './badge-viewer'
 import cutoutsUrl from './assets/badge-candies.png'
+import badgeUrl from './assets/badge-nameless.png'
 
 type Crop = readonly [number, number, number, number]
 type Outline = ReadonlyArray<readonly [number, number]>
@@ -121,8 +122,20 @@ export function createBadgeCandies(app: HTMLElement) {
     [.58, .72, .16, .12], [.74, .725, .08, .125],
     [.54, .84, .24, .16], [.78, .845, .22, .155],
   ]
-  new THREE.TextureLoader().load(cutoutsUrl, source => {
-    const badgeMesh = cutout(source.image, [0, 0, .56, 1], false)
+  Promise.all([new THREE.TextureLoader().loadAsync(badgeUrl), new THREE.TextureLoader().loadAsync(cutoutsUrl)])
+    .then(async ([edited, original]) => {
+    // Retain the original alpha silhouette when using the retouched name strip.
+    const canvas = document.createElement('canvas')
+    canvas.width = original.image.naturalWidth; canvas.height = original.image.naturalHeight
+    const context = canvas.getContext('2d')!
+    context.drawImage(edited.image, 0, 0, canvas.width, canvas.height)
+    context.globalCompositeOperation = 'destination-in'
+    context.drawImage(original.image, 0, 0)
+    const image = new Image()
+    image.src = canvas.toDataURL('image/png')
+    await image.decode()
+    edited.dispose(); original.dispose()
+    const badgeMesh = cutout(image, [0, 0, .56, 1], false)
     if (badgeMesh) {
       // Anchor the swing at the top of the lanyard loop, above the hanging card.
       const pivotX = badgeMesh.geometry.parameters.width * .32
@@ -133,6 +146,9 @@ export function createBadgeCandies(app: HTMLElement) {
       interactiveBadge = badgeMesh
       viewer.setImage(badgeMesh.material.map!.image as HTMLCanvasElement)
     }
+    layout(viewWidth, viewHeight)
+  }).catch(error => console.error('사원증 이미지를 불러오지 못했습니다.', error))
+  new THREE.TextureLoader().load(cutoutsUrl, source => {
     const stripOutlines: Record<number, Outline> = {
       2: [[.694, .191], [.762, .35], [.687, .43], [.598, .266]],
       3: [[.79, .208], [.959, .289], [.938, .427], [.766, .357]],
