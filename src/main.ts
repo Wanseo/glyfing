@@ -124,6 +124,7 @@ createExperiences(app, captureCharacter, route => {
   const home = route === 'home'
   character.root.visible = home; shadow.visible = home
   glossProps.root.visible = home; badgeCandies.root.visible = home
+  glossProps.syncLinks(camera)
   const bubble = app.querySelector<HTMLElement>('.character-speech')!
   bubble.hidden = true
 })
@@ -185,8 +186,8 @@ renderer.setAnimationLoop((time: number) => {
   })
   character.arms.forEach((arm, i) => { arm.rotation.x = Math.sin(gait + i * Math.PI) * 0.45 * walk })
   shadow.position.set(position.x, position.y - 2.23315625 * characterSize, -0.8)
-  if (currentView === 'home') speech.update(dt, position.x, position.y, camera,
-    2.429375 * characterSize, 2.803125 * characterSize)
   glossProps.syncLinks(camera)
+  if (currentView === 'home') speech.update(dt, position.x, position.y, camera,
+    2.429375 * characterSize, 2.803125 * characterSize, glossProps.hoveredBounds())
   renderer.render(scene, camera)
 })

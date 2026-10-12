@@ -38,7 +38,7 @@ export function createSpeech(app: HTMLElement) {
     return remaining.pop()!
   }
   return {
-    update(dt: number, x: number, y: number, camera: THREE.Camera, halfWidth: number, halfHeight: number) {
+    update(dt: number, x: number, y: number, camera: THREE.Camera, halfWidth: number, halfHeight: number, blocked: DOMRect[] = []) {
       countdown -= dt
       if (countdown <= 0) {
         if (bubble.hidden) {
@@ -65,7 +65,11 @@ export function createSpeech(app: HTMLElement) {
       const rightRoom = window.innerWidth - character.right - gap - tail - margin
       const placement = placements[placementIndex]!
       let onLeft = placement === 'upper-left'
-      if ((onLeft ? leftRoom : rightRoom) < 156 && (onLeft ? rightRoom : leftRoom) >= 156) onLeft = !onLeft
+      if (blocked.length) {
+        const center = blocked.reduce((sum, rect) => sum + (rect.left + rect.right) / 2, 0) / blocked.length
+        onLeft = center >= screenX
+      }
+      if (!blocked.length && (onLeft ? leftRoom : rightRoom) < 156 && (onLeft ? rightRoom : leftRoom) >= 156) onLeft = !onLeft
       const sideRoom = onLeft ? leftRoom : rightRoom
       const canUseSide = sideRoom >= 156
       const upperRoom = onLeft ? screenX - 60 : window.innerWidth - screenX - 60
@@ -89,6 +93,17 @@ export function createSpeech(app: HTMLElement) {
         direction = fitsAbove ? (onLeft ? 'down-right' : 'down-left') : 'up'
       } else {
         // On very small screens wait for room rather than overlap the character.
+        bubble.style.visibility = 'hidden'
+        return
+      }
+      const bounds = {
+        left: left - (direction === 'left' ? tail : 0),
+        right: left + width + (direction === 'right' ? tail : 0),
+        top: top - (direction === 'up' ? tail : 0),
+        bottom: top + height + (direction.startsWith('down') ? tail : 0),
+      }
+      if (blocked.some(rect => bounds.left < rect.right + 12 && bounds.right > rect.left - 12
+        && bounds.top < rect.bottom + 12 && bounds.bottom > rect.top - 12)) {
         bubble.style.visibility = 'hidden'
         return
       }

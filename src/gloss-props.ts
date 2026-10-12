@@ -107,6 +107,11 @@ export function createGlossProps(app: HTMLElement) {
   return {
     root,
     layout,
+    hoveredBounds() {
+      if (!root.visible) return []
+      return links.filter(link => link.element.classList.contains('is-hovered')
+        || link.element.matches(':focus-visible')).map(link => link.element.getBoundingClientRect())
+    },
     syncLinks(camera: THREE.OrthographicCamera) {
       root.updateMatrixWorld(true)
       const pixelsPerUnit = window.innerWidth / (camera.right - camera.left)
