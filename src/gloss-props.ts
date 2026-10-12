@@ -3,7 +3,7 @@ import cutoutsUrl from './assets/gloss-cutouts.png'
 
 // Both products share an alpha image. The diagonal gap separates the carton
 // from the tube without clipping its attached tooth and underwear charms.
-function productTexture(image: HTMLImageElement, carton: boolean) {
+export function productTexture(image: HTMLImageElement, carton: boolean) {
   const canvas = document.createElement('canvas')
   canvas.width = image.naturalWidth
   canvas.height = image.naturalHeight
@@ -51,11 +51,11 @@ export function createGlossProps() {
     const width = wide ? Math.min(6, halfWidth * .65, halfHeight * 1.2)
       : Math.min(halfWidth * .8, halfHeight * .38)
     carton.scale.setScalar(width * .8)
-    product.scale.setScalar(width * .8)
+    product.scale.setScalar(width * (wide ? .8 : .62))
     carton.position.set(wide ? -halfWidth * .62 : halfWidth * .47,
       wide ? .9 : halfHeight * .68, -2.3)
-    product.position.set(wide ? halfWidth * .62 : halfWidth * .35,
-      wide ? -.6 : -halfHeight * .65, -2.3)
+    product.position.set(wide ? halfWidth * .62 : halfWidth * .66,
+      wide ? -.6 : -halfHeight * .42, -2.3)
     cartonBaseY = carton.position.y
     productBaseY = product.position.y
     floatAmount = Math.min(.18, width * .045)

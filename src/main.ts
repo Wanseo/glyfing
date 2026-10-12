@@ -8,6 +8,7 @@ import { createGlossProps } from './gloss-props'
 import { createBadgeCandies } from './badge-candies'
 import { createSpeech } from './speech'
 import { createMusic } from './music'
+import { createExperiences } from './experiences'
 
 const app = document.querySelector<HTMLDivElement>('#app')!
 const scene = new THREE.Scene()
@@ -99,9 +100,35 @@ function resize() {
 }
 window.addEventListener('resize', resize)
 resize()
+let currentView = 'home'
 const keys = new Set<string>()
+function captureCharacter() {
+  const stickerScene = new THREE.Scene()
+  const model = character.root.clone(true)
+  model.position.set(0, -3.37309375 * characterSize, 0)
+  model.rotation.set(0, 0, 0)
+  stickerScene.add(model, new THREE.HemisphereLight('#fff9ec', '#b19373', 1.8))
+  const key = new THREE.DirectionalLight('#fff4df', 2.2)
+  key.position.set(-3, 10, 6); stickerScene.add(key)
+  const stickerCamera = new THREE.OrthographicCamera(-2.7, 2.7, 3.2, -3.2, .1, 100)
+  stickerCamera.position.set(0, 0, 20)
+  const stickerRenderer = new THREE.WebGLRenderer({ antialias: true, alpha: true })
+  stickerRenderer.setSize(432, 512); stickerRenderer.setClearColor(0, 0)
+  stickerRenderer.render(stickerScene, stickerCamera)
+  const url = stickerRenderer.domElement.toDataURL('image/png')
+  stickerRenderer.dispose(); stickerRenderer.forceContextLoss()
+  return url
+}
+createExperiences(app, captureCharacter, route => {
+  currentView = route; keys.clear()
+  const home = route === 'home'
+  character.root.visible = home; shadow.visible = home
+  glossProps.root.visible = home; badgeCandies.root.visible = home
+  const bubble = app.querySelector<HTMLElement>('.character-speech')!
+  bubble.hidden = true
+})
 window.addEventListener('keydown', event => {
-  if (!event.key.startsWith('Arrow')) return
+  if (currentView !== 'home' || !event.key.startsWith('Arrow')) return
   event.preventDefault()
   keys.add(event.key)
 })
@@ -158,7 +185,7 @@ renderer.setAnimationLoop((time: number) => {
   })
   character.arms.forEach((arm, i) => { arm.rotation.x = Math.sin(gait + i * Math.PI) * 0.45 * walk })
   shadow.position.set(position.x, position.y - 2.23315625 * characterSize, -0.8)
-  speech.update(dt, position.x, position.y, camera,
+  if (currentView === 'home') speech.update(dt, position.x, position.y, camera,
     2.429375 * characterSize, 2.803125 * characterSize)
   renderer.render(scene, camera)
 })

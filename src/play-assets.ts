@@ -1,0 +1,39 @@
+import badgeUrl from './assets/badge-candies.png'
+import glossUrl from './assets/gloss-cutouts.png'
+import logoUrl from './assets/glyf-logo.png'
+import { cutout } from './badge-candies'
+import { productTexture } from './gloss-props'
+
+export async function loadImage(url: string) {
+  const image = new Image()
+  image.src = url
+  await image.decode()
+  return image
+}
+export async function loadPlayAssets(characterUrl: string) {
+  const [source, gloss, logo, character] = await Promise.all([
+    loadImage(badgeUrl), loadImage(glossUrl), loadImage(logoUrl), loadImage(characterUrl),
+  ])
+  const candies = [[.56, .03, .22, .195], [.62, .425, .14, .14],
+    [.65, .545, .14, .165], [.74, .725, .08, .125]].map(region => {
+    const mesh = cutout(source, region as [number, number, number, number])!
+    const material = mesh.material
+    const canvas = material.map!.image as HTMLCanvasElement
+    mesh.geometry.dispose(); material.map!.dispose(); material.dispose()
+    return canvas
+  })
+  const carton = productTexture(gloss, true), tube = productTexture(gloss, false)
+  const box = carton.texture.image as HTMLCanvasElement
+  const chrome = tube.texture.image as HTMLCanvasElement
+  carton.texture.dispose(); tube.texture.dispose()
+  return { candies, logo, character, box, chrome }
+}
+export type PlayAssets = Awaited<ReturnType<typeof loadPlayAssets>>
+
+export function drawFit(ctx: CanvasRenderingContext2D, image: CanvasImageSource,
+  x: number, y: number, width: number, height: number) {
+  const source = image as HTMLImageElement | HTMLCanvasElement
+  const aspect = source.width / source.height
+  const w = Math.min(width, height * aspect), h = w / aspect
+  ctx.drawImage(image, x + (width - w) / 2, y + (height - h) / 2, w, h)
+}

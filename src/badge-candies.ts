@@ -5,7 +5,7 @@ type Crop = readonly [number, number, number, number]
 type Outline = ReadonlyArray<readonly [number, number]>
 
 // Regions are normalized so the source can retain its original resolution.
-function cutout(image: HTMLImageElement, region: Crop, singleObject = true, outline?: Outline) {
+export function cutout(image: HTMLImageElement, region: Crop, singleObject = true, outline?: Outline) {
   const [x, y, width, height] = region
   const canvas = document.createElement('canvas')
   canvas.width = Math.round(image.naturalWidth * width)
