@@ -49,7 +49,7 @@ const characterSize = .9
 character.root.scale.setScalar(1.86875 * characterSize)
 const position = new THREE.Vector2(0, 0)
 scene.add(character.root)
-const glossProps = createGlossProps()
+const glossProps = createGlossProps(app)
 scene.add(glossProps.root)
 const badgeCandies = createBadgeCandies()
 scene.add(badgeCandies.root)
@@ -187,5 +187,6 @@ renderer.setAnimationLoop((time: number) => {
   shadow.position.set(position.x, position.y - 2.23315625 * characterSize, -0.8)
   if (currentView === 'home') speech.update(dt, position.x, position.y, camera,
     2.429375 * characterSize, 2.803125 * characterSize)
+  glossProps.syncLinks(camera)
   renderer.render(scene, camera)
 })

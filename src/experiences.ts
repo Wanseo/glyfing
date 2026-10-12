@@ -7,14 +7,9 @@ export function createExperiences(app: HTMLElement, captureCharacter: () => stri
   const nav = document.createElement('nav')
   nav.className = 'world-nav'; nav.setAttribute('aria-label', 'GLYF 화면 이동')
   nav.innerHTML = '<a href="#home" data-route="home">THE WORLD</a><a href="#game" data-route="game">PLAY ↗</a><a href="#photo" data-route="photo">SNAP ↗</a>'
-  const home = document.createElement('section')
-  home.className = 'home-invitation'
-  home.innerHTML = `<div class="home-tagline"><h1>A little gloss.<br><em>A lot of personality.</em></h1></div>
-    <div class="home-doors"><a class="home-door game-door" href="#game"><span>01 / A QUICK SNACK BREAK</span><strong>GUMMY RUSH ↗</strong><small>젤리 모으러 갈래?</small></a>
-    <a class="home-door photo-door" href="#photo"><span>02 / YOUR NEXT STORY</span><strong>PHOTOBOOTH ↗</strong><small>우리 같이 한 장 찍을까?</small></a></div>`
   const screen = document.createElement('main')
   screen.className = 'play-screen'; screen.hidden = true
-  app.append(nav, home, screen)
+  app.append(nav, screen)
   let dispose: (() => void) | undefined, request = 0
   const assets = loadPlayAssets(captureCharacter())
   // Retain a handled promise even if users stay on the home screen.
@@ -25,7 +20,7 @@ export function createExperiences(app: HTMLElement, captureCharacter: () => stri
     dispose?.(); dispose = undefined
     onRoute(route)
     document.documentElement.dataset.view = route
-    home.hidden = route !== 'home'; screen.hidden = route === 'home'; nav.hidden = route === 'home'
+    screen.hidden = route === 'home'; nav.hidden = route === 'home'
     links.forEach(link => {
       if (link.dataset.route === route) link.setAttribute('aria-current', 'page')
       else link.removeAttribute('aria-current')

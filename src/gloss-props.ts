@@ -36,7 +36,9 @@ export function productTexture(image: HTMLImageElement, carton: boolean) {
   return { texture, aspect: cropped.width / cropped.height }
 }
 
-export function createGlossProps() {
+export function createGlossProps(app: HTMLElement) {
+  const links: { group: THREE.Group; element: HTMLAnchorElement; aspect: number }[] = []
+  const projected = new THREE.Vector3()
   const root = new THREE.Group()
   const carton = new THREE.Group(), product = new THREE.Group()
   root.add(carton, product)
@@ -67,6 +69,37 @@ export function createGlossProps() {
         new THREE.MeshBasicMaterial({ map: texture, transparent: true,
           depthWrite: false, toneMapped: false }))
       group.add(mesh)
+      const element = document.createElement('a')
+      element.className = 'product-link'
+      element.href = isCarton ? '#game' : '#photo'
+      element.setAttribute('aria-label', isCarton ? 'GUMMY RUSH 게임으로 이동' : 'PHOTOBOOTH 포토부스로 이동')
+      element.title = isCarton ? 'GUMMY RUSH ↗' : 'PHOTOBOOTH ↗'
+      const image = document.createElement('img')
+      const canvas = texture.image as HTMLCanvasElement
+      image.src = canvas.toDataURL('image/png')
+      image.alt = ''; image.draggable = false
+      element.appendChild(image); app.appendChild(element)
+      const pixels = canvas.getContext('2d')!.getImageData(0, 0, canvas.width, canvas.height).data
+      function overProduct(event: MouseEvent) {
+        const bounds = element.getBoundingClientRect()
+        const matrix = new DOMMatrix(getComputedStyle(element).transform)
+        matrix.e = 0; matrix.f = 0
+        const point = new DOMPoint(event.clientX - bounds.left - bounds.width / 2,
+          event.clientY - bounds.top - bounds.height / 2)
+          .matrixTransform(matrix.inverse())
+        const x = Math.floor((point.x / element.offsetWidth + .5) * canvas.width)
+        const y = Math.floor((point.y / element.offsetHeight + .5) * canvas.height)
+        return x >= 0 && y >= 0 && x < canvas.width && y < canvas.height
+          && pixels[(y * canvas.width + x) * 4 + 3]! > 8
+      }
+      element.addEventListener('pointerdown', event => element.classList.toggle('is-hovered', overProduct(event)))
+      element.addEventListener('pointercancel', () => element.classList.remove('is-hovered'))
+      element.addEventListener('mousemove', event => element.classList.toggle('is-hovered', overProduct(event)))
+      element.addEventListener('mouseleave', () => element.classList.remove('is-hovered'))
+      element.addEventListener('click', event => {
+        if (event.detail && !overProduct(event)) event.preventDefault()
+      })
+      links.push({ group, element, aspect })
     }
     source.dispose()
     layout(viewWidth, viewHeight)
@@ -74,6 +107,20 @@ export function createGlossProps() {
   return {
     root,
     layout,
+    syncLinks(camera: THREE.OrthographicCamera) {
+      root.updateMatrixWorld(true)
+      const pixelsPerUnit = window.innerWidth / (camera.right - camera.left)
+      for (const { group, element, aspect } of links) {
+        element.hidden = !root.visible
+        if (!root.visible) { element.classList.remove('is-hovered'); continue }
+        projected.copy(group.position).project(camera)
+        element.style.left = `${(projected.x + 1) * window.innerWidth / 2}px`
+        element.style.top = `${(1 - projected.y) * window.innerHeight / 2}px`
+        element.style.width = `${group.scale.x * pixelsPerUnit}px`
+        element.style.height = `${group.scale.y * pixelsPerUnit / aspect}px`
+        element.style.transform = `translate(-50%, -50%) rotate(${-group.rotation.z}rad)`
+      }
+    },
     update(dt: number) {
       floatTime += dt
       const amount = reducedMotion.matches ? 0 : 1
