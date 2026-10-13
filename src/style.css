@@ -435,6 +435,9 @@ html[data-view='game'] .brand-home { display: none; }
 .home-camera .camera-close { top: -12px; right: -12px; width: 28px; height: 28px; z-index: 2; font-size: 14px; }
 
 .home-icon-link img { display: block; width: 28px; height: 28px; object-fit: contain; }
+.rain-home.home-icon-link { padding: 0; border: 0; background: transparent; box-shadow: none; }
+.rain-home.home-icon-link:hover { background: transparent; }
+.rain-home.home-icon-link img { width: 48px; height: 48px; }
 .world-nav .home-icon-link { display: flex; align-items: center; justify-content: center; padding: 4px 12px; }
 
 .retry-icon-button img, .retry-icon { display: block; width: 28px; height: 28px; object-fit: contain; }
