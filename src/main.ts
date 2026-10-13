@@ -11,8 +11,10 @@ import { createMusic } from './music'
 import { createExperiences } from './experiences'
 import { createCharacterPlay } from './character-play'
 import { createPlushProps } from './plush-props'
+import { createClickSound } from './click-sound'
 
 THREE.Cache.enabled = true
+createClickSound()
 document.documentElement.classList.add('is-loading')
 const app = document.querySelector<HTMLDivElement>('#app')!
 const scene = new THREE.Scene()
