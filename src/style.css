@@ -570,3 +570,6 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
 .camera-shutter { grid-row: 1; }
 .record-stop { width: 15px; height: 15px; background: #fff; border-radius: 2px; }
 .home-camera-view video.recorded-video { transform: none; object-fit: contain; }
+
+.home-camera-view { background-size: cover; background-position: center; }
+.home-camera-view video.recorded-video { left: 50%; right: auto; width: auto; height: 100%; max-width: 100%; aspect-ratio: 9 / 16; transform: translateX(-50%); object-fit: contain; }

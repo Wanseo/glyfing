@@ -136,6 +136,7 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
         recordedBlob = new Blob(chunks, { type: mimeType })
         stop(); recordedUrl = URL.createObjectURL(recordedBlob)
         video.src = recordedUrl; video.classList.add('recorded-video'); video.controls = true; video.loop = true
+        if (recordBackground) view.style.backgroundImage = `url("${recordBackground.toDataURL('image/png')}")`
         image.hidden = true; video.hidden = false; overlay.hidden = true
         void video.play().catch(() => {})
         save.hidden = false; shoot.disabled = false; shoot.innerHTML = `<img class="retry-icon" src="${retryIconUrl}" alt="">`
@@ -175,6 +176,7 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
     stop(); shoot.disabled = true; retry.hidden = true
     if (recordedUrl) { URL.revokeObjectURL(recordedUrl); recordedUrl = '' }
     recordedBlob = null; video.removeAttribute('src'); video.load(); video.controls = false; video.loop = false; video.classList.remove('recorded-video')
+    view.style.backgroundImage = ''
     status.textContent = ''
     try {
       const incoming = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
