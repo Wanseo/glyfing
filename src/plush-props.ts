@@ -23,7 +23,7 @@ export function createPlushProps() {
       : Math.min(width * .43, height * .2)
     toys.forEach((toy, index) => {
       const [x, y] = positions[index]!
-      toy.size = baseSize * sizes[index]!
+      toy.size = baseSize * sizes[index]! * .9
       toy.y = y! * height
       toy.mesh.scale.setScalar(toy.size)
       toy.mesh.position.set(x! * width, toy.y, -3)
