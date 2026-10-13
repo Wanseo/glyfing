@@ -15,6 +15,9 @@ const levels = [
   { target: 6, count: 15, seconds: 27 },
 ]
 export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
+  const itemSound = new Audio(`${import.meta.env.BASE_URL}audio/item-get.mp3`)
+  itemSound.preload = 'auto'
+  itemSound.volume = .65
   host.innerHTML = `
     <section class="rain-game" aria-label="젤리와 인형 수집 게임">
       <div class="rain-lives" role="status" aria-label="남은 목숨 3개">${Array.from({ length: 3 }, () => `<img src="${lifeHeartUrl}" alt="" aria-hidden="true">`).join('')}</div>
@@ -145,6 +148,8 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
           if (drop.kind === levels[level]!.target) {
             caught++; score += 10 * (level + 1)
             catchEffect(true, playerY + 20)
+            itemSound.currentTime = 0
+            void itemSound.play().catch(() => { /* Browser audio permission may be unavailable. */ })
             if (caught >= levels[level]!.count) { updateHud(); clearLevel(); break }
           } else {
             catchEffect(false, playerY + 20)
@@ -207,6 +212,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   resize(); start(); frame = requestAnimationFrame(loop)
   return () => {
     disposed = true; cancelAnimationFrame(frame); clearTimeout(transition); observer.disconnect()
+    itemSound.pause()
     window.removeEventListener('keydown', keydown); window.removeEventListener('keyup', keyup)
     window.removeEventListener('blur', clearKeys); document.removeEventListener('visibilitychange', visibility)
   }
