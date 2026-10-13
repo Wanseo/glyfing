@@ -2,12 +2,13 @@ import { loadPlayAssets } from './play-assets'
 import { createGummyGame } from './gummy-game'
 import { createPhotoBooth } from './photo-booth'
 import { createHomeCamera } from './home-camera'
+import homeIconUrl from './assets/home-icon.png'
 
 type Route = 'home' | 'game' | 'photo' | 'camera'
 export function createExperiences(app: HTMLElement, captureCharacter: () => string, onRoute: (route: Route) => void) {
   const nav = document.createElement('nav')
   nav.className = 'world-nav'; nav.setAttribute('aria-label', 'GLYF 화면 이동')
-  nav.innerHTML = '<a href="#home" data-route="home">THE WORLD</a><a href="#game" data-route="game">PLAY ↗</a><a href="#photo" data-route="photo">SNAP ↗</a>'
+  nav.innerHTML = `<a href="#home" data-route="home" class="home-icon-link" aria-label="HOME"><img src="${homeIconUrl}" alt=""></a><a href="#game" data-route="game">PLAY ↗</a><a href="#photo" data-route="photo">SNAP ↗</a>`
   const screen = document.createElement('main')
   screen.className = 'play-screen'; screen.hidden = true
   app.append(nav, screen)

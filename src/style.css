@@ -432,3 +432,6 @@ html[data-view='game'] .brand-home { display: none; }
 .home-camera [data-save] { grid-column: 3; justify-self: end; min-height: 30px; padding: 5px 10px; font-size: 10px; box-shadow: none; }
 .home-camera p:empty { display: none; }
 .home-camera .camera-close { top: -12px; right: -12px; width: 28px; height: 28px; z-index: 2; font-size: 14px; }
+
+.home-icon-link img { display: block; width: 28px; height: 28px; object-fit: contain; }
+.world-nav .home-icon-link { display: flex; align-items: center; justify-content: center; padding: 4px 12px; }

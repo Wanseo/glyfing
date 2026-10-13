@@ -5,6 +5,7 @@ import gameOverUrl from './assets/game-over.png'
 import lifeHeartUrl from './assets/life-heart.png'
 import levelLabelsUrl from './assets/level-labels.png'
 import victoryUrl from './assets/all-levels-clear.png'
+import homeIconUrl from './assets/home-icon.png'
 
 type Drop = { x: number; y: number; speed: number; kind: number; angle: number; double?: boolean }
 type CatchEffect = { x: number; y: number; age: number; correct: boolean; label: string; bonus: number }
@@ -40,7 +41,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   host.innerHTML = `
     <section class="rain-game" aria-label="젤리와 인형 수집 게임">
       <div class="rain-lives" role="status" aria-label="남은 목숨 3개">${Array.from({ length: 3 }, () => `<img src="${lifeHeartUrl}" alt="" aria-hidden="true">`).join('')}</div>
-      <a class="play-button pink-button rain-home" href="#home">HOME</a>
+      <a class="play-button pink-button rain-home home-icon-link" href="#home" aria-label="HOME"><img src="${homeIconUrl}" alt=""></a>
       <canvas class="game-canvas" aria-label="방향키 또는 A와 D 키로 목표 아이템을 받으세요"></canvas>
       <div class="rain-level"><b data-level></b>
         <div class="rain-goal-images"><canvas data-target width="100" height="100" role="img" aria-label="이번 단계에서 받을 아이템"></canvas></div>
@@ -167,7 +168,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       if (score > best) localStorage.setItem('glyf-gummy-best', String(score))
     } catch { /* optional */ }
     message.innerHTML = `${won ? `<img class="victory-art" src="${victoryUrl}" alt="ALL LEVELS CLEAR!">` : `<img class="game-over-art" src="${gameOverUrl}" alt="GAME OVER">`}
-      <div class="result-actions"><button class="play-button" data-again>RETRY</button><a class="play-button pink-button" href="#home">HOME</a></div>`
+      <div class="result-actions"><button class="play-button" data-again>RETRY</button><a class="play-button pink-button home-icon-link" href="#home" aria-label="HOME"><img src="${homeIconUrl}" alt=""></a></div>`
     message.hidden = false
     message.querySelector('[data-again]')!.addEventListener('click', start)
   }
