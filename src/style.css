@@ -640,3 +640,10 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
 }
 
 .character-speech { z-index: 100; }
+
+@media (pointer: coarse) {
+  html[data-view='home'] #app > .mobile-touch-controls.movement-hint { grid-template-columns: repeat(3, 36px); grid-template-rows: repeat(3, 36px); gap: 0; }
+  html[data-view='home'] #app > .mobile-touch-controls button { width: 36px; height: 36px; }
+  html[data-view='home'] #app > .mobile-touch-controls .pixel-move-arrow { width: 36px; height: 36px; }
+  .rain-game .mobile-touch-controls.movement-hint { gap: 2px; }
+}
