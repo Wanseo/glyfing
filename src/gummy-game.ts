@@ -42,7 +42,6 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       </div>
       <div class="rain-timer" role="timer" aria-label="남은 시간"><small>TIME LEFT</small><span data-time></span></div>
       <aside class="rain-goal"><h1 class="rain-title"><span>GUMMY</span><span>RUSH</span></h1>
-        <p data-feedback role="status"></p>
       </aside>
       <div class="rain-help">← → / A·D 키로 이동<br>목표만 받아요! 다른 아이템은 -2sec</div>
       <button class="text-button rain-restart" data-restart>다시 시작 ↻</button>
@@ -57,7 +56,6 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   const levelEl = host.querySelector<HTMLElement>('[data-level]')!
   const countEl = host.querySelector<HTMLElement>('[data-count]')!
   const timeEl = host.querySelector<HTMLElement>('[data-time]')!
-  const feedback = host.querySelector<HTMLElement>('[data-feedback]')!
   host.querySelector<HTMLImageElement>('.rain-mascot')!.src = assets.character.src
   const items = [...assets.candies, ...assets.toys]
   const levelUpImage = new Image()
@@ -95,7 +93,6 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     targetCtx.clearRect(0, 0, 100, 100)
     drawFit(targetCtx, items[levels[level]!.target]!, 5, 5, 90, 90)
     updateHud(); message.hidden = true; message.classList.remove('is-level-up'); running = true; keys.clear(); previous = 0
-    feedback.textContent = ''
   }
   function start() {
     clearTimeout(transition); effects.length = 0; shakeRemaining = 0; level = 0; score = 0; player = .5; beginLevel()
@@ -160,11 +157,11 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
           drops.splice(i, 1)
           if (drop.kind === levels[level]!.target) {
             catchEffect(true, playerY + 20)
-            caught++; score += 10 * (level + 1); feedback.textContent = '맞아요! +1 ✦'
+            caught++; score += 10 * (level + 1)
             if (caught >= levels[level]!.count) { updateHud(); clearLevel(); break }
           } else {
             catchEffect(false, playerY + 20)
-            remaining = Math.max(0, remaining - 2); feedback.textContent = '✕ -2sec'
+            remaining = Math.max(0, remaining - 2)
           }
         } else if (drop.y > height + 50) drops.splice(i, 1)
       }
