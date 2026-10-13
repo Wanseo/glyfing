@@ -93,6 +93,12 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   gameOverImage.src = gameOverUrl
   let width = 900, height = 600, player = .5, score = 0, level = 0, caught = 0, remaining = 45
   let running = false, spawn = 0, previous = 0, frame = 0, transition = 0, disposed = false
+  const celebration = document.createElement('canvas')
+  celebration.className = 'victory-celebration'; celebration.setAttribute('aria-hidden', 'true')
+  message.appendChild(celebration)
+  const partyCtx = celebration.getContext('2d')!
+  const confetti: { x: number; y: number; speed: number; kind: number; angle: number; size: number }[] = []
+  let celebrating = false, partySpawn = 0, partyTime = 0
   let introActive = false, introTime = 0, introStep = -1
   const countdownLabels = ['ARE YOU READY?', '3', '2', '1', 'GO!']
   const countdownImages: string[] = []
@@ -198,6 +204,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     timeFill.style.width = `${24 + (1 - remaining / levels[level]!.seconds) * 69.5}%`
   }
   function beginLevel() {
+    celebrating = false; confetti.length = 0
     countdownSound.pause(); countdownSound.currentTime = 0
     caught = 0; remaining = levels[level]!.seconds; spawn = 0; heartSpawn = 3; drops.length = 0
     targetCtx.clearRect(0, 0, 100, 100)
@@ -234,6 +241,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     running = false; keys.clear()
     message.classList.remove('is-level-up')
     message.classList.toggle('is-victory', won)
+    celebrating = won; partySpawn = 0; partyTime = 0; confetti.length = 0
     try {
       const best = Number(localStorage.getItem('glyf-gummy-best')) || 0
       if (score > best) localStorage.setItem('glyf-gummy-best', String(score))
@@ -241,6 +249,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     message.innerHTML = `${won ? `<img class="victory-art" src="${victoryUrl}" alt="ALL LEVELS CLEAR!">` : `<img class="game-over-art" src="${gameOverUrl}" alt="GAME OVER">`}
       <div class="result-actions"><button class="play-button retry-icon-button" data-again aria-label="RETRY"><img src="${retryIconUrl}" alt=""></button><a class="play-button pink-button home-icon-link" href="#home" aria-label="HOME"><img src="${homeIconUrl}" alt=""></a></div>`
     message.hidden = false
+    if (won) message.appendChild(celebration)
     message.querySelector('[data-again]')!.addEventListener('click', start)
   }
   function clearLevel() {
@@ -417,6 +426,38 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
         ctx.strokeText(`+${effect.bonus}`, x, bonusY); ctx.fillText(`+${effect.bonus}`, x, bonusY)
       }
       ctx.restore()
+    }
+    if (celebrating) {
+      if (celebration.width !== Math.round(width) || celebration.height !== Math.round(height)) {
+        celebration.width = Math.round(width); celebration.height = Math.round(height)
+      }
+      partyTime += dt; partySpawn -= dt
+      partyCtx.clearRect(0, 0, width, height)
+      if (partySpawn <= 0 && confetti.length < 90) {
+        partySpawn = .12
+        confetti.push({ x: Math.random() * width, y: -35, speed: 65 + Math.random() * 100,
+          kind: Math.floor(Math.random() * assets.candies.length), angle: Math.random() * 6, size: 18 + Math.random() * 18 })
+      }
+      for (let i = confetti.length - 1; i >= 0; i--) {
+        const piece = confetti[i]!
+        if (!reducedMotion.matches) { piece.y += piece.speed * dt; piece.angle += dt * .7 }
+        if (piece.y > height + 40) { confetti.splice(i, 1); continue }
+        partyCtx.save(); partyCtx.translate(piece.x + Math.sin(partyTime + i) * 12, piece.y)
+        partyCtx.rotate(piece.angle); drawFit(partyCtx, assets.candies[piece.kind]!, -piece.size / 2, -piece.size / 2, piece.size, piece.size); partyCtx.restore()
+      }
+      for (let star = 0; star < 24; star++) {
+        const side = star % 2
+        const x = (side ? .77 : .04) * width + (star * 37 % Math.max(1, width * .19))
+        const y = (star * 83 + 45) % height
+        const glint = reducedMotion.matches ? .5 : (Math.sin(partyTime * 4 + star * 1.9) + 1) / 2
+        const size = 3 + glint * 8
+        partyCtx.globalAlpha = .15 + glint * .85; partyCtx.fillStyle = '#f5ff00'
+        partyCtx.beginPath(); partyCtx.moveTo(x, y - size); partyCtx.lineTo(x + 2, y - 2)
+        partyCtx.lineTo(x + size, y); partyCtx.lineTo(x + 2, y + 2); partyCtx.lineTo(x, y + size)
+        partyCtx.lineTo(x - 2, y + 2); partyCtx.lineTo(x - size, y); partyCtx.lineTo(x - 2, y - 2)
+        partyCtx.closePath(); partyCtx.fill()
+      }
+      partyCtx.globalAlpha = 1
     }
     frame = requestAnimationFrame(loop)
   }
