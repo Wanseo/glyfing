@@ -630,3 +630,11 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
   .home-movement-hint .pixel-move-arrow.right { grid-column: 3; grid-row: 2; }
   .home-movement-hint .pixel-move-arrow.down { display: block; grid-column: 2; grid-row: 3; transform: rotate(90deg); }
 }
+
+@media (pointer: coarse) {
+  html[data-view='home'] #app > .mobile-touch-controls.movement-hint { display: grid; grid-template-columns: repeat(3, 46px); grid-template-rows: repeat(3, 46px); gap: 2px; }
+  html[data-view='home'] #app > .mobile-touch-controls button:has(.up) { grid-column: 2; grid-row: 1; }
+  html[data-view='home'] #app > .mobile-touch-controls button:has(.left) { grid-column: 1; grid-row: 2; }
+  html[data-view='home'] #app > .mobile-touch-controls button:has(.right) { grid-column: 3; grid-row: 2; }
+  html[data-view='home'] #app > .mobile-touch-controls button:has(.down) { grid-column: 2; grid-row: 3; }
+}
