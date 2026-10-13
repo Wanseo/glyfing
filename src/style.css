@@ -647,3 +647,9 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
   html[data-view='home'] #app > .mobile-touch-controls .pixel-move-arrow { width: 36px; height: 36px; }
   .rain-game .mobile-touch-controls.movement-hint { gap: 2px; }
 }
+
+@media (pointer: coarse) {
+  html[data-view='home'] #app > .mobile-touch-controls.movement-hint { grid-template-columns: repeat(3, 42px); grid-template-rows: repeat(3, 42px); }
+  html[data-view='home'] #app > .mobile-touch-controls button { width: 42px; height: 42px; }
+  html[data-view='home'] #app > .mobile-touch-controls .pixel-move-arrow { width: 44px; height: 44px; }
+}
