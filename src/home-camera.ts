@@ -73,9 +73,13 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
     if (glossWand) {
       const wandHeight = h * .34
       const wandWidth = wandHeight * glossWand.width / glossWand.height
-      ctx.drawImage(glossWand, w * .14 - wandWidth / 2, h - wandHeight * .88, wandWidth, wandHeight)
+      ctx.drawImage(glossWand, w * .27 - wandWidth / 2, h - wandHeight * .88, wandWidth, wandHeight)
     }
-    if (chromeTube) drawFit(ctx, chromeTube, w * .18, h * .7, w * .18, h * .33)
+    if (chromeTube) {
+      ctx.save(); ctx.translate(w * .14, h * .865); ctx.rotate(-Math.PI / 9)
+      drawFit(ctx, chromeTube, -w * .09, -h * .165, w * .18, h * .33)
+      ctx.restore()
+    }
   }
   function resizeOverlay() {
     overlay.width = Math.max(1, view.clientWidth * 2); overlay.height = Math.max(1, view.clientHeight * 2)
