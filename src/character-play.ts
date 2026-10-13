@@ -19,7 +19,7 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
   const drops: { mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>; vx: number; vy: number; age: number }[] = []
   let candy: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial> | null = null
   let elapsed = 1, lastClick = -Infinity, clicks = 0, x = 0, y = 0
-  let idleTime = 0, hintTime = 0, hasMoved = false, hasTapped = false
+  let idleTime = 0, hintTime = 0, hasTapped = false
   new THREE.TextureLoader().load(candyUrl, source => {
     candy = cutout(source.image, [.62, .425, .14, .14])
     source.dispose()
@@ -47,7 +47,6 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
     update(dt: number, px: number, py: number, camera: THREE.OrthographicCamera, visible: boolean, moving = false) {
       x = px; y = py; elapsed += dt
       const available = visible && !document.querySelector('dialog[open]')
-      if (moving && visible) hasMoved = true
       if (available) hintTime += dt
       idleTime = available && !moving ? idleTime + dt : 0
       const inviting = available && !moving && !hasTapped && !reducedMotion.matches
@@ -64,7 +63,7 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
       button.style.top = `${(1 - projected.y) * window.innerHeight / 2}px`
       button.style.width = `${Math.abs(corner.x - projected.x) * window.innerWidth}px`
       button.style.height = `${Math.abs(corner.y - projected.y) * window.innerHeight}px`
-      moveHint.hidden = !available || hasMoved || hintTime < .5 || hintTime > 5.5
+      moveHint.hidden = !available || hintTime < .5 || hintTime > 5.5
       moveHint.style.left = button.style.left
       moveHint.style.top = `${(1 - projected.y) * window.innerHeight / 2 + 110}px`
       for (let i = drops.length - 1; i >= 0; i--) {
