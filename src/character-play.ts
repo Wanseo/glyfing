@@ -9,16 +9,23 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
   button.setAttribute('aria-label', '캐릭터를 눌러 장난치기. 연속으로 누르면 숨겨둔 젤리가 나와요.')
   button.title = 'Hey! Personal space!'
   app.appendChild(button)
+  const moveHint = document.createElement('div')
+  moveHint.className = 'movement-hint home-movement-hint'
+  moveHint.setAttribute('aria-label', '방향키로 캐릭터 이동')
+  moveHint.innerHTML = '<span aria-hidden="true">←</span><span aria-hidden="true">→</span>'
+  app.appendChild(moveHint)
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
   const projected = new THREE.Vector3(), corner = new THREE.Vector3()
   const drops: { mesh: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial>; vx: number; vy: number; age: number }[] = []
   let candy: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial> | null = null
   let elapsed = 1, lastClick = -Infinity, clicks = 0, x = 0, y = 0
+  let idleTime = 0, hintTime = 0, hasMoved = false, hasTapped = false
   new THREE.TextureLoader().load(candyUrl, source => {
     candy = cutout(source.image, [.62, .425, .14, .14])
     source.dispose()
   })
   button.addEventListener('click', () => {
+    hasTapped = true
     const now = performance.now()
     clicks = now - lastClick < 650 ? clicks + 1 : 1
     lastClick = now; elapsed = 0
@@ -37,10 +44,19 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
     } else say(clicks === 1 ? 'Hey! Personal space!' : 'Easy! I’m full of gummies!')
   })
   return {
-    update(dt: number, px: number, py: number, camera: THREE.OrthographicCamera, visible: boolean) {
+    update(dt: number, px: number, py: number, camera: THREE.OrthographicCamera, visible: boolean, moving = false) {
       x = px; y = py; elapsed += dt
-      const hop = reducedMotion.matches || elapsed >= .8 ? 0
+      const available = visible && !document.querySelector('dialog[open]')
+      if (moving && visible) hasMoved = true
+      if (available) hintTime += dt
+      idleTime = available && !moving ? idleTime + dt : 0
+      const inviting = available && !moving && !hasTapped && !reducedMotion.matches
+      button.classList.toggle('is-inviting', inviting)
+      const phase = idleTime % 8
+      const idleHop = inviting && phase > 1 && phase < 1.6 ? Math.sin((phase - 1) / .6 * Math.PI) * .16 : 0
+      const hop = (reducedMotion.matches || elapsed >= .8 ? 0
         : Math.abs(Math.sin(elapsed * Math.PI / .32)) * .4 * (1 - elapsed / .8)
+      ) + idleHop
       button.hidden = !visible
       if (!visible) { clicks = 0; lastClick = -Infinity; elapsed = 1 }
       projected.set(x, y + hop, 0).project(camera)
@@ -49,6 +65,9 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
       button.style.top = `${(1 - projected.y) * window.innerHeight / 2}px`
       button.style.width = `${Math.abs(corner.x - projected.x) * window.innerWidth}px`
       button.style.height = `${Math.abs(corner.y - projected.y) * window.innerHeight}px`
+      moveHint.hidden = !available || hasMoved || hintTime < .5 || hintTime > 7
+      moveHint.style.left = button.style.left
+      moveHint.style.top = `${(1 - projected.y) * window.innerHeight / 2 + 75}px`
       for (let i = drops.length - 1; i >= 0; i--) {
         const drop = drops[i]!
         drop.age += dt; drop.vy -= dt * 7

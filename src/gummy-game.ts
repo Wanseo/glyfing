@@ -44,6 +44,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       <div class="rain-lives" role="status" aria-label="남은 목숨 3개">${Array.from({ length: 3 }, () => `<img src="${lifeHeartUrl}" alt="" aria-hidden="true">`).join('')}</div>
       <a class="play-button pink-button rain-home home-icon-link" href="#home" aria-label="HOME"><img src="${homeIconUrl}" alt=""></a>
       <canvas class="game-canvas" aria-label="방향키 또는 A와 D 키로 목표 아이템을 받으세요"></canvas>
+      <div class="movement-hint game-movement-hint" aria-label="좌우 방향키로 이동"><span aria-hidden="true">←</span><span aria-hidden="true">→</span></div>
       <div class="rain-level"><b data-level></b>
         <div class="rain-goal-images"><canvas data-target width="100" height="100" role="img" aria-label="이번 단계에서 받을 아이템"></canvas></div>
       </div>
@@ -52,6 +53,8 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     </section>`
   const canvas = host.querySelector<HTMLCanvasElement>('.game-canvas')!
   const ctx = canvas.getContext('2d')!
+  const moveHint = host.querySelector<HTMLElement>('.game-movement-hint')!
+  let hintTime = 0, hasMoved = false
   const stage = host.querySelector<HTMLElement>('.rain-game')!
   const message = host.querySelector<HTMLElement>('.game-message')!
   const targetCanvas = host.querySelector<HTMLCanvasElement>('[data-target]')!
@@ -150,6 +153,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     updateHud(); message.hidden = true; message.classList.remove('is-level-up', 'is-victory'); running = true; keys.clear(); previous = 0
   }
   function start() {
+    hintTime = 0; hasMoved = false
     clearHeartFlights()
     winSound.pause(); winSound.currentTime = 0
     gameOverSound.pause(); gameOverSound.currentTime = 0
@@ -211,6 +215,8 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     if (running) {
       remaining = Math.max(0, remaining - dt)
       const direction = Number(keys.has('arrowright') || keys.has('d')) - Number(keys.has('arrowleft') || keys.has('a'))
+      if (direction) hasMoved = true
+      hintTime += dt
       player = Math.max(.07, Math.min(.93, player + direction * dt * .8))
       spawn -= dt
       if (level === levels.length - 1) {
@@ -282,6 +288,9 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       }
     }
     const bob = running ? Math.sin(time / 150) * 3 : 0
+    moveHint.hidden = !running || hasMoved || hintTime > 7
+    moveHint.style.left = `${player * width}px`
+    moveHint.style.top = `${height - 50}px`
     shakeRemaining = Math.max(0, shakeRemaining - dt)
     const shake = reducedMotion.matches ? 0 : Math.sin(shakeRemaining * 65) * (shakeRemaining / .65)
     ctx.save()

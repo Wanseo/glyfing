@@ -438,3 +438,12 @@ html[data-view='game'] .brand-home { display: none; }
 
 .retry-icon-button img, .retry-icon { display: block; width: 28px; height: 28px; object-fit: contain; }
 .camera-shutter .retry-icon { width: 100%; height: 100%; }
+
+.movement-hint { position: fixed; display: flex; gap: 8px; transform: translateX(-50%); pointer-events: none; z-index: 3; }
+.movement-hint span { display: grid; place-items: center; width: 28px; height: 25px; background: #fff; color: #171717; border: 2px solid #171717; border-radius: 4px; box-shadow: 0 3px #171717; font: 800 20px Arial; animation: hint-key-press 1.6s infinite; }
+.movement-hint span + span { animation-delay: .8s; }
+.game-movement-hint { position: absolute; }
+.character-play.is-inviting::after { content: ''; position: absolute; left: 50%; top: 50%; width: 60%; height: 60%; border: 2px solid #fff; border-radius: 50%; pointer-events: none; opacity: 0; animation: hint-tap-ring 8s infinite; }
+@keyframes hint-key-press { 0%, 35%, 100% { transform: translateY(0); background: #fff; box-shadow: 0 3px #171717; } 15%, 25% { transform: translateY(3px); background: #f5ff00; box-shadow: none; } }
+@keyframes hint-tap-ring { 0%, 12% { opacity: 0; transform: translate(-50%, -50%) scale(.7); } 15% { opacity: .8; } 24%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.35); } }
+@media (prefers-reduced-motion: reduce) { .movement-hint span { animation: none; } .character-play.is-inviting::after { animation: none; } }

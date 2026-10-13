@@ -197,7 +197,7 @@ renderer.setAnimationLoop((time: number) => {
     const target = Math.atan2(direction.x, -direction.y)
     character.root.rotation.y = target
   }
-  const hop = characterPlay.update(dt, position.x, position.y, camera, currentView === 'home')
+  const hop = characterPlay.update(dt, position.x, position.y, camera, currentView === 'home', direction.moving)
   character.root.position.set(position.x, position.y + hop - 3.37309375 * characterSize + Math.abs(Math.sin(gait)) * 0.04671875 * characterSize * walk, 0)
   character.torso.rotation.z = Math.cos(gait) * 0.05 * walk
   character.torso.position.x = Math.cos(gait) * 0.035 * walk
