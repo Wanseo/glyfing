@@ -620,3 +620,13 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
   .mobile-touch-controls button:active { filter: brightness(1.15); }
   html:not([data-view='home']) #app > .mobile-touch-controls { display: none; }
 }
+
+.home-movement-hint .pixel-move-arrow.up, .home-movement-hint .pixel-move-arrow.down { display: none; }
+@media (max-width: 700px) {
+  .home-movement-hint { display: grid; grid-template-columns: repeat(3, 52px); grid-template-rows: repeat(3, 52px); gap: 2px; }
+  .home-movement-hint .pixel-move-arrow { width: 52px; height: 52px; }
+  .home-movement-hint .pixel-move-arrow.up { display: block; grid-column: 2; grid-row: 1; transform: rotate(-90deg); }
+  .home-movement-hint .pixel-move-arrow.left { grid-column: 1; grid-row: 2; }
+  .home-movement-hint .pixel-move-arrow.right { grid-column: 3; grid-row: 2; }
+  .home-movement-hint .pixel-move-arrow.down { display: block; grid-column: 2; grid-row: 3; transform: rotate(90deg); }
+}

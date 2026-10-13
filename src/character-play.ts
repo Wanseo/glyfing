@@ -12,7 +12,7 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
   const moveHint = document.createElement('div')
   moveHint.className = 'movement-hint home-movement-hint'
   moveHint.setAttribute('aria-label', '방향키로 캐릭터 이동')
-  moveHint.innerHTML = '<span class="pixel-move-arrow left" aria-hidden="true"></span><span class="pixel-move-arrow" aria-hidden="true"></span>'
+  moveHint.innerHTML = '<span class="pixel-move-arrow up" aria-hidden="true"></span><span class="pixel-move-arrow left" aria-hidden="true"></span><span class="pixel-move-arrow right" aria-hidden="true"></span><span class="pixel-move-arrow down" aria-hidden="true"></span>'
   app.appendChild(moveHint)
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
   const projected = new THREE.Vector3(), corner = new THREE.Vector3()
