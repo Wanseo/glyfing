@@ -323,7 +323,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       }
     }
     const bob = running ? Math.sin(time / 150) * 3 : 0
-    moveHint.hidden = !running || hasMoved || hintTime > 1
+    moveHint.hidden = !running || hasMoved || hintTime > 5
     moveHint.style.left = `${player * width}px`
     moveHint.style.top = `${height - 50}px`
     shakeRemaining = Math.max(0, shakeRemaining - dt)

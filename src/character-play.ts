@@ -64,7 +64,7 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
       button.style.top = `${(1 - projected.y) * window.innerHeight / 2}px`
       button.style.width = `${Math.abs(corner.x - projected.x) * window.innerWidth}px`
       button.style.height = `${Math.abs(corner.y - projected.y) * window.innerHeight}px`
-      moveHint.hidden = !available || hasMoved || hintTime < .5 || hintTime > 1.5
+      moveHint.hidden = !available || hasMoved || hintTime < .5 || hintTime > 5.5
       moveHint.style.left = button.style.left
       moveHint.style.top = `${(1 - projected.y) * window.innerHeight / 2 + 135}px`
       for (let i = drops.length - 1; i >= 0; i--) {
