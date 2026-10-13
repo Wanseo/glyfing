@@ -94,7 +94,7 @@ let viewHalfWidth = 5.95, viewHalfHeight = 3.15
 let background: THREE.CanvasTexture | null = null
 let backgroundSize = ''
 function resize() {
-  characterSize = window.innerWidth <= 700 ? .67 : .84
+  characterSize = window.innerWidth <= 700 ? .54 : .84
   character.root.scale.setScalar(1.86875 * characterSize)
   shadow.scale.setScalar(characterSize / .84)
   const aspect = window.innerWidth / window.innerHeight
