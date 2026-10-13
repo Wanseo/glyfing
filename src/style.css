@@ -409,3 +409,7 @@ html[data-view='camera'] .play-screen::before { display: none; }
 @media (any-pointer: fine) {
   body .badge-trigger, body .badge-trigger * { cursor: var(--badge-cursor, zoom-in) !important; }
 }
+
+.product-prompt { container-type: inline-size; }
+.product-prompt-question { position: absolute; left: 15%; top: 38%; width: 70%; height: 18%; display: grid; place-items: center; color: #171717; font: 800 clamp(12px, 7cqw, 22px)/1.2 Arial, sans-serif; white-space: nowrap; }
+.product-prompt button { color: #171717; font: 800 clamp(11px, 6cqw, 20px)/1.2 Arial, sans-serif; }
