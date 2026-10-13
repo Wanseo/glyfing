@@ -72,7 +72,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     const label = `LEVEL ${level + 1}/${levels.length}`
     if (levelEl.dataset.label !== label) {
       levelEl.dataset.label = label
-      levelEl.innerHTML = `<svg class="level-pixel-text" viewBox="0 ${100 + level * 230} 1280 190" role="img" aria-label="${label}" xmlns="http://www.w3.org/2000/svg"><image href="${levelLabelsUrl}" width="1280" height="1280"/></svg>`
+      levelEl.innerHTML = `<span class="level-pixel-text" role="img" aria-label="${label}" style="background-image:url('${levelLabelsUrl}');background-position:center ${(100 + level * 230) / (1280 - 190) * 100}%"></span>`
     }
     countEl.textContent = `${caught}/${levels[level]!.count}`
     timeEl.textContent = `${Math.ceil(remaining)}sec`
