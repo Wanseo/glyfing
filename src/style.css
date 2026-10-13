@@ -663,3 +663,8 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
 @media (pointer: coarse) and (max-width: 700px) {
   .home-camera { top: calc(-1 * min(32px, 4dvh)); }
 }
+
+@media (pointer: coarse) and (max-width: 700px) {
+  .rain-level .rain-goal-images canvas { width: 79px; height: 79px; }
+  .rain-level .rain-goal-images { height: 89px; }
+}

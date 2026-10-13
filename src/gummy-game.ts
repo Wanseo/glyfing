@@ -312,7 +312,9 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     const dt = previous && !document.hidden ? Math.min((time - previous) / 1000, .05) : 0
     previous = time
     ctx.clearRect(0, 0, width, height)
-    const playerSize = width <= 700 ? Math.min(132, width * .29) : Math.min(190, width * .39)
+    const mobile = window.matchMedia('(pointer: coarse)').matches && width <= 700
+    const playerSize = mobile ? Math.min(112, width * .245)
+      : width <= 700 ? Math.min(132, width * .29) : Math.min(190, width * .39)
     const playerY = height - playerSize - 20
     if (introActive) {
       if (countdownLoaded) introTime += dt
@@ -387,7 +389,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       if (running && remaining <= 0) finish(false)
     }
     for (const drop of drops) {
-      const size = drop.kind < 4 ? 52 : 66
+      const size = (drop.kind < 4 ? 52 : 66) * (mobile && drop.kind !== heartKind ? .8 : 1)
       ctx.save(); ctx.translate(drop.x, drop.y); ctx.rotate(drop.angle)
       drawFit(ctx, drop.kind === heartKind ? fallingHeart : items[drop.kind]!, -size / 2, -size / 2, size, size); ctx.restore()
       if (drop.double) {
