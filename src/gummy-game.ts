@@ -9,12 +9,13 @@ import lifeHeartUrl from './assets/life-heart.png'
 import levelLabelsUrl from './assets/level-labels.png'
 import victoryUrl from './assets/all-levels-clear.png'
 import homeIconUrl from './assets/home-icon.png'
+import batteryUrl from './assets/timer-battery.png'
 import { createTouchMovement } from './touch-movement'
 
 let preparedImages: Promise<HTMLImageElement[]> | undefined
 export function prepareGameImages() {
   return preparedImages ??= Promise.all([retryIconUrl, levelUpUrl, gameOverUrl, lifeHeartUrl,
-    levelLabelsUrl, victoryUrl, homeIconUrl, countdownUrl, countdownDigitsUrl].map(loadImage))
+    levelLabelsUrl, victoryUrl, homeIconUrl, countdownUrl, countdownDigitsUrl, batteryUrl].map(loadImage))
 }
 
 type Drop = { x: number; y: number; speed: number; kind: number; angle: number; double?: boolean }
@@ -204,7 +205,8 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       levelEl.innerHTML = `<span class="level-pixel-text" role="img" aria-label="${label}" style="background-image:url('${levelLabelsUrl}');background-position:center ${(100 + level * 230) / (1280 - 190) * 100}%"></span>`
     }
     timeEl.textContent = `${Math.ceil(remaining)}sec`
-    timeFill.style.width = `${24 + (1 - remaining / levels[level]!.seconds) * 69.5}%`
+    const fraction = Math.max(0, Math.min(1, remaining / levels[level]!.seconds))
+    timeFill.style.width = fraction === 1 ? '0%' : `${6 + (1 - fraction) * 88}%`
   }
   function beginLevel() {
     touchMovement.clear()
