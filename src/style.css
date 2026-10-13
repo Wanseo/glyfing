@@ -464,3 +464,15 @@ html[data-view='game'] .rain-timer { right: 96px; }
   .rain-lives { height: 37.5px; }
   .rain-timer [data-time] { font-size: 20px; }
 }
+
+html[data-view='game'] .rain-timer { top: 18px; right: 180px; }
+html[data-view='game'] .brand-bar { top: calc(27px + clamp(140px, 17vw, 230px) * 3 / 16 - 36px); right: 88px; bottom: auto; }
+html[data-view='game'] .rain-home.home-icon-link { top: calc(27px + clamp(140px, 17vw, 230px) * 3 / 16 - 36px); right: 12px; width: 72px; height: 72px; }
+html[data-view='game'] .rain-home.home-icon-link img { width: 64px; height: 64px; }
+@media (max-width: 700px) {
+  html[data-view='game'] .rain-timer { top: 120px; right: 132px; }
+  html[data-view='game'] .pixel-battery { width: 100px; }
+  html[data-view='game'] .brand-bar { top: 117.75px; right: 66px; }
+  html[data-view='game'] .rain-home.home-icon-link { top: 117.75px; right: 6px; width: 60px; height: 60px; }
+  html[data-view='game'] .rain-home.home-icon-link img { width: 54px; height: 54px; }
+}
