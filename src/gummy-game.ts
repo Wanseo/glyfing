@@ -34,7 +34,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   host.innerHTML = `
     <section class="rain-game" aria-label="젤리와 인형 수집 게임">
       <div class="rain-lives" role="status" aria-label="남은 목숨 3개">${Array.from({ length: 3 }, () => `<img src="${lifeHeartUrl}" alt="" aria-hidden="true">`).join('')}</div>
-      <a class="play-button rain-home" href="#home">메인으로 ↗</a>
+      <a class="play-button pink-button rain-home" href="#home">HOME</a>
       <canvas class="game-canvas" aria-label="방향키 또는 A와 D 키로 목표 아이템을 받으세요"></canvas>
       <div class="rain-level"><b data-level></b>
         <div class="rain-goal-images"><canvas data-target width="100" height="100" role="img" aria-label="이번 단계에서 받을 아이템"></canvas></div>
