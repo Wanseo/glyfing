@@ -280,9 +280,9 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     const playerY = height - playerSize - 20
     if (introActive) {
       if (countdownLoaded) introTime += dt
-      const step = introTime < .7 ? 0 : introTime < 1.35 ? 1 : introTime < 2 ? 2 : introTime < 2.65 ? 3 : 4
+      const step = introTime < .55 ? 0 : introTime < 1.05 ? 1 : introTime < 1.55 ? 2 : introTime < 2.05 ? 3 : 4
       showIntro(step)
-      if (introTime >= 3.2) {
+      if (introTime >= 2.55) {
         introActive = false; message.hidden = true; message.classList.remove('is-countdown'); running = true; keys.clear()
       }
     }
