@@ -378,3 +378,8 @@ html[data-view='camera'] .play-screen::before { display: none; }
 .product-prompt-yes { left: 19.5%; top: 65%; width: 23.5%; height: 15%; }
 .product-prompt-no { left: 57%; top: 65%; width: 23.5%; height: 15%; }
 .product-prompt-close { left: 79%; top: 15.5%; width: 9.5%; height: 12.5%; }
+
+.startup-loading { display: none; }
+.is-loading .startup-loading { position: fixed; inset: 0; display: grid; place-items: center; z-index: 20; background: #e83796; }
+.startup-loading img, .experience-loading img { display: block; width: min(520px, 84vw); height: auto; }
+.experience-loading { position: fixed; inset: 0; display: grid; place-items: center; pointer-events: none; }

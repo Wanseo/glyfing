@@ -2,6 +2,7 @@ import { loadPlayAssets } from './play-assets'
 import { createGummyGame } from './gummy-game'
 import { createPhotoBooth } from './photo-booth'
 import { createHomeCamera } from './home-camera'
+import loadingUrl from './assets/loading.png'
 
 type Route = 'home' | 'game' | 'photo' | 'camera'
 export function createExperiences(app: HTMLElement, captureCharacter: () => string, onRoute: (route: Route) => void) {
@@ -31,7 +32,7 @@ export function createExperiences(app: HTMLElement, captureCharacter: () => stri
       screen.querySelector<HTMLAnchorElement>('.camera-close')!.focus({ preventScroll: true })
       return
     }
-    screen.innerHTML = '<div class="loading-card" role="status">A little weirdness is loading… ✦</div>'
+    screen.innerHTML = `<div class="experience-loading" role="status"><img src="${loadingUrl}" alt="LOADING..."></div>`
     try {
       const images = await (assets ??= loadPlayAssets(captureCharacter()))
       if (request !== current) return
