@@ -1,5 +1,6 @@
 import retryIconUrl from './assets/retry-icon.png'
-import { drawFit } from './play-assets'
+import { drawFit, loadImage } from './play-assets'
+import countdownUrl from './assets/game-countdown.png'
 import type { PlayAssets } from './play-assets'
 import levelUpUrl from './assets/level-up.png'
 import gameOverUrl from './assets/game-over.png'
@@ -81,6 +82,30 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   gameOverImage.src = gameOverUrl
   let width = 900, height = 600, player = .5, score = 0, level = 0, caught = 0, remaining = 45
   let running = false, spawn = 0, previous = 0, frame = 0, transition = 0, disposed = false
+  let introActive = false, introTime = 0, introStep = -1
+  const countdownLabels = ['ARE YOU READY?', '3', '2', '1', 'GO!']
+  const countdownImages: string[] = []
+  let countdownLoaded = false
+  void loadImage(countdownUrl).then(source => {
+    if (disposed) return
+    const regions = [[.03, .1, .94, .14], [.42, .285, .17, .145], [.42, .46, .17, .15], [.43, .64, .15, .15], [.33, .81, .34, .15]]
+    for (const [x, y, w, h] of regions) {
+      const crop = document.createElement('canvas')
+      crop.width = Math.round(source.width * w!); crop.height = Math.round(source.height * h!)
+      crop.getContext('2d')!.drawImage(source, source.width * x!, source.height * y!, crop.width, crop.height, 0, 0, crop.width, crop.height)
+      countdownImages.push(crop.toDataURL('image/png'))
+    }
+    countdownLoaded = true; introStep = -1
+  }).catch(() => { countdownLoaded = true })
+  function showIntro(step: number) {
+    if (introStep === step) return
+    introStep = step
+    message.classList.add('is-countdown')
+    message.innerHTML = countdownImages[step]
+      ? `<img class="countdown-art ${step === 0 ? 'is-ready' : ''}" src="${countdownImages[step]}" alt="${countdownLabels[step]}">`
+      : `<h2>${countdownLabels[step]}</h2>`
+    message.hidden = false
+  }
   const keys = new Set<string>(), drops: Drop[] = []
   const effects: CatchEffect[] = []
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
@@ -150,7 +175,8 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     }
     targetCtx.drawImage(outline, 0, 0)
     drawFit(targetCtx, items[levels[level]!.target]!, 5, 5, 90, 90)
-    updateHud(); message.hidden = true; message.classList.remove('is-level-up', 'is-victory'); running = true; keys.clear(); previous = 0
+    introActive = false
+    updateHud(); message.hidden = true; message.classList.remove('is-level-up', 'is-victory', 'is-countdown'); running = true; keys.clear(); previous = 0
   }
   function start() {
     hintTime = 0; hasMoved = false
@@ -160,6 +186,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     wrongSound.pause(); wrongSound.currentTime = 0
     levelSound.pause(); levelSound.currentTime = 0
     clearTimeout(transition); effects.length = 0; shakeRemaining = 0; lives = 3; updateLives(); level = 0; score = 0; player = .5; beginLevel()
+    introActive = true; introTime = 0; introStep = -1; running = false; showIntro(0)
   }
   function finish(won: boolean) {
     const resultSound = won ? winSound : gameOverSound
@@ -212,6 +239,14 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     ctx.clearRect(0, 0, width, height)
     const playerSize = Math.min(190, width * .39)
     const playerY = height - playerSize - 20
+    if (introActive) {
+      if (countdownLoaded) introTime += dt
+      const step = introTime < 1.3 ? 0 : introTime < 2.3 ? 1 : introTime < 3.3 ? 2 : introTime < 4.3 ? 3 : 4
+      showIntro(step)
+      if (introTime >= 4.95) {
+        introActive = false; message.hidden = true; message.classList.remove('is-countdown'); running = true; keys.clear()
+      }
+    }
     if (running) {
       remaining = Math.max(0, remaining - dt)
       const direction = Number(keys.has('arrowright') || keys.has('d')) - Number(keys.has('arrowleft') || keys.has('a'))
