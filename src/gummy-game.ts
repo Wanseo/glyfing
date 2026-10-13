@@ -161,7 +161,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     const dt = previous && !document.hidden ? Math.min((time - previous) / 1000, .05) : 0
     previous = time
     ctx.clearRect(0, 0, width, height)
-    const playerSize = Math.min(152, width * .31)
+    const playerSize = Math.min(190, width * .39)
     const playerY = height - playerSize - 20
     if (running) {
       remaining = Math.max(0, remaining - dt)

@@ -351,14 +351,14 @@ html[data-view='camera'] .play-screen::before { display: none; }
 .rain-lives img { width: 58px; height: 58px; object-fit: contain; }
 @media (max-width: 700px) { .rain-lives { top: 129px; left: 10px; gap: 0; height: 48.75px; } .rain-lives img { width: 40px; height: 40px; } }
 
-.rain-level .rain-goal-images { height: 108px; gap: 18px; }
+.rain-level .rain-goal-images { height: 135px; gap: 18px; }
 .rain-level .rain-mascot { width: 88px; height: 100px; }
-.rain-level .rain-goal-images canvas { width: 96px; height: 96px; }
+.rain-level .rain-goal-images canvas { width: 120px; height: 120px; }
 .rain-level .rain-goal-images > span { font-size: 30px; }
 @media (max-width: 700px) {
-  .rain-level .rain-goal-images { height: 82px; gap: 12px; }
+  .rain-level .rain-goal-images { height: 103px; gap: 12px; }
   .rain-level .rain-mascot { width: 64px; height: 76px; }
-  .rain-level .rain-goal-images canvas { width: 74px; height: 74px; }
+  .rain-level .rain-goal-images canvas { width: 93px; height: 93px; }
 }
 
 .rain-level .rain-goal-images canvas {
