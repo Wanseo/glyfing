@@ -32,7 +32,10 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap
 renderer.domElement.setAttribute('aria-label', '핑크 글리터 배경 위의 3D 캐릭터와 Glue Gloss 패키지, 크롬 튜브, 사원증과 알록달록한 젤리들. 방향키로 움직일 수 있습니다.')
 renderer.domElement.setAttribute('role', 'img')
 app.appendChild(renderer.domElement)
-const touchMovement = createTouchMovement(renderer.domElement)
+const touchMovement = createTouchMovement(renderer.domElement, () => {
+  const center = new THREE.Vector3(position.x, position.y, 0).project(camera)
+  return { x: (center.x + 1) * window.innerWidth / 2, y: (1 - center.y) * window.innerHeight / 2 }
+})
 const brandLogo = document.createElement('img')
 brandLogo.className = 'brand-logo'
 brandLogo.src = brandLogoUrl
@@ -61,7 +64,7 @@ const fill = new THREE.DirectionalLight('#ffffff', 0.8)
 fill.position.set(4, 1, -3)
 scene.add(fill)
 const character = createCharacter()
-const characterSize = .84
+let characterSize = .84
 character.root.scale.setScalar(1.86875 * characterSize)
 const position = new THREE.Vector2(0, 0)
 scene.add(character.root)
@@ -90,6 +93,9 @@ let viewHalfWidth = 5.95, viewHalfHeight = 3.15
 let background: THREE.CanvasTexture | null = null
 let backgroundSize = ''
 function resize() {
+  characterSize = window.innerWidth <= 700 ? .67 : .84
+  character.root.scale.setScalar(1.86875 * characterSize)
+  shadow.scale.setScalar(characterSize / .84)
   const aspect = window.innerWidth / window.innerHeight
   // Keep the character approximately 120 pixels tall on desktop screens.
   const pixelsPerUnit = Math.min(48, window.innerHeight / 8, window.innerWidth / 6)
@@ -216,8 +222,10 @@ renderer.setAnimationLoop((time: number) => {
   if (document.querySelector('dialog[open]')) keys.clear()
   const direction = getDirection(keys)
   if (currentView === 'home' && !document.querySelector('dialog[open]')) {
-    const touchDirection = touchMovement.direction()
-    if (touchDirection) { direction.x = touchDirection; direction.y = 0; direction.moving = true }
+    const touchDirection = touchMovement.vector()
+    if (touchDirection.x || touchDirection.y) {
+      direction.x = touchDirection.x; direction.y = touchDirection.y; direction.moving = true
+    }
   } else touchMovement.clear()
   const previousX = position.x, previousY = position.y
   position.x = clampPosition(position.x + direction.x * dt * 2.9, viewHalfWidth, 2.429375 * characterSize)

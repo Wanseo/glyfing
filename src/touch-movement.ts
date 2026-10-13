@@ -1,12 +1,15 @@
-export function createTouchMovement(surface: HTMLElement) {
-  const touches = new Map<number, number>()
+export function createTouchMovement(surface: HTMLElement, anchor?: () => { x: number; y: number }) {
+  const touches = new Map<number, { x: number; y: number }>()
   function update(event: PointerEvent) {
     if (event.pointerType !== 'touch' || !touches.has(event.pointerId)) return
-    touches.set(event.pointerId, event.clientX < window.innerWidth / 2 ? -1 : 1)
+    const center = anchor?.() ?? { x: window.innerWidth / 2, y: window.innerHeight / 2 }
+    const dx = event.clientX - center.x, dy = event.clientY - center.y
+    touches.set(event.pointerId, anchor && Math.abs(dy) > Math.abs(dx)
+      ? { x: 0, y: dy < 0 ? 1 : -1 } : { x: dx < 0 ? -1 : 1, y: 0 })
   }
   function down(event: PointerEvent) {
     if (event.pointerType !== 'touch') return
-    touches.set(event.pointerId, 0)
+    touches.set(event.pointerId, { x: 0, y: 0 })
     surface.setPointerCapture(event.pointerId); update(event)
   }
   function release(event: PointerEvent) { touches.delete(event.pointerId) }
@@ -21,7 +24,13 @@ export function createTouchMovement(surface: HTMLElement) {
   window.addEventListener('blur', clear)
   document.addEventListener('visibilitychange', visibility)
   return {
-    direction() { return Math.sign([...touches.values()].reduce((sum, value) => sum + value, 0)) },
+    direction() { return Math.sign([...touches.values()].reduce((sum, value) => sum + value.x, 0)) },
+    vector() {
+      const x = Math.sign([...touches.values()].reduce((sum, value) => sum + value.x, 0))
+      const y = Math.sign([...touches.values()].reduce((sum, value) => sum + value.y, 0))
+      const length = Math.hypot(x, y) || 1
+      return { x: x / length, y: y / length }
+    },
     clear,
     dispose() {
       clear()

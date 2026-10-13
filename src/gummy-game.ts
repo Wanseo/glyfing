@@ -311,7 +311,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     const dt = previous && !document.hidden ? Math.min((time - previous) / 1000, .05) : 0
     previous = time
     ctx.clearRect(0, 0, width, height)
-    const playerSize = Math.min(190, width * .39)
+    const playerSize = width <= 700 ? Math.min(132, width * .29) : Math.min(190, width * .39)
     const playerY = height - playerSize - 20
     if (introActive) {
       if (countdownLoaded) introTime += dt
