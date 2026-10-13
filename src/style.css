@@ -715,3 +715,5 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
 @media (pointer: coarse) and (prefers-reduced-motion: reduce) {
   .rain-game.show-mobile-movement-hint .mobile-touch-controls.movement-hint { animation: none; opacity: 1; }
 }
+
+.camera-sticker-layer.is-playback { pointer-events: auto; }

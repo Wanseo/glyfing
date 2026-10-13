@@ -24,6 +24,7 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
   let recorder: MediaRecorder | null = null, recordStream: MediaStream | null = null, animationFrame = 0
   let recordStarted = 0, recordCanvas: HTMLCanvasElement | null = null, recordBackground: HTMLCanvasElement | null = null
   let lastPaint = 0
+  let recordedView = { x: 66, y: 0, width: 948, height: 0 }
   const shutterMarkup = shoot.innerHTML
   const save = host.querySelector<HTMLButtonElement>('[data-save]')!
   const view = host.querySelector<HTMLElement>('.home-camera-view')!
@@ -152,6 +153,13 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
   }
   function frame(time: number) {
     if (disposed) return
+    if (recordedBlob && video.readyState >= 2 && time - lastPaint > 40) {
+      lastPaint = time
+      const ctx = overlay.getContext('2d')!
+      ctx.clearRect(0, 0, overlay.width, overlay.height)
+      ctx.drawImage(video, recordedView.x, recordedView.y, recordedView.width, recordedView.height,
+        0, 0, overlay.width, overlay.height)
+    }
     if (stream && videoMode && time - lastPaint > 80) {
       lastPaint = time
       const ctx = overlay.getContext('2d')!
@@ -173,6 +181,8 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
       if (!mimeType) throw new Error('No recording format')
       recordBackground = captureHome(); recordCanvas = document.createElement('canvas')
       recordCanvas.width = 1080; recordCanvas.height = 1920
+      const imageHeight = 948 * view.clientHeight / view.clientWidth
+      recordedView = { x: 66, y: (1920 - (24 + 40 + imageHeight + 70)) / 2 + 52, width: 948, height: imageHeight }
       composeStory(shootFrame(true), recordBackground, recordCanvas)
       recordStream = recordCanvas.captureStream(24)
       recorder = new MediaRecorder(recordStream, { mimeType, videoBitsPerSecond: 5000000 })
@@ -183,9 +193,11 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
         if (disposed) return
         recordedBlob = new Blob(chunks, { type: mimeType })
         stop(); recordedUrl = URL.createObjectURL(recordedBlob)
-        video.src = recordedUrl; video.classList.add('recorded-video'); video.controls = true; video.loop = true
-        if (recordBackground) view.style.backgroundImage = `url("${recordBackground.toDataURL('image/png')}")`
-        image.hidden = true; video.hidden = false; overlay.hidden = true
+        video.src = recordedUrl; video.classList.add('recorded-video'); video.controls = false; video.loop = true
+        image.hidden = true; video.hidden = true; overlay.hidden = false
+        overlay.classList.add('is-playback')
+        if (recordCanvas) overlay.getContext('2d')!.drawImage(recordCanvas,
+          recordedView.x, recordedView.y, recordedView.width, recordedView.height, 0, 0, overlay.width, overlay.height)
         void video.play().catch(() => {})
         save.hidden = false; shoot.disabled = false; shoot.innerHTML = `<img class="retry-icon" src="${retryIconUrl}" alt="">`
         shoot.setAttribute('aria-label', '다시 촬영'); status.textContent = ''; downloadBlob(recordedBlob)
@@ -219,6 +231,11 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
     if (photo || recordedBlob) void connect()
     else resizeOverlay()
   }))
+  overlay.addEventListener('click', () => {
+    if (!recordedBlob) return
+    if (video.paused) void video.play().catch(() => {})
+    else video.pause()
+  })
   animationFrame = requestAnimationFrame(frame)
   function stop() { stream?.getTracks().forEach(track => track.stop()); stream = null; video.srcObject = null }
   async function connect() {
@@ -227,6 +244,7 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
     if (recordedUrl) { URL.revokeObjectURL(recordedUrl); recordedUrl = '' }
     recordedBlob = null; video.removeAttribute('src'); video.load(); video.controls = false; video.loop = false; video.classList.remove('recorded-video')
     view.style.backgroundImage = ''
+    overlay.classList.remove('is-playback')
     status.textContent = ''
     try {
       const incoming = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
