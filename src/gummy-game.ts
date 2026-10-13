@@ -1,6 +1,7 @@
 import retryIconUrl from './assets/retry-icon.png'
 import { drawFit, loadImage } from './play-assets'
 import countdownUrl from './assets/game-countdown.png'
+import countdownDigitsUrl from './assets/countdown-digits.png'
 import type { PlayAssets } from './play-assets'
 import levelUpUrl from './assets/level-up.png'
 import gameOverUrl from './assets/game-over.png'
@@ -86,7 +87,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   const countdownLabels = ['ARE YOU READY?', '3', '2', '1', 'GO!']
   const countdownImages: string[] = []
   let countdownLoaded = false
-  void loadImage(countdownUrl).then(source => {
+  void Promise.all([loadImage(countdownUrl), loadImage(countdownDigitsUrl)]).then(([source, digits]) => {
     if (disposed) return
     const regions = [[.03, .1, .94, .14], [.42, .285, .17, .145], [.42, .46, .17, .15], [.43, .64, .15, .15], [.33, .81, .34, .15]]
     for (const [x, y, w, h] of regions) {
@@ -94,6 +95,13 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       crop.width = Math.round(source.width * w!); crop.height = Math.round(source.height * h!)
       crop.getContext('2d')!.drawImage(source, source.width * x!, source.height * y!, crop.width, crop.height, 0, 0, crop.width, crop.height)
       countdownImages.push(crop.toDataURL('image/png'))
+    }
+    for (let i = 0; i < 3; i++) {
+      const crop = document.createElement('canvas')
+      crop.width = Math.round(digits.width / 3); crop.height = digits.height
+      crop.getContext('2d')!.drawImage(digits, i * digits.width / 3, 0, digits.width / 3, digits.height,
+        0, 0, crop.width, crop.height)
+      countdownImages[i + 1] = crop.toDataURL('image/png')
     }
     countdownLoaded = true; introStep = -1
   }).catch(() => { countdownLoaded = true })

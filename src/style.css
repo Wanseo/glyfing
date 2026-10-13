@@ -515,3 +515,10 @@ html[data-view='game'] .rain-home.home-icon-link { right: 88px; }
   html[data-view='game'] .brand-bar { right: 6px; }
   html[data-view='game'] .rain-home.home-icon-link { right: 66px; }
 }
+
+.countdown-art { width: min(210px, 40vw); }
+.countdown-art.is-ready { width: min(800px, 94vw); }
+.result-actions { gap: 28px; }
+.result-actions .play-button { padding: 0; min-width: 68px; min-height: 68px; border: 0; background: transparent; box-shadow: none; }
+.result-actions .play-button:hover { background: transparent; }
+.result-actions .retry-icon-button img, .result-actions .home-icon-link img { width: 68px; height: 68px; image-rendering: pixelated; filter: drop-shadow(1px 0 0 #000) drop-shadow(-1px 0 0 #000) drop-shadow(0 1px 0 #000) drop-shadow(0 -1px 0 #000); }
