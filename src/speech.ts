@@ -47,9 +47,14 @@ export function createSpeech(app: HTMLElement) {
       placementIndex = (placementIndex + 1) % placements.length
     },
     update(dt: number, x: number, y: number, camera: THREE.Camera, halfWidth: number, halfHeight: number, blocked: DOMRect[] = []) {
+      if (document.documentElement.classList.contains('is-loading')) {
+        bubble.hidden = true
+        return
+      }
       if (awaitingTap) {
-        if (!document.documentElement.classList.contains('is-loading')) introductionTime += dt
-        text.textContent = introductionTime < 3 ? 'Hello! My name is Fuggler!' : 'Tap me!'
+        introductionTime += dt
+        if (introductionTime < .5) { bubble.hidden = true; return }
+        text.textContent = introductionTime < 3.5 ? 'Hello! My name is Fuggler!' : 'Tap me!'
         bubble.hidden = false
         if (placementIndex < 0) placementIndex = 0
       } else countdown -= dt
