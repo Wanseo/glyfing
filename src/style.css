@@ -536,3 +536,8 @@ html[data-view='game'] .brand-bar {
   right: max(16px, env(safe-area-inset-right));
   bottom: auto;
 }
+
+.countdown-art.is-go { height: min(118px, 17vw); }
+.life-label { color: #171717; font: 900 30px/1 monospace; margin-right: 4px; }
+.music-toggle:focus-visible { outline: none; outline-offset: 0; filter: drop-shadow(0 0 3px #e83796); }
+@media (max-width: 700px) { .life-label { font-size: 20px; margin-right: 2px; } .rain-lives { left: 6px; } .rain-lives img { width: 28px; height: 28px; } }

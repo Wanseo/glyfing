@@ -43,7 +43,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   window.addEventListener('glyf-sound-change', syncSound)
   host.innerHTML = `
     <section class="rain-game" aria-label="젤리와 인형 수집 게임">
-      <div class="rain-lives" role="status" aria-label="남은 목숨 3개">${Array.from({ length: 3 }, () => `<img src="${lifeHeartUrl}" alt="" aria-hidden="true">`).join('')}</div>
+      <div class="rain-lives" role="status" aria-label="남은 목숨 3개"><span class="life-label">LIFE</span>${Array.from({ length: 3 }, () => `<img src="${lifeHeartUrl}" alt="" aria-hidden="true">`).join('')}</div>
       <a class="play-button pink-button rain-home home-icon-link" href="#home" aria-label="HOME"><img src="${homeIconUrl}" alt=""></a>
       <canvas class="game-canvas" aria-label="방향키 또는 A와 D 키로 목표 아이템을 받으세요"></canvas>
       <div class="movement-hint game-movement-hint" aria-label="좌우 방향키로 이동"><span class="pixel-move-arrow left" aria-hidden="true"></span><span class="pixel-move-arrow" aria-hidden="true"></span></div>
@@ -125,7 +125,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     introStep = step
     message.classList.add('is-countdown')
     message.innerHTML = countdownImages[step]
-      ? `<img class="countdown-art ${step === 0 ? 'is-ready' : ''}" src="${countdownImages[step]}" alt="${countdownLabels[step]}">`
+      ? `<img class="countdown-art ${step === 0 ? 'is-ready' : step === 4 ? 'is-go' : ''}" src="${countdownImages[step]}" alt="${countdownLabels[step]}">`
       : ''
     message.hidden = false
   }
@@ -142,7 +142,8 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     const origin = canvas.getBoundingClientRect(), destination = livesEl.getBoundingClientRect()
     const size = parseFloat(getComputedStyle(hearts[0]!).width)
     const gap = parseFloat(getComputedStyle(livesEl).gap) || 0
-    const targetX = destination.left + slot * (size + gap) + size / 2
+    const labelWidth = livesEl.querySelector<HTMLElement>('.life-label')!.getBoundingClientRect().width
+    const targetX = destination.left + labelWidth + gap + slot * (size + gap) + size / 2
     const targetY = destination.top + destination.height / 2
     const image = document.createElement('img')
     image.src = lifeHeartUrl; image.alt = ''; image.className = 'flying-life-heart'
