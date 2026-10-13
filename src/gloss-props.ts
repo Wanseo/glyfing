@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import cutoutsUrl from './assets/gloss-cutouts.webp'
+import { createProductPrompt } from './product-prompt'
 
 // Both products share an alpha image. The diagonal gap separates the carton
 // from the tube without clipping its attached tooth and underwear charms.
@@ -37,6 +38,7 @@ export function productTexture(image: HTMLImageElement, carton: boolean) {
 }
 
 export function createGlossProps(app: HTMLElement) {
+  const showPrompt = createProductPrompt(app)
   const links: { group: THREE.Group; mesh: THREE.Mesh; element: HTMLAnchorElement; aspect: number; hover: number }[] = []
   const projected = new THREE.Vector3()
   const root = new THREE.Group()
@@ -52,7 +54,7 @@ export function createGlossProps(app: HTMLElement) {
     const wide = halfWidth > 7
     const width = wide ? Math.min(6, halfWidth * .65, halfHeight * 1.2)
       : Math.min(halfWidth * 1.08, halfHeight * .5)
-    carton.scale.setScalar(width * .8)
+    carton.scale.setScalar(width * .96)
     product.scale.setScalar(width * (wide ? .8 : .72))
     carton.position.set(wide ? -halfWidth * .62 : -halfWidth * .43,
       wide ? .9 : -halfHeight * .34, -2.3)
@@ -97,7 +99,9 @@ export function createGlossProps(app: HTMLElement) {
       element.addEventListener('mousemove', event => element.classList.toggle('is-hovered', overProduct(event)))
       element.addEventListener('mouseleave', () => element.classList.remove('is-hovered'))
       element.addEventListener('click', event => {
-        if (event.detail && !overProduct(event)) event.preventDefault()
+        event.preventDefault()
+        if (event.detail && !overProduct(event)) return
+        showPrompt(isCarton)
       })
       links.push({ group, mesh, element, aspect, hover: 0 })
     }

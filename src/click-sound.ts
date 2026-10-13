@@ -5,7 +5,8 @@ export function createClickSound() {
   document.addEventListener('click', event => {
     const view = document.documentElement.dataset.view ?? 'home'
     if (view !== 'home' && view !== 'game') return
-    if (event.defaultPrevented || !(event.target instanceof Element)) return
+    if (!(event.target instanceof Element)) return
+    if (event.defaultPrevented && !document.querySelector('.product-prompt[open]')) return
     const control = event.target.closest('button, a[href], input, select, label')
     if (!control || control.matches(':disabled, [aria-disabled="true"]')) return
     sound.currentTime = 0

@@ -369,3 +369,12 @@ html[data-view='camera'] .play-screen::before { display: none; }
 }
 
 .flying-life-heart { position: fixed; top: 0; left: 0; width: 64px; height: 64px; object-fit: contain; z-index: 30; pointer-events: none; }
+
+.product-prompt { width: min(620px, 96vw, 130dvh); max-width: none; max-height: none; padding: 0; border: 0; background: transparent; overflow: visible; }
+.product-prompt::backdrop { background: #170a1238; }
+.product-prompt-art { display: block; width: 100%; height: auto; }
+.product-prompt button { position: absolute; padding: 0; background: transparent; border: 0; cursor: pointer; border-radius: 8px; }
+.product-prompt button:hover { background: #ffffff26; }
+.product-prompt-yes { left: 19.5%; top: 65%; width: 23.5%; height: 15%; }
+.product-prompt-no { left: 57%; top: 65%; width: 23.5%; height: 15%; }
+.product-prompt-close { left: 79%; top: 15.5%; width: 9.5%; height: 12.5%; }
