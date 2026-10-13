@@ -362,11 +362,8 @@ html[data-view='camera'] .play-screen::before { display: none; }
 }
 
 .rain-level .rain-goal-images canvas {
-  border: 3px solid #f5ff00;
-  padding: 5px;
-  border-radius: 14px;
-  transition: box-shadow 120ms ease-out;
+  transition: filter 120ms ease-out;
 }
 .rain-level .rain-goal-images canvas.is-caught {
-  box-shadow: 0 0 10px #f5ff00, 0 0 26px #f5ff00, inset 0 0 12px #f5ff0080;
+  filter: drop-shadow(0 0 5px #f5ff00) drop-shadow(0 0 12px #f5ff00);
 }

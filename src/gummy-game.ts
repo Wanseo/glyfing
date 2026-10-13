@@ -85,6 +85,18 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   function beginLevel() {
     caught = 0; remaining = levels[level]!.seconds; spawn = 0; drops.length = 0
     targetCtx.clearRect(0, 0, 100, 100)
+    const outline = document.createElement('canvas')
+    outline.width = outline.height = 100
+    const outlineCtx = outline.getContext('2d')!
+    drawFit(outlineCtx, items[levels[level]!.target]!, 5, 5, 90, 90)
+    outlineCtx.globalCompositeOperation = 'source-in'
+    outlineCtx.fillStyle = '#f5ff00'
+    outlineCtx.fillRect(0, 0, 100, 100)
+    for (let step = 0; step < 24; step++) {
+      const angle = step * Math.PI * 2 / 24
+      targetCtx.drawImage(outline, Math.cos(angle) * 3, Math.sin(angle) * 3)
+    }
+    targetCtx.drawImage(outline, 0, 0)
     drawFit(targetCtx, items[levels[level]!.target]!, 5, 5, 90, 90)
     updateHud(); message.hidden = true; message.classList.remove('is-level-up'); running = true; keys.clear(); previous = 0
   }
