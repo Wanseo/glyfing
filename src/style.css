@@ -530,3 +530,9 @@ html[data-view='game'] .rain-home.home-icon-link { right: 88px; }
 .result-actions { gap: 12px; align-items: center; justify-content: center; }
 .result-actions .play-button { display: grid; place-items: center; width: 68px; height: 68px; min-width: 68px; min-height: 68px; }
 .result-actions .retry-icon-button img, .result-actions .home-icon-link img { align-self: center; justify-self: center; }
+
+html[data-view='game'] .brand-bar {
+  top: max(16px, env(safe-area-inset-top));
+  right: max(16px, env(safe-area-inset-right));
+  bottom: auto;
+}
