@@ -25,17 +25,9 @@
         </filter>
         <filter id="product-hover-outline" x="-25%" y="-25%" width="150%" height="150%" color-interpolation-filters="sRGB">
           <feMorphology in="SourceAlpha" operator="dilate" radius="4" result="expanded" />
-          <feMorphology in="SourceAlpha" operator="dilate" radius="6" result="outer" />
-          <feComposite in="outer" in2="expanded" operator="out" result="outer-ring" />
-          <feFlood flood-color="#000000" result="black" />
-          <feComposite in="black" in2="outer-ring" operator="in" result="black-ring" />
           <feComposite in="expanded" in2="SourceAlpha" operator="out" result="ring" />
-          <feFlood flood-color="#e83796" flood-opacity="0.95" result="yellow" />
-          <feComposite in="yellow" in2="ring" operator="in" result="pink-ring" />
-          <feMerge>
-            <feMergeNode in="black-ring" />
-            <feMergeNode in="pink-ring" />
-          </feMerge>
+          <feFlood flood-color="#ffffff" result="white" />
+          <feComposite in="white" in2="ring" operator="in" />
         </filter>
       </defs>
     </svg>
