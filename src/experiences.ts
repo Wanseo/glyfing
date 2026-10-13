@@ -35,10 +35,7 @@ export function createExperiences(app: HTMLElement, captureCharacter: () => stri
     try {
       const images = await (assets ??= loadPlayAssets(captureCharacter()))
       if (request !== current) return
-      if (route === 'game') dispose = createGummyGame(screen, images, points => {
-        history.pushState(null, '', '#photo')
-        void show('photo', points)
-      })
+      if (route === 'game') dispose = createGummyGame(screen, images)
       else dispose = createPhotoBooth(screen, images, score)
       const title = screen.querySelector<HTMLElement>('h1')!
       title.tabIndex = -1; title.focus({ preventScroll: true })

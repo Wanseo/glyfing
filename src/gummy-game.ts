@@ -12,7 +12,7 @@ const levels = [
   { target: 11, count: 13, seconds: 29 },
   { target: 6, count: 15, seconds: 27 },
 ]
-export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto: (score: number) => void) {
+export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   host.innerHTML = `
     <section class="rain-game" aria-label="젤리와 인형 수집 게임">
       <a class="play-button rain-home" href="#home">메인으로 ↗</a>
@@ -86,10 +86,9 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
     } catch { /* optional */ }
     message.innerHTML = `${won ? '<h2>ALL LEVELS CLEAR! ✦</h2>' : `<img class="game-over-art" src="${gameOverUrl}" alt="GAME OVER">`}
       <p>${won ? '5단계 모두 성공!' : `LEVEL ${level + 1} · ${caught} / ${levels[level]!.count}개`} · ${score} POINTS</p>
-      <div class="result-actions"><button class="play-button" data-again>다시 도전 ↻</button><button class="play-button pink-button" data-photo>포토카드 만들기 ↗</button></div>`
+      <div class="result-actions"><button class="play-button" data-again>RETRY ↻</button><a class="play-button pink-button" href="#home">HOME ↗</a></div>`
     message.hidden = false
     message.querySelector('[data-again]')!.addEventListener('click', start)
-    message.querySelector('[data-photo]')!.addEventListener('click', () => openPhoto(score))
   }
   function clearLevel() {
     running = false; drops.length = 0; keys.clear()
