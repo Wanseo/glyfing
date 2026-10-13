@@ -35,9 +35,13 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   const winSound = new Audio(`${import.meta.env.BASE_URL}audio/game-win.mp3`)
   winSound.preload = 'auto'
   winSound.volume = .65
+  const countdownSound = new Audio(`${import.meta.env.BASE_URL}audio/countdown.mp3`)
+  countdownSound.preload = 'auto'
+  countdownSound.volume = .65
+  countdownSound.playbackRate = 6.034 / 2.1
   function syncSound() {
     const muted = document.documentElement.dataset.soundMuted === 'true'
-    for (const sound of [itemSound, levelSound, wrongSound, gameOverSound, winSound]) sound.muted = muted
+    for (const sound of [itemSound, levelSound, wrongSound, gameOverSound, winSound, countdownSound]) sound.muted = muted
   }
   syncSound()
   window.addEventListener('glyf-sound-change', syncSound)
@@ -123,6 +127,10 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   function showIntro(step: number) {
     if (introStep === step) return
     introStep = step
+    if (step === 1) {
+      countdownSound.currentTime = 0
+      void countdownSound.play().catch(() => { /* Audio playback is optional. */ })
+    }
     message.classList.add('is-countdown')
     message.innerHTML = countdownImages[step]
       ? `<img class="countdown-art ${step === 0 ? 'is-ready' : step === 4 ? 'is-go' : ''}" src="${countdownImages[step]}" alt="${countdownLabels[step]}">`
@@ -184,6 +192,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     timeFill.style.width = `${24 + (1 - remaining / levels[level]!.seconds) * 69.5}%`
   }
   function beginLevel() {
+    countdownSound.pause(); countdownSound.currentTime = 0
     caught = 0; remaining = levels[level]!.seconds; spawn = 0; heartSpawn = 3; drops.length = 0
     targetCtx.clearRect(0, 0, 100, 100)
     const outline = document.createElement('canvas')
@@ -268,6 +277,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       const step = introTime < .7 ? 0 : introTime < 1.25 ? 1 : introTime < 1.8 ? 2 : introTime < 2.35 ? 3 : 4
       showIntro(step)
       if (introTime >= 2.8) {
+        countdownSound.pause()
         introActive = false; message.hidden = true; message.classList.remove('is-countdown'); running = true; keys.clear()
       }
     }
@@ -414,6 +424,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     wrongSound.pause()
     gameOverSound.pause()
     winSound.pause()
+    countdownSound.pause()
     clearTimeout(targetGlowTimer)
     window.removeEventListener('keydown', keydown); window.removeEventListener('keyup', keyup)
     window.removeEventListener('blur', clearKeys); document.removeEventListener('visibilitychange', visibility)
