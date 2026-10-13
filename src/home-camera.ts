@@ -39,6 +39,29 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
       const sticker = stickerImages[kind!]
       if (sticker) drawFit(ctx, sticker, x! * w, y! * h, size! * w, size! * w)
     }
+    ctx.save()
+    ctx.fillStyle = '#ff38cf'
+    const stars = [[.07, .07], [.13, .12], [.55, .035], [.87, .08], [.95, .32],
+      [.08, .47], [.92, .53], [.035, .67], [.17, .9], [.54, .95], [.89, .88], [.97, .72]]
+    stars.forEach(([sx, sy], index) => {
+      const radius = w * (index % 3 === 0 ? .025 : .018)
+      ctx.beginPath()
+      for (let point = 0; point < 10; point++) {
+        const angle = -Math.PI / 2 + point * Math.PI / 5
+        const r = point % 2 ? radius * .43 : radius
+        const x = sx! * w + Math.cos(angle) * r, y = sy! * h + Math.sin(angle) * r
+        if (point === 0) ctx.moveTo(x, y)
+        else ctx.lineTo(x, y)
+      }
+      ctx.closePath(); ctx.fill()
+    })
+    ctx.fillStyle = '#fff'
+    ctx.font = `500 ${w * .043}px 'Arial Narrow', Arial, sans-serif`
+    for (const [x, y] of [[.015, .56], [.045, .62], [.015, .68], [.68, .91]]) {
+      ctx.save(); ctx.translate(x! * w, y! * h); ctx.scale(.55, 1)
+      ctx.fillText('FLUFFY FANG', 0, 0); ctx.restore()
+    }
+    ctx.restore()
   }
   function resizeOverlay() {
     overlay.width = Math.max(1, view.clientWidth * 2); overlay.height = Math.max(1, view.clientHeight * 2)
