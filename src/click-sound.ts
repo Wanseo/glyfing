@@ -3,6 +3,7 @@ export function createClickSound() {
   sound.preload = 'auto'
   sound.volume = .55
   document.addEventListener('click', event => {
+    if (document.documentElement.dataset.soundMuted === 'true') return
     const view = document.documentElement.dataset.view ?? 'home'
     if (view !== 'home' && view !== 'game') return
     if (!(event.target instanceof Element)) return

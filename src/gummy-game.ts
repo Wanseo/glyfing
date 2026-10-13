@@ -31,6 +31,12 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   const winSound = new Audio(`${import.meta.env.BASE_URL}audio/game-win.mp3`)
   winSound.preload = 'auto'
   winSound.volume = .65
+  function syncSound() {
+    const muted = document.documentElement.dataset.soundMuted === 'true'
+    for (const sound of [itemSound, levelSound, wrongSound, gameOverSound, winSound]) sound.muted = muted
+  }
+  syncSound()
+  window.addEventListener('glyf-sound-change', syncSound)
   host.innerHTML = `
     <section class="rain-game" aria-label="젤리와 인형 수집 게임">
       <div class="rain-lives" role="status" aria-label="남은 목숨 3개">${Array.from({ length: 3 }, () => `<img src="${lifeHeartUrl}" alt="" aria-hidden="true">`).join('')}</div>
@@ -330,6 +336,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   }
   resize(); start(); frame = requestAnimationFrame(loop)
   return () => {
+    window.removeEventListener('glyf-sound-change', syncSound)
     disposed = true; cancelAnimationFrame(frame); clearTimeout(transition); observer.disconnect()
     clearHeartFlights()
     itemSound.pause()

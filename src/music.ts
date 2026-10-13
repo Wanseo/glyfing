@@ -21,6 +21,8 @@ export function createMusic(app: HTMLElement) {
   let pending = false
   function render() {
     const playing = !audio.paused
+    document.documentElement.dataset.soundMuted = String(!playing)
+    window.dispatchEvent(new Event('glyf-sound-change'))
     button.classList.toggle('is-off', !playing)
     button.title = playing ? 'MUSIC ON' : 'MUSIC OFF'
     button.setAttribute('aria-label', playing ? '배경음악 끄기' : '배경음악 켜기')
