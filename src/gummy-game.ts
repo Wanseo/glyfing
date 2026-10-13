@@ -101,6 +101,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   const partyCtx = celebration.getContext('2d')!
   const confetti: { x: number; y: number; speed: number; drift: number; kind: number; angle: number; size: number }[] = []
   let celebrating = false, partySpawn = 0, partyTime = 0
+  const jellyBurst: { x: number; y: number; vx: number; vy: number; age: number; kind: number; angle: number; spin: number; size: number }[] = []
   let introActive = false, introTime = 0, introStep = -1
   const countdownLabels = ['ARE YOU READY?', '3', '2', '1', 'GO!']
   const countdownImages: string[] = []
@@ -208,6 +209,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   function beginLevel() {
     touchMovement.clear()
     celebrating = false; confetti.length = 0
+    jellyBurst.length = 0
     countdownSound.pause(); countdownSound.currentTime = 0
     caught = 0; remaining = levels[level]!.seconds; spawn = 0; heartSpawn = 3; drops.length = 0
     targetCtx.clearRect(0, 0, 100, 100)
@@ -245,6 +247,16 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     message.classList.remove('is-level-up')
     message.classList.toggle('is-victory', won)
     celebrating = won; partySpawn = 0; partyTime = 0; confetti.length = 0
+    jellyBurst.length = 0
+    if (won && !reducedMotion.matches) {
+      for (let i = 0; i < 40; i++) {
+        const angle = i * Math.PI * 2 / 40 + (Math.random() - .5) * .12
+        const speed = Math.min(width, height) * (.35 + Math.random() * .45)
+        jellyBurst.push({ x: width / 2, y: height / 2, vx: Math.cos(angle) * speed,
+          vy: Math.sin(angle) * speed, age: 0, kind: i % assets.candies.length,
+          angle: Math.random() * 6, spin: (Math.random() - .5) * 4, size: 22 + Math.random() * 20 })
+      }
+    }
     try {
       const best = Number(localStorage.getItem('glyf-gummy-best')) || 0
       if (score > best) localStorage.setItem('glyf-gummy-best', String(score))
@@ -445,6 +457,17 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       }
       partyTime += dt; partySpawn -= dt
       partyCtx.clearRect(0, 0, width, height)
+      for (let i = jellyBurst.length - 1; i >= 0; i--) {
+        const piece = jellyBurst[i]!
+        piece.age += dt
+        if (piece.age >= 1.8) { jellyBurst.splice(i, 1); continue }
+        piece.x += piece.vx * dt; piece.y += piece.vy * dt
+        piece.vy += 70 * dt; piece.angle += piece.spin * dt
+        partyCtx.save(); partyCtx.globalAlpha = Math.min(1, (1.8 - piece.age) * 2)
+        partyCtx.translate(piece.x, piece.y); partyCtx.rotate(piece.angle)
+        drawFit(partyCtx, assets.candies[piece.kind]!, -piece.size / 2, -piece.size / 2, piece.size, piece.size)
+        partyCtx.restore()
+      }
       if (partySpawn <= 0 && confetti.length < 90) {
         partySpawn = .12
         confetti.push({ x: Math.random() * width, y: -35, speed: 85 + Math.random() * 65, drift: (Math.random() - .5) * 18,
