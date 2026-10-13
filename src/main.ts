@@ -98,14 +98,16 @@ let backgroundSize = ''
 let needsBackgroundRender = true
 function resize() {
   needsBackgroundRender = true
-  characterSize = mobileRendering ? .54 : .84
-  character.root.scale.setScalar(1.86875 * characterSize)
-  shadow.scale.setScalar(characterSize / .84)
   const aspect = window.innerWidth / window.innerHeight
   // Fit one fixed desktop composition so narrowing a laptop window scales all props together.
   const pixelsPerUnit = mobileRendering
     ? Math.min(48, window.innerHeight / 8, window.innerWidth / 6)
     : Math.min(48, window.innerWidth / 36, window.innerHeight / 20)
+  // Preserve the character's original on-screen size within the fitted desktop scene.
+  const originalPixelsPerUnit = Math.min(48, window.innerHeight / 8, window.innerWidth / 6)
+  characterSize = mobileRendering ? .54 : .84 * originalPixelsPerUnit / pixelsPerUnit
+  character.root.scale.setScalar(1.86875 * characterSize)
+  shadow.scale.setScalar(characterSize / .84)
   const halfHeight = window.innerHeight / pixelsPerUnit / 2
   const halfWidth = halfHeight * aspect
   viewHalfWidth = halfWidth
