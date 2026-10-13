@@ -105,7 +105,7 @@ function resize() {
   const pixelsPerUnit = mobileRendering
     ? Math.min(48, window.innerHeight / 8, window.innerWidth / 6)
     : Math.min(48, desktopHeight / 8, desktopWidth / 6)
-  characterSize = mobileRendering ? .54 : .84
+  characterSize = mobileRendering ? .54 : .9
   character.root.scale.setScalar(1.86875 * characterSize)
   shadow.scale.setScalar(characterSize / .84)
   const halfHeight = window.innerHeight / pixelsPerUnit / 2
@@ -247,8 +247,9 @@ renderer.setAnimationLoop((time: number) => {
     }
   } else touchMovement.clear()
   const previousX = position.x, previousY = position.y
-  position.x = clampPosition(position.x + direction.x * dt * 2.9, viewHalfWidth, 2.429375 * characterSize)
-  position.y = clampPosition(position.y + direction.y * dt * 2.9, viewHalfHeight, 2.803125 * characterSize)
+  const movementSpeed = mobileRendering ? 2.9 : 3.5
+  position.x = clampPosition(position.x + direction.x * dt * movementSpeed, viewHalfWidth, 2.429375 * characterSize)
+  position.y = clampPosition(position.y + direction.y * dt * movementSpeed, viewHalfHeight, 2.803125 * characterSize)
   const distance = Math.hypot(position.x - previousX, position.y - previousY)
   walk = THREE.MathUtils.damp(walk, distance > 0 ? 1 : 0, 12, dt)
   // Tie steps to distance travelled so the feet stop stepping at walls.
