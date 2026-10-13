@@ -54,7 +54,7 @@ export function createGlossProps(app: HTMLElement) {
     const wide = halfWidth > 7
     const width = wide ? Math.min(6, halfWidth * .65, halfHeight * 1.2)
       : Math.min(halfWidth * 1.08, halfHeight * .5)
-    carton.scale.setScalar(width * .96)
+    carton.scale.setScalar(width * 1.1)
     product.scale.setScalar(width * (wide ? .8 : .72))
     carton.position.set(wide ? -halfWidth * .62 : -halfWidth * .43,
       wide ? .9 : -halfHeight * .34, -2.3)

@@ -46,7 +46,7 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
   return {
     update(dt: number, px: number, py: number, camera: THREE.OrthographicCamera, visible: boolean, moving = false) {
       x = px; y = py; elapsed += dt
-      const available = visible && !document.querySelector('dialog[open]')
+      const available = visible && !document.documentElement.classList.contains('is-loading') && !document.querySelector('dialog[open]')
       if (available) hintTime += dt
       idleTime = available && !moving ? idleTime + dt : 0
       const inviting = available && !moving && !hasTapped && !reducedMotion.matches
@@ -64,6 +64,7 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
       button.style.width = `${Math.abs(corner.x - projected.x) * window.innerWidth}px`
       button.style.height = `${Math.abs(corner.y - projected.y) * window.innerHeight}px`
       moveHint.hidden = !available || hintTime < .5 || hintTime > 5.5
+      document.documentElement.classList.toggle('show-object-hints', !moveHint.hidden)
       moveHint.style.left = button.style.left
       moveHint.style.top = `${(1 - projected.y) * window.innerHeight / 2 + 110}px`
       for (let i = drops.length - 1; i >= 0; i--) {

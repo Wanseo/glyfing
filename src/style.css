@@ -589,3 +589,11 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
 
 .rain-message.is-victory .victory-art { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(480px, 80vw, 56dvh); max-height: 56dvh; margin: 0; }
 .rain-message.is-victory .result-actions { position: absolute; left: 50%; bottom: max(24px, 7dvh); transform: translateX(-50%); }
+
+.show-object-hints .product-link:not(.is-hovered):not(:focus-visible) img,
+.show-object-hints .badge-trigger:not(.is-hovered):not(:focus-visible) img {
+  animation: movement-hint-blink 5s ease-in-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .show-object-hints .product-link img, .show-object-hints .badge-trigger img { animation: none; opacity: 1; }
+}
