@@ -293,6 +293,7 @@ html[data-view='game'] .world-nav { display: none; }
 .rain-level { position: absolute; top: max(20px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); padding: 10px 16px; background: #fff; border: 2px solid #171717; box-shadow: 4px 4px #171717; font: 900 20px Arial; white-space: nowrap; pointer-events: none; }
 .rain-level [data-level] { display: block; text-align: center; }
 .rain-level [data-count] { display: block; margin-top: 7px; font: 900 17px Arial; text-align: center; color: #dc168b; }
+.rain-level .rain-goal-images { justify-content: center; margin-top: 8px; padding: 5px 8px; background: #ff38cf; color: #f5ff00; }
 .rain-timer { position: absolute; top: 125px; right: 20px; text-align: right; color: #fff; pointer-events: none; text-shadow: 3px 3px #171717; }
 .rain-timer small { display: block; font: 800 12px Arial; letter-spacing: 2px; }
 .rain-timer [data-time] { display: block; font: 900 clamp(42px, 6vw, 78px)/1.15 Arial; }
