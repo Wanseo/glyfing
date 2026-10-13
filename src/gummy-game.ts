@@ -270,15 +270,17 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       const x = effect.x * width, y = effect.y
       ctx.save()
       ctx.globalAlpha = Math.min(1, (1 - progress) * 2)
-      if (effect.correct) {
+      if (effect.correct && effect.age < .5) {
+        const sparkleProgress = effect.age / .5
+        ctx.globalAlpha = Math.min(1, (1 - sparkleProgress) * 1.5)
         ctx.fillStyle = '#fff9a0'; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2
         for (let star = 0; star < 32; star++) {
           const angle = star * Math.PI * 2 / 32
           const spread = .8 + (star % 3) * .1
-          const radius = reducedMotion.matches ? 42 : (12 + progress * 115) * spread
+          const radius = reducedMotion.matches ? 42 : (12 + sparkleProgress * 115) * spread
           const sx = x + Math.cos(angle) * radius
           const sy = y + playerSize / 2 - 20 + Math.sin(angle) * radius
-          const size = (star % 3 === 0 ? 12 : 5 + star % 4) * (1 - progress * .5)
+          const size = (star % 3 === 0 ? 7 : 3 + star % 3) * (1 - sparkleProgress * .5)
           ctx.beginPath()
           for (let point = 0; point < 8; point++) {
             const a = point * Math.PI / 4, r = point % 2 ? size * .25 : size
@@ -289,6 +291,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
           ctx.closePath(); ctx.fill(); ctx.stroke()
         }
       }
+      ctx.globalAlpha = Math.min(1, (1 - progress) * 2)
       ctx.textAlign = 'center'; ctx.font = '900 21px Arial'
       ctx.lineWidth = 5; ctx.strokeStyle = effect.correct ? '#875000' : '#fff'
       ctx.fillStyle = effect.correct ? '#fff9a0' : '#d90035'
