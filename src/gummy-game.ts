@@ -232,6 +232,13 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       const label = effect.label
       const labelY = y - 28 - (reducedMotion.matches ? 0 : progress * 35)
       ctx.strokeText(label, x, labelY); ctx.fillText(label, x, labelY)
+      if (effect.correct && effect.age < .5) {
+        const rise = effect.age / .5
+        ctx.globalAlpha = 1 - rise * rise
+        ctx.font = '900 30px Arial'
+        const bonusY = y - 58 - (reducedMotion.matches ? 0 : rise * 105)
+        ctx.strokeText('+1', x, bonusY); ctx.fillText('+1', x, bonusY)
+      }
       ctx.restore()
     }
     frame = requestAnimationFrame(loop)
