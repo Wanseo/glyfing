@@ -659,3 +659,7 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
   html[data-view='home'] #app > .mobile-touch-controls button { position: relative; }
   .rain-game .mobile-touch-controls.movement-hint { z-index: 0; }
 }
+
+@media (pointer: coarse) and (max-width: 700px) {
+  .home-camera { top: calc(-1 * min(32px, 4dvh)); }
+}
