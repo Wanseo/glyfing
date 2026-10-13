@@ -18,6 +18,9 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   const itemSound = new Audio(`${import.meta.env.BASE_URL}audio/item-get.mp3`)
   itemSound.preload = 'auto'
   itemSound.volume = .65
+  const levelSound = new Audio(`${import.meta.env.BASE_URL}audio/level-up.mp3`)
+  levelSound.preload = 'auto'
+  levelSound.volume = .65
   host.innerHTML = `
     <section class="rain-game" aria-label="젤리와 인형 수집 게임">
       <div class="rain-lives" role="status" aria-label="남은 목숨 3개">${Array.from({ length: 3 }, () => `<img src="${lifeHeartUrl}" alt="" aria-hidden="true">`).join('')}</div>
@@ -86,6 +89,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     updateHud(); message.hidden = true; message.classList.remove('is-level-up'); running = true; keys.clear(); previous = 0
   }
   function start() {
+    levelSound.pause(); levelSound.currentTime = 0
     clearTimeout(transition); effects.length = 0; shakeRemaining = 0; lives = 3; updateLives(); level = 0; score = 0; player = .5; beginLevel()
   }
   function finish(won: boolean) {
@@ -104,6 +108,8 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     running = false; drops.length = 0; keys.clear()
     if (level === levels.length - 1) { finish(true); return }
     message.classList.add('is-level-up')
+    levelSound.currentTime = 0
+    void levelSound.play().catch(() => { /* Audio playback is optional. */ })
     message.innerHTML = `<div class="level-up-announcement" role="status"><img class="level-up-art" src="${levelUpUrl}" alt="LEVEL UP"></div>`
     message.hidden = false
     transition = window.setTimeout(() => { if (!disposed) { level++; beginLevel() } }, 1400)
@@ -216,6 +222,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   return () => {
     disposed = true; cancelAnimationFrame(frame); clearTimeout(transition); observer.disconnect()
     itemSound.pause()
+    levelSound.pause()
     clearTimeout(targetGlowTimer)
     window.removeEventListener('keydown', keydown); window.removeEventListener('keyup', keyup)
     window.removeEventListener('blur', clearKeys); document.removeEventListener('visibilitychange', visibility)
