@@ -405,3 +405,7 @@ html[data-view='camera'] .play-screen::before { display: none; }
 
 .rain-message.is-victory { background: #000b; }
 .victory-art { display: block; width: min(560px, 85vw, 70dvh); height: auto; max-height: 72dvh; object-fit: contain; margin-bottom: 18px; filter: drop-shadow(0 0 16px #f5ff0033); }
+
+@media (any-pointer: fine) {
+  body .badge-trigger, body .badge-trigger * { cursor: var(--badge-cursor, zoom-in) !important; }
+}

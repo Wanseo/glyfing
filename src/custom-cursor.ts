@@ -1,6 +1,17 @@
 import cursorUrl from './assets/cursor.png'
+import magnifierUrl from './assets/magnifier-cursor.png'
 
 export function createCustomCursor() {
+  const magnifier = new Image()
+  magnifier.src = magnifierUrl
+  void magnifier.decode().then(() => {
+    const canvas = document.createElement('canvas')
+    canvas.width = canvas.height = 36
+    const ctx = canvas.getContext('2d')!
+    ctx.imageSmoothingEnabled = false
+    ctx.drawImage(magnifier, 0, 0, 36, 36)
+    document.documentElement.style.setProperty('--badge-cursor', `url("${canvas.toDataURL('image/png')}") 13 13, zoom-in`)
+  }).catch(() => { /* Keep the standard zoom cursor if loading fails. */ })
   const image = new Image()
   image.src = cursorUrl
   void image.decode().then(() => {
