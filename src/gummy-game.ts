@@ -21,6 +21,9 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   const levelSound = new Audio(`${import.meta.env.BASE_URL}audio/level-up.mp3`)
   levelSound.preload = 'auto'
   levelSound.volume = .65
+  const wrongSound = new Audio(`${import.meta.env.BASE_URL}audio/item-wrong.mp3`)
+  wrongSound.preload = 'auto'
+  wrongSound.volume = .65
   host.innerHTML = `
     <section class="rain-game" aria-label="젤리와 인형 수집 게임">
       <div class="rain-lives" role="status" aria-label="남은 목숨 3개">${Array.from({ length: 3 }, () => `<img src="${lifeHeartUrl}" alt="" aria-hidden="true">`).join('')}</div>
@@ -101,6 +104,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     updateHud(); message.hidden = true; message.classList.remove('is-level-up'); running = true; keys.clear(); previous = 0
   }
   function start() {
+    wrongSound.pause(); wrongSound.currentTime = 0
     levelSound.pause(); levelSound.currentTime = 0
     clearTimeout(transition); effects.length = 0; shakeRemaining = 0; lives = 3; updateLives(); level = 0; score = 0; player = .5; beginLevel()
   }
@@ -174,6 +178,8 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
             if (caught >= levels[level]!.count) { updateHud(); clearLevel(); break }
           } else {
             catchEffect(false, playerY + 20)
+            wrongSound.currentTime = 0
+            void wrongSound.play().catch(() => { /* Audio playback is optional. */ })
             lives--; updateLives()
             if (lives === 0) { finish(false); break }
           }
@@ -235,6 +241,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     disposed = true; cancelAnimationFrame(frame); clearTimeout(transition); observer.disconnect()
     itemSound.pause()
     levelSound.pause()
+    wrongSound.pause()
     clearTimeout(targetGlowTimer)
     window.removeEventListener('keydown', keydown); window.removeEventListener('keyup', keyup)
     window.removeEventListener('blur', clearKeys); document.removeEventListener('visibilitychange', visibility)
