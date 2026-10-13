@@ -103,7 +103,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     message.classList.add('is-countdown')
     message.innerHTML = countdownImages[step]
       ? `<img class="countdown-art ${step === 0 ? 'is-ready' : ''}" src="${countdownImages[step]}" alt="${countdownLabels[step]}">`
-      : `<h2>${countdownLabels[step]}</h2>`
+      : ''
     message.hidden = false
   }
   const keys = new Set<string>(), drops: Drop[] = []
