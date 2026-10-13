@@ -26,7 +26,8 @@ scene.background = new THREE.Color('#e83796')
 const camera = new THREE.OrthographicCamera(-10, 10, 7, -7, 0.1, 100)
 camera.position.set(0, 0, 20)
 const renderer = new THREE.WebGLRenderer({ antialias: true })
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
+const mobileRendering = window.matchMedia('(pointer: coarse)').matches || window.innerWidth <= 700
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, mobileRendering ? 1.25 : 2))
 renderer.shadowMap.enabled = false
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
 renderer.domElement.setAttribute('aria-label', '핑크 글리터 배경 위의 3D 캐릭터와 Glue Gloss 패키지, 크롬 튜브, 사원증과 알록달록한 젤리들. 방향키로 움직일 수 있습니다.')
@@ -93,7 +94,9 @@ scene.add(shadow)
 let viewHalfWidth = 5.95, viewHalfHeight = 3.15
 let background: THREE.CanvasTexture | null = null
 let backgroundSize = ''
+let needsBackgroundRender = true
 function resize() {
+  needsBackgroundRender = true
   characterSize = window.innerWidth <= 700 ? .54 : .84
   character.root.scale.setScalar(1.86875 * characterSize)
   shadow.scale.setScalar(characterSize / .84)
@@ -107,7 +110,7 @@ function resize() {
   glossProps.layout(halfWidth, halfHeight)
   badgeCandies.layout(halfWidth, halfHeight)
   plushProps.layout(halfWidth, halfHeight)
-  const pixelRatio = Math.min(window.devicePixelRatio, 2,
+  const pixelRatio = Math.min(window.devicePixelRatio, mobileRendering ? 1.25 : 2,
     renderer.capabilities.maxTextureSize / Math.max(window.innerWidth, window.innerHeight))
   renderer.setPixelRatio(pixelRatio)
   const size = `${window.innerWidth}:${window.innerHeight}:${pixelRatio}`
@@ -125,7 +128,8 @@ function resize() {
   camera.updateProjectionMatrix()
   renderer.setSize(window.innerWidth, window.innerHeight)
 }
-window.addEventListener('resize', resize)
+let resizeTimer = 0
+window.addEventListener('resize', () => { clearTimeout(resizeTimer); resizeTimer = window.setTimeout(resize, 80) })
 resize()
 let currentView = 'home'
 const keys = new Set<string>()
@@ -177,7 +181,7 @@ function captureHome() {
   return output
 }
 createExperiences(app, captureCharacter, route => {
-  currentView = route; keys.clear(); touchMovement.clear()
+  currentView = route; keys.clear(); touchMovement.clear(); needsBackgroundRender = true
   characterPlay.update(0, position.x, position.y, camera, route === 'home')
   const home = route === 'home' || route === 'camera'
   character.root.visible = home; shadow.visible = home
@@ -197,10 +201,17 @@ window.addEventListener('keyup', event => keys.delete(event.key))
 window.addEventListener('blur', () => keys.clear())
 document.addEventListener('visibilitychange', () => { if (document.hidden) keys.clear() })
 let previous = 0, gait = 0, walk = 0
+let uiElapsed = 0
 let nextBlink = Number.POSITIVE_INFINITY
 let blinkStarted: number | null = null
 renderer.setAnimationLoop((time: number) => {
-  if (!previous) nextBlink = time + 1200 + Math.random() * 1000
+  if (document.hidden) { previous = time; return }
+  if (currentView !== 'home' && currentView !== 'camera') {
+    previous = time
+    if (needsBackgroundRender) { renderer.render(scene, camera); needsBackgroundRender = false }
+    return
+  }
+  if (!previous || !Number.isFinite(nextBlink)) nextBlink = time + 1200 + Math.random() * 1000
   const dt = previous ? Math.min((time - previous) / 1000, 0.05) : 0
   previous = time
   badgeCandies.update(dt)
@@ -257,11 +268,15 @@ renderer.setAnimationLoop((time: number) => {
   shadow.position.set(position.x, position.y - 2.23315625 * characterSize, -0.8)
   if (currentView === 'home') badgeCandies.eatNearby(position.x, position.y + hop,
     1.9 * characterSize, 2.4 * characterSize)
-  glossProps.syncLinks(camera)
-  badgeCandies.syncInteraction(camera)
-  if (currentView === 'home') speech.update(dt, position.x, position.y + hop, camera,
-    2.429375 * characterSize, 2.803125 * characterSize,
-    [...glossProps.hoveredBounds(), ...badgeCandies.hoveredBounds()])
+  uiElapsed += dt
+  if (!mobileRendering || uiElapsed >= 1 / 30) {
+    glossProps.syncLinks(camera)
+    badgeCandies.syncInteraction(camera)
+    if (currentView === 'home') speech.update(uiElapsed, position.x, position.y + hop, camera,
+      2.429375 * characterSize, 2.803125 * characterSize,
+      [...glossProps.hoveredBounds(), ...badgeCandies.hoveredBounds()])
+    uiElapsed = 0
+  }
   renderer.render(scene, camera)
 })
 

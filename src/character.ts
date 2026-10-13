@@ -13,6 +13,7 @@ const referenceColors = {
 
 // A little sewn plush: three sleepy eyes, a broad head, and patterned briefs.
 export function createCharacter() {
+  const mobile = window.matchMedia('(pointer: coarse)').matches || window.innerWidth <= 700
   const root = new THREE.Group()
   const torso = new THREE.Group()
   const eyelids: { upper: THREE.Mesh; lower: THREE.Mesh; eyeball: THREE.Group; closed: THREE.Mesh; crease: THREE.Mesh }[] = []
@@ -82,7 +83,7 @@ export function createCharacter() {
   })
   const dark = new THREE.MeshStandardMaterial({ color: '#291c19', roughness: 0.65 })
   const iris = new THREE.MeshStandardMaterial({ color: '#684537', roughness: 0.4 })
-  const sphere = new THREE.SphereGeometry(1, 32, 24)
+  const sphere = new THREE.SphereGeometry(1, mobile ? 24 : 32, mobile ? 16 : 24)
   // Soft, overlapping fleece locks give the plush a fluffy, tufted silhouette.
   const strandCurve = new THREE.CatmullRomCurve3([
     new THREE.Vector3(0, -0.008, 0),
@@ -119,7 +120,7 @@ export function createCharacter() {
     return mesh
   }
   function fuzzy(parent: THREE.Group, position: number[], scale: number[], count: number, squircle = false) {
-    const geometry = squircle ? new THREE.SphereGeometry(1, 64, 48) : sphere.clone()
+    const geometry = squircle ? new THREE.SphereGeometry(1, mobile ? 40 : 64, mobile ? 28 : 48) : sphere.clone()
     const power = (v: number) => Math.abs(v) < 1e-7 ? 0 : Math.sign(v) * Math.abs(v) ** 0.72
     if (squircle) {
       const vertices = geometry.attributes.position!
@@ -154,7 +155,7 @@ export function createCharacter() {
     mesh.position.set(position[0]!, position[1]!, position[2]!)
     mesh.scale.set(scale[0]!, scale[1]!, scale[2]!)
     parent.add(mesh)
-    const fiberCount = count * 4
+    const fiberCount = Math.round(count * (mobile ? 1.5 : 4))
     const tufts = new THREE.InstancedMesh(tuftGeometry, fibers, fiberCount)
     const dummy = new THREE.Object3D()
     for (let i = 0; i < fiberCount; i++) {
