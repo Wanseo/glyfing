@@ -14,6 +14,7 @@ import { createCharacterPlay } from './character-play'
 import { createPlushProps } from './plush-props'
 import { createClickSound } from './click-sound'
 import { createCustomCursor } from './custom-cursor'
+import { createTouchMovement } from './touch-movement'
 
 THREE.Cache.enabled = true
 createClickSound()
@@ -31,6 +32,7 @@ renderer.shadowMap.type = THREE.PCFSoftShadowMap
 renderer.domElement.setAttribute('aria-label', '핑크 글리터 배경 위의 3D 캐릭터와 Glue Gloss 패키지, 크롬 튜브, 사원증과 알록달록한 젤리들. 방향키로 움직일 수 있습니다.')
 renderer.domElement.setAttribute('role', 'img')
 app.appendChild(renderer.domElement)
+const touchMovement = createTouchMovement(renderer.domElement)
 const brandLogo = document.createElement('img')
 brandLogo.className = 'brand-logo'
 brandLogo.src = brandLogoUrl
@@ -168,7 +170,7 @@ function captureHome() {
   return output
 }
 createExperiences(app, captureCharacter, route => {
-  currentView = route; keys.clear()
+  currentView = route; keys.clear(); touchMovement.clear()
   characterPlay.update(0, position.x, position.y, camera, route === 'home')
   const home = route === 'home' || route === 'camera'
   character.root.visible = home; shadow.visible = home
@@ -213,6 +215,10 @@ renderer.setAnimationLoop((time: number) => {
   }
   if (document.querySelector('dialog[open]')) keys.clear()
   const direction = getDirection(keys)
+  if (currentView === 'home' && !document.querySelector('dialog[open]')) {
+    const touchDirection = touchMovement.direction()
+    if (touchDirection) { direction.x = touchDirection; direction.y = 0; direction.moving = true }
+  } else touchMovement.clear()
   const previousX = position.x, previousY = position.y
   position.x = clampPosition(position.x + direction.x * dt * 2.9, viewHalfWidth, 2.429375 * characterSize)
   position.y = clampPosition(position.y + direction.y * dt * 2.9, viewHalfHeight, 2.803125 * characterSize)

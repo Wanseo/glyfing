@@ -9,6 +9,7 @@ import lifeHeartUrl from './assets/life-heart.png'
 import levelLabelsUrl from './assets/level-labels.png'
 import victoryUrl from './assets/all-levels-clear.png'
 import homeIconUrl from './assets/home-icon.png'
+import { createTouchMovement } from './touch-movement'
 
 let preparedImages: Promise<HTMLImageElement[]> | undefined
 export function prepareGameImages() {
@@ -65,6 +66,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     </section>`
   const canvas = host.querySelector<HTMLCanvasElement>('.game-canvas')!
   const ctx = canvas.getContext('2d')!
+  const touchMovement = createTouchMovement(canvas)
   const moveHint = host.querySelector<HTMLElement>('.game-movement-hint')!
   let hintTime = 0, hasMoved = false
   const stage = host.querySelector<HTMLElement>('.rain-game')!
@@ -204,6 +206,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     timeFill.style.width = `${24 + (1 - remaining / levels[level]!.seconds) * 69.5}%`
   }
   function beginLevel() {
+    touchMovement.clear()
     celebrating = false; confetti.length = 0
     countdownSound.pause(); countdownSound.currentTime = 0
     caught = 0; remaining = levels[level]!.seconds; spawn = 0; heartSpawn = 3; drops.length = 0
@@ -306,7 +309,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     }
     if (running) {
       remaining = Math.max(0, remaining - dt)
-      const direction = Number(keys.has('arrowright') || keys.has('d')) - Number(keys.has('arrowleft') || keys.has('a'))
+      const direction = touchMovement.direction() || (Number(keys.has('arrowright') || keys.has('d')) - Number(keys.has('arrowleft') || keys.has('a')))
       if (direction) hasMoved = true
       hintTime += dt
       player = Math.max(.07, Math.min(.93, player + direction * dt * .8))
@@ -472,6 +475,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   }
   resize(); start(); frame = requestAnimationFrame(loop)
   return () => {
+    touchMovement.dispose()
     window.removeEventListener('glyf-sound-change', syncSound)
     disposed = true; cancelAnimationFrame(frame); clearTimeout(transition); observer.disconnect()
     clearHeartFlights()
