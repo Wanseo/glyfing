@@ -162,7 +162,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       if (score > best) localStorage.setItem('glyf-gummy-best', String(score))
     } catch { /* optional */ }
     message.innerHTML = `${won ? `<img class="victory-art" src="${victoryUrl}" alt="ALL LEVELS CLEAR!">` : `<img class="game-over-art" src="${gameOverUrl}" alt="GAME OVER">`}
-      <div class="result-actions"><button class="play-button" data-again>RETRY ↻</button><a class="play-button pink-button" href="#home">HOME ↗</a></div>`
+      <div class="result-actions"><button class="play-button" data-again>RETRY</button><a class="play-button pink-button" href="#home">HOME</a></div>`
     message.hidden = false
     message.querySelector('[data-again]')!.addEventListener('click', start)
   }
