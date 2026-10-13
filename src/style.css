@@ -347,6 +347,6 @@ html[data-view='camera'] .play-screen::before { display: none; }
 .camera-actions { display: flex; justify-content: center; gap: 10px; }
 .camera-close { position: absolute; top: -16px; right: -16px; display: grid; place-items: center; width: 40px; height: 40px; background: #fff; border: 2px solid #171717; color: #171717; text-decoration: none; }
 
-.rain-lives { position: absolute; top: max(16px, env(safe-area-inset-top)); left: 16px; display: flex; gap: 4px; pointer-events: none; }
+.rain-lives { position: absolute; top: 41px; left: 16px; display: flex; align-items: center; gap: 4px; height: calc(clamp(140px, 17vw, 230px) * 3 / 8); pointer-events: none; }
 .rain-lives img { width: 58px; height: 58px; object-fit: contain; }
-@media (max-width: 700px) { .rain-lives { top: 120px; left: 10px; gap: 0; } .rain-lives img { width: 40px; height: 40px; } }
+@media (max-width: 700px) { .rain-lives { top: 143px; left: 10px; gap: 0; height: 48.75px; } .rain-lives img { width: 40px; height: 40px; } }
