@@ -505,3 +505,6 @@ html[data-view='game'] .rain-home.home-icon-link img { width: 64px; height: 64px
   75%, 86% { opacity: 1; } 100% { opacity: 0; }
 }
 @media (prefers-reduced-motion: reduce) { .movement-hint { animation: none; } }
+
+.movement-hint .pixel-move-arrow { width: 48px; height: 48px; background-image: url('./assets/move-arrow.png'); background-size: contain; background-position: center; }
+.home-movement-hint .pixel-move-arrow { width: 80px; height: 80px; }
