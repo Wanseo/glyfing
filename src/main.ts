@@ -140,6 +140,31 @@ function captureCharacter() {
   stickerRenderer.dispose(); stickerRenderer.forceContextLoss()
   return url
 }
+function captureHome() {
+  const output = document.createElement('canvas')
+  output.width = 1080; output.height = 1920
+  const ctx = output.getContext('2d')!
+  const captureRenderer = new THREE.WebGLRenderer({ antialias: true })
+  captureRenderer.setSize(1080, 1920)
+  const captureCamera = camera.clone()
+  captureCamera.left = -5.625; captureCamera.right = 5.625
+  captureCamera.top = 10; captureCamera.bottom = -10
+  captureCamera.updateProjectionMatrix()
+  const originalBackground = scene.background
+  const captureBackground = createGlitterBackground(1080, 1920, 1)
+  try {
+    scene.background = captureBackground
+    glossProps.layout(5.625, 10); badgeCandies.layout(5.625, 10); plushProps.layout(5.625, 10)
+    captureRenderer.render(scene, captureCamera)
+    ctx.drawImage(captureRenderer.domElement, 0, 0)
+    ctx.drawImage(brandLogo, 32, 32, 110, 110 * brandLogo.naturalHeight / brandLogo.naturalWidth)
+  } finally {
+    scene.background = originalBackground
+    glossProps.layout(viewHalfWidth, viewHalfHeight); badgeCandies.layout(viewHalfWidth, viewHalfHeight); plushProps.layout(viewHalfWidth, viewHalfHeight)
+    captureBackground.dispose(); captureRenderer.dispose(); captureRenderer.forceContextLoss()
+  }
+  return output
+}
 createExperiences(app, captureCharacter, route => {
   currentView = route; keys.clear()
   characterPlay.update(0, position.x, position.y, camera, route === 'home')
@@ -151,7 +176,7 @@ createExperiences(app, captureCharacter, route => {
   badgeCandies.syncInteraction(camera)
   const bubble = app.querySelector<HTMLElement>('.character-speech')!
   bubble.hidden = true
-})
+}, captureHome)
 window.addEventListener('keydown', event => {
   if (currentView !== 'home' || document.querySelector('dialog[open]') || !event.key.startsWith('Arrow')) return
   event.preventDefault()

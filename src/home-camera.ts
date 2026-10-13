@@ -4,7 +4,7 @@ import stickersUrl from './assets/camera-stickers.png'
 import { loadImage, drawFit } from './play-assets'
 import { cutout } from './badge-candies'
 
-export function createHomeCamera(host: HTMLElement) {
+export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanvasElement) {
   host.innerHTML = `<section class="home-camera" aria-label="카메라 촬영">
     <a class="camera-close" href="#home" aria-label="카메라 닫기"><img src="${closeButtonUrl}" alt=""></a>
     <header class="camera-titlebar"><span aria-hidden="true">● ● ●</span><h1>Photo Booth</h1></header><div class="home-camera-view"><video autoplay muted playsinline></video><img alt="촬영한 사진" hidden><canvas class="camera-sticker-layer" aria-hidden="true"></canvas></div>
@@ -33,6 +33,33 @@ export function createHomeCamera(host: HTMLElement) {
   const observer = new ResizeObserver(resizeOverlay); observer.observe(view)
   const retry = host.querySelector<HTMLButtonElement>('[data-retry]')!
   let stream: MediaStream | null = null, disposed = false, photo: HTMLCanvasElement | null = null, request = 0
+  let story: HTMLCanvasElement | null = null
+  function download() {
+    story?.toBlob(blob => {
+      if (!blob || disposed) return
+      const url = URL.createObjectURL(blob), link = document.createElement('a')
+      link.href = url; link.download = 'GLYF-story-1080x1920.png'; link.click()
+      window.setTimeout(() => URL.revokeObjectURL(url), 1000)
+    }, 'image/png')
+  }
+  function composeStory(shot: HTMLCanvasElement) {
+    const result = captureHome(), ctx = result.getContext('2d')!
+    const x = 54, width = 972, padding = 12, title = 40, footer = 70
+    const imageWidth = width - padding * 2, imageHeight = imageWidth * shot.height / shot.width
+    const height = padding * 2 + title + imageHeight + footer, y = (1920 - height) / 2
+    ctx.fillStyle = '#e83796'; ctx.fillRect(x, y, width, height)
+    ctx.fillStyle = '#ededed'; ctx.fillRect(x + padding, y + padding, imageWidth, title)
+    ctx.fillStyle = '#888'; ctx.font = '20px Arial'; ctx.fillText('● ● ●', x + 24, y + 39)
+    ctx.fillStyle = '#333'; ctx.font = '700 20px Arial'; ctx.fillText('Photo Booth', x + 112, y + 39)
+    ctx.drawImage(shot, x + padding, y + padding + title, imageWidth, imageHeight)
+    const footerY = y + padding + title + imageHeight
+    ctx.fillStyle = '#e1e1e1'; ctx.fillRect(x + padding, footerY, imageWidth, footer)
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(540, footerY + 35, 28, 0, Math.PI * 2); ctx.fill()
+    ctx.fillStyle = '#f21c2c'; ctx.beginPath(); ctx.arc(540, footerY + 35, 24, 0, Math.PI * 2); ctx.fill()
+    ctx.fillStyle = '#fff'; ctx.fillRect(527, footerY + 28, 26, 18); ctx.fillRect(533, footerY + 24, 14, 5)
+    ctx.fillStyle = '#f21c2c'; ctx.beginPath(); ctx.arc(540, footerY + 37, 6, 0, Math.PI * 2); ctx.fill()
+    return result
+  }
   void loadImage(stickersUrl).then(source => {
     if (disposed) return
     for (let i = 0; i < 2; i++) {
@@ -52,7 +79,7 @@ export function createHomeCamera(host: HTMLElement) {
       if (disposed || current !== request) { incoming.getTracks().forEach(track => track.stop()); return }
       stream = incoming; video.srcObject = incoming; await video.play()
       if (disposed || current !== request) return
-      image.hidden = true; video.hidden = false; save.hidden = true; photo = null
+      image.hidden = true; video.hidden = false; save.hidden = true; photo = null; story = null
       shoot.disabled = false; shoot.innerHTML = shutterMarkup; shoot.setAttribute('aria-label', '촬영'); overlay.hidden = false
       status.textContent = ''
     } catch {
@@ -72,13 +99,10 @@ export function createHomeCamera(host: HTMLElement) {
     ctx.restore(); decorate(ctx, photo.width, photo.height); overlay.hidden = true
     image.src = photo.toDataURL('image/png'); image.hidden = false; video.hidden = true
     stop(); save.hidden = false; shoot.innerHTML = `<img class="retry-icon" src="${retryIconUrl}" alt="">`; shoot.setAttribute('aria-label', '다시 촬영'); status.textContent = ''
+    try { story = composeStory(photo); download() }
+    catch { status.textContent = '스토리 이미지를 만들지 못했어요. 다시 촬영해 주세요.' }
   })
-  save.addEventListener('click', () => photo?.toBlob(blob => {
-    if (!blob || disposed) return
-    const url = URL.createObjectURL(blob), link = document.createElement('a')
-    link.href = url; link.download = 'GLYF-photo.png'; link.click()
-    window.setTimeout(() => URL.revokeObjectURL(url), 1000)
-  }, 'image/png'))
+  save.addEventListener('click', download)
   retry.addEventListener('click', () => { void connect() })
   void connect()
   return () => { disposed = true; request++; stop(); observer.disconnect() }
