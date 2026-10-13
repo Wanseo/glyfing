@@ -419,7 +419,7 @@ html[data-view='camera'] .play-screen::before { display: none; }
 html[data-view='game'] .brand-bar { display: flex; top: auto; bottom: max(16px, env(safe-area-inset-bottom)); left: auto; right: max(16px, env(safe-area-inset-right)); }
 html[data-view='game'] .brand-home { display: none; }
 
-.home-camera { width: min(720px, calc(100vw - 48px)); padding: 8px; background: #e83796; border: 0; box-shadow: 5px 5px #17171755; }
+.home-camera { width: min(720px, calc(100vw - 48px)); padding: 8px; background: #e83796; border: 0; box-shadow: none; }
 .camera-titlebar { display: flex; align-items: center; gap: 10px; height: 26px; padding: 0 10px; background: linear-gradient(#fff, #d6d6d6); border-radius: 7px 7px 0 0; }
 .camera-titlebar > span { color: #888; font-size: 10px; letter-spacing: 2px; }
 .home-camera .camera-titlebar h1 { margin: 0; color: #333; font: 700 11px Arial; }
