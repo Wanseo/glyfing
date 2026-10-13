@@ -18,7 +18,7 @@ export function createHomeCamera(host: HTMLElement) {
   const view = host.querySelector<HTMLElement>('.home-camera-view')!
   const overlay = host.querySelector<HTMLCanvasElement>('.camera-sticker-layer')!
   const stickerImages: HTMLCanvasElement[] = []
-  const placements = [[0, .01, .29, 0], [.04, .04, .29, 0], [.73, .2, .27, 1], [.69, .49, .29, 0], [.32, .72, .24, 1], [.56, .76, .28, 1]]
+  const placements = [[0, .01, .29, 0], [.04, .04, .29, 0], [.73, .2, .27, 1], [.69, .49, .29, 0]]
   function decorate(ctx: CanvasRenderingContext2D, w: number, h: number) {
     for (const [x, y, size, kind] of placements) {
       const sticker = stickerImages[kind!]
