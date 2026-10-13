@@ -703,3 +703,15 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
 @media (pointer: coarse) and (prefers-reduced-motion: reduce) {
   html[data-view='home'].show-object-hints #app > .mobile-touch-controls.movement-hint { animation: none; opacity: 1; }
 }
+
+@media (pointer: coarse) {
+  .rain-game .mobile-touch-controls.movement-hint { visibility: hidden; opacity: 0; pointer-events: none; }
+  .rain-game.show-mobile-movement-hint .mobile-touch-controls.movement-hint {
+    visibility: visible;
+    pointer-events: auto;
+    animation: movement-hint-blink 5s ease-in-out both;
+  }
+}
+@media (pointer: coarse) and (prefers-reduced-motion: reduce) {
+  .rain-game.show-mobile-movement-hint .mobile-touch-controls.movement-hint { animation: none; opacity: 1; }
+}
