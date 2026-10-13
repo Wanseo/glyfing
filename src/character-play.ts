@@ -20,7 +20,6 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
   let candy: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial> | null = null
   let elapsed = 1, lastClick = -Infinity, clicks = 0, x = 0, y = 0
   let idleTime = 0, hintTime = 0, hasMoved = false, hasTapped = false
-  let tapPromptShown = false
   new THREE.TextureLoader().load(candyUrl, source => {
     candy = cutout(source.image, [.62, .425, .14, .14])
     source.dispose()
@@ -52,9 +51,6 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
       if (available) hintTime += dt
       idleTime = available && !moving ? idleTime + dt : 0
       const inviting = available && !moving && !hasTapped && !reducedMotion.matches
-      if (available && !hasTapped && !tapPromptShown && hintTime > 1.6) {
-        say('Tap me!'); tapPromptShown = true
-      }
       const phase = idleTime % 8
       const idleHop = inviting && phase > 1 && phase < 1.6 ? Math.sin((phase - 1) / .6 * Math.PI) * .16 : 0
       const hop = (reducedMotion.matches || elapsed >= .8 ? 0

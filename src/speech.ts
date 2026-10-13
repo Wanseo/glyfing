@@ -22,6 +22,7 @@ export function createSpeech(app: HTMLElement) {
   const anchor = new THREE.Vector3()
   const corner = new THREE.Vector3()
   let countdown = .35, greeting = 0
+  let awaitingTap = true, introductionTime = 0
   let remaining: string[] = []
   const placements = ['middle', 'upper-left', 'upper-right'] as const
   let placementIndex = -1
@@ -39,14 +40,20 @@ export function createSpeech(app: HTMLElement) {
   }
   return {
     say(message: string) {
+      awaitingTap = false
       text.textContent = message
       bubble.hidden = false
       countdown = 3
       placementIndex = (placementIndex + 1) % placements.length
     },
     update(dt: number, x: number, y: number, camera: THREE.Camera, halfWidth: number, halfHeight: number, blocked: DOMRect[] = []) {
-      countdown -= dt
-      if (countdown <= 0) {
+      if (awaitingTap) {
+        if (!document.documentElement.classList.contains('is-loading')) introductionTime += dt
+        text.textContent = introductionTime < 3 ? 'Hello! My name is Fuggler!' : 'Tap me!'
+        bubble.hidden = false
+        if (placementIndex < 0) placementIndex = 0
+      } else countdown -= dt
+      if (!awaitingTap && countdown <= 0) {
         if (bubble.hidden) {
           text.textContent = nextPhrase()
           placementIndex = (placementIndex + 1) % placements.length
