@@ -387,3 +387,9 @@ html[data-view='camera'] .play-screen::before { display: none; }
 @media (any-pointer: fine) {
   html, body, body * { cursor: var(--site-cursor, auto) !important; }
 }
+
+.music-toggle { position: relative; width: 72px; height: 72px; min-height: 44px; padding: 0; border: 0; background: transparent; }
+.music-toggle img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.music-off-slash { display: none; position: absolute; inset: 0; width: 100%; height: 100%; shape-rendering: crispEdges; }
+.music-toggle.is-off .music-off-slash { display: block; }
+@media (max-width: 700px) { .music-toggle { width: 60px; height: 60px; } }
