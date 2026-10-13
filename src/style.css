@@ -487,3 +487,6 @@ html[data-view='game'] .rain-home.home-icon-link img { width: 64px; height: 64px
 .home-movement-hint { gap: 24px; }
 .home-movement-hint .pixel-move-arrow { width: 100px; height: 72px; }
 .home-movement-hint .pixel-move-arrow::after { inset: 6px; }
+
+.home-camera .camera-close { border: 0; padding: 0; background: transparent; }
+.camera-close img { display: block; width: 100%; height: 100%; object-fit: contain; }

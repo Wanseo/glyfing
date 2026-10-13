@@ -1,11 +1,12 @@
 import retryIconUrl from './assets/retry-icon.png'
+import closeButtonUrl from './assets/close-button.png'
 import stickersUrl from './assets/camera-stickers.png'
 import { loadImage, drawFit } from './play-assets'
 import { cutout } from './badge-candies'
 
 export function createHomeCamera(host: HTMLElement) {
   host.innerHTML = `<section class="home-camera" aria-label="카메라 촬영">
-    <a class="camera-close" href="#home" aria-label="카메라 닫기">✕</a>
+    <a class="camera-close" href="#home" aria-label="카메라 닫기"><img src="${closeButtonUrl}" alt=""></a>
     <header class="camera-titlebar"><span aria-hidden="true">● ● ●</span><h1>Photo Booth</h1></header><div class="home-camera-view"><video autoplay muted playsinline></video><img alt="촬영한 사진" hidden><canvas class="camera-sticker-layer" aria-hidden="true"></canvas></div>
     <p role="status"></p><div class="camera-actions"><button class="camera-shutter" data-shoot disabled aria-label="촬영"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 4h8l2 3h3v13H3V7h3zm4 5a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg></button><button class="play-button" data-save hidden>SAVE</button></div>
     <button class="text-button retry-icon-button" data-retry hidden aria-label="카메라 다시 연결"><img src="${retryIconUrl}" alt=""></button></section>`
