@@ -389,7 +389,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       if (running && remaining <= 0) finish(false)
     }
     for (const drop of drops) {
-      const size = (drop.kind < 4 ? 52 : 66) * (mobile && drop.kind !== heartKind ? .8 : 1)
+      const size = (drop.kind < 4 ? 52 : 66) * (mobile && drop.kind !== heartKind ? .6 : 1)
       ctx.save(); ctx.translate(drop.x, drop.y); ctx.rotate(drop.angle)
       drawFit(ctx, drop.kind === heartKind ? fallingHeart : items[drop.kind]!, -size / 2, -size / 2, size, size); ctx.restore()
       if (drop.double) {
