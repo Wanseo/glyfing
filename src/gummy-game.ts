@@ -12,6 +12,26 @@ const levels = [
   { target: 11, count: 13, seconds: 29 },
   { target: 6, count: 15, seconds: 27 },
 ]
+const levelGlyphs: Record<string, string[]> = {
+  L: ['10000','10000','10000','10000','10000','10000','11111'],
+  E: ['11111','10000','10000','11110','10000','10000','11111'],
+  V: ['10001','10001','10001','10001','10001','01010','00100'],
+  '1': ['00100','01100','00100','00100','00100','00100','01110'],
+  '2': ['01110','10001','00001','00010','00100','01000','11111'],
+  '3': ['11110','00001','00001','01110','00001','00001','11110'],
+  '4': ['10010','10010','10010','11111','00010','00010','00010'],
+  '5': ['11111','10000','10000','11110','00001','00001','11110'],
+  '/': ['00001','00001','00010','00100','01000','10000','10000'],
+}
+function levelLettering(text: string) {
+  let pixels = ''
+  for (const [index, letter] of [...text].entries()) {
+    levelGlyphs[letter]?.forEach((row, y) => [...row].forEach((pixel, x) => {
+      if (pixel === '1') pixels += `<rect x="${index * 6 + x + 1}" y="${y + 1}" width="1" height="1"/>`
+    }))
+  }
+  return `<svg class="level-pixel-text" viewBox="0 0 ${text.length * 6 + 2} 10" role="img" aria-label="${text}" xmlns="http://www.w3.org/2000/svg"><g fill="#171717" transform="translate(1 1)">${pixels}</g><g fill="#f5ff00">${pixels}</g></svg>`
+}
 export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   host.innerHTML = `
     <section class="rain-game" aria-label="젤리와 인형 수집 게임">
@@ -63,7 +83,10 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   }
   const observer = new ResizeObserver(resize); observer.observe(stage)
   function updateHud() {
-    levelEl.textContent = `LEVEL ${level + 1} / ${levels.length}`
+    const label = `LEVEL ${level + 1}/${levels.length}`
+    if (levelEl.dataset.label !== label) {
+      levelEl.dataset.label = label; levelEl.innerHTML = levelLettering(label)
+    }
     countEl.textContent = `${caught} / ${levels[level]!.count}개`
     timeEl.textContent = `${Math.ceil(remaining)}초`
   }
