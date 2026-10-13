@@ -93,7 +93,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       levelEl.dataset.label = label; levelEl.innerHTML = levelLettering(label)
     }
     countEl.textContent = `${caught}/${levels[level]!.count}`
-    timeEl.textContent = `${Math.ceil(remaining)}초`
+    timeEl.textContent = `${Math.ceil(remaining)}sec`
     timeFill.style.width = `${24 + (1 - remaining / levels[level]!.seconds) * 69.5}%`
   }
   function beginLevel() {
