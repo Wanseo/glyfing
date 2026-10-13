@@ -597,3 +597,14 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
 @media (prefers-reduced-motion: reduce) {
   .show-object-hints .product-link img, .show-object-hints .badge-trigger img { animation: none; opacity: 1; }
 }
+
+@media (pointer: coarse) {
+  html[data-view='home'] #app, html[data-view='home'] #app *,
+  html[data-view='game'] #app, html[data-view='game'] #app * {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  html[data-view='home'] #app, html[data-view='game'] .rain-game { touch-action: none; }
+}
