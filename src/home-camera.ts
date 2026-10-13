@@ -23,7 +23,7 @@ export function createHomeCamera(host: HTMLElement) {
       if (disposed || current !== request) return
       image.hidden = true; video.hidden = false; save.hidden = true; photo = null
       shoot.disabled = false; shoot.textContent = '촬영 ✦'
-      status.textContent = '준비되면 촬영을 눌러요!'
+      status.textContent = ''
     } catch {
       if (disposed || current !== request) return
       stop(); retry.hidden = false
