@@ -541,3 +541,13 @@ html[data-view='game'] .brand-bar {
 .life-label { color: #171717; font: 900 30px/1 monospace; margin-right: 4px; }
 .music-toggle:focus-visible { outline: none; outline-offset: 0; filter: drop-shadow(0 0 3px #e83796); }
 @media (max-width: 700px) { .life-label { font-size: 20px; margin-right: 2px; } .rain-lives { left: 6px; } .rain-lives img { width: 28px; height: 28px; } }
+
+html[data-view='game'] .rain-lives { top: max(16px, env(safe-area-inset-top)); height: 72px; }
+html[data-view='game'] .rain-home.home-icon-link { top: max(16px, env(safe-area-inset-top)); }
+html[data-view='game'] .rain-timer { top: calc(max(16px, env(safe-area-inset-top)) + 27px - clamp(140px, 17vw, 230px) * 3 / 16); }
+@media (max-width: 700px) {
+  html[data-view='game'] .rain-lives { height: 60px; }
+  html[data-view='game'] .rain-home.home-icon-link { top: max(16px, env(safe-area-inset-top)); }
+  html[data-view='game'] .pixel-battery { width: 90px; }
+  html[data-view='game'] .rain-timer { top: calc(max(16px, env(safe-area-inset-top)) + 21px - 90px * 3 / 16); }
+}
