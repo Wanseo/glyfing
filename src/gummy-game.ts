@@ -27,6 +27,9 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   const gameOverSound = new Audio(`${import.meta.env.BASE_URL}audio/freesound_community-videogame-death-sound-43894.mp3`)
   gameOverSound.preload = 'auto'
   gameOverSound.volume = .65
+  const winSound = new Audio(`${import.meta.env.BASE_URL}audio/game-win.mp3`)
+  winSound.preload = 'auto'
+  winSound.volume = .65
   host.innerHTML = `
     <section class="rain-game" aria-label="젤리와 인형 수집 게임">
       <div class="rain-lives" role="status" aria-label="남은 목숨 3개">${Array.from({ length: 3 }, () => `<img src="${lifeHeartUrl}" alt="" aria-hidden="true">`).join('')}</div>
@@ -107,16 +110,16 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     updateHud(); message.hidden = true; message.classList.remove('is-level-up'); running = true; keys.clear(); previous = 0
   }
   function start() {
+    winSound.pause(); winSound.currentTime = 0
     gameOverSound.pause(); gameOverSound.currentTime = 0
     wrongSound.pause(); wrongSound.currentTime = 0
     levelSound.pause(); levelSound.currentTime = 0
     clearTimeout(transition); effects.length = 0; shakeRemaining = 0; lives = 3; updateLives(); level = 0; score = 0; player = .5; beginLevel()
   }
   function finish(won: boolean) {
-    if (!won) {
-      gameOverSound.currentTime = 0
-      void gameOverSound.play().catch(() => { /* Audio playback is optional. */ })
-    }
+    const resultSound = won ? winSound : gameOverSound
+    resultSound.currentTime = 0
+    void resultSound.play().catch(() => { /* Audio playback is optional. */ })
     running = false; keys.clear()
     message.classList.remove('is-level-up')
     try {
@@ -258,6 +261,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     levelSound.pause()
     wrongSound.pause()
     gameOverSound.pause()
+    winSound.pause()
     clearTimeout(targetGlowTimer)
     window.removeEventListener('keydown', keydown); window.removeEventListener('keyup', keyup)
     window.removeEventListener('blur', clearKeys); document.removeEventListener('visibilitychange', visibility)
