@@ -551,3 +551,13 @@ html[data-view='game'] .rain-timer { top: calc(max(16px, env(safe-area-inset-top
   html[data-view='game'] .pixel-battery { width: 90px; }
   html[data-view='game'] .rain-timer { top: calc(max(16px, env(safe-area-inset-top)) + 21px - 90px * 3 / 16); }
 }
+
+/* Keep LEVEL fixed while lowering the remaining top controls together. */
+html[data-view='game'] .rain-lives { top: max(40px, env(safe-area-inset-top)); }
+html[data-view='game'] .rain-home.home-icon-link { top: max(40px, env(safe-area-inset-top)); }
+html[data-view='game'] .brand-bar, html[data-view='home'] .brand-bar { top: max(40px, env(safe-area-inset-top)); }
+html[data-view='game'] .rain-timer { top: calc(max(40px, env(safe-area-inset-top)) + 27px - clamp(140px, 17vw, 230px) * 3 / 16); }
+html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
+@media (max-width: 700px) {
+  html[data-view='game'] .rain-timer { top: calc(max(40px, env(safe-area-inset-top)) + 21px - 90px * 3 / 16); }
+}
