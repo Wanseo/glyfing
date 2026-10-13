@@ -73,6 +73,34 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   const keys = new Set<string>(), drops: Drop[] = []
   const effects: CatchEffect[] = []
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
+  const heartFlights = new Set<HTMLElement>()
+  function clearHeartFlights() {
+    heartFlights.forEach(image => { image.getAnimations().forEach(animation => animation.cancel()); image.remove() })
+    heartFlights.clear()
+  }
+  function flyHeart(x: number, y: number, slot: number) {
+    if (reducedMotion.matches) { updateLives(); return }
+    const origin = canvas.getBoundingClientRect(), destination = livesEl.getBoundingClientRect()
+    const size = parseFloat(getComputedStyle(hearts[0]!).width)
+    const gap = parseFloat(getComputedStyle(livesEl).gap) || 0
+    const targetX = destination.left + slot * (size + gap) + size / 2
+    const targetY = destination.top + destination.height / 2
+    const image = document.createElement('img')
+    image.src = lifeHeartUrl; image.alt = ''; image.className = 'flying-life-heart'
+    document.body.appendChild(image); heartFlights.add(image)
+    const fromX = origin.left + x, fromY = origin.top + y
+    const animation = image.animate([
+      { transform: `translate(${fromX - 32}px, ${fromY - 32}px) scale(1)` },
+      { transform: `translate(${targetX - 32}px, ${targetY - 32}px) scale(${size / 64})` },
+    ], { duration: 550, easing: 'cubic-bezier(.3,0,.15,1)', fill: 'forwards' })
+    animation.onfinish = () => {
+      image.remove(); heartFlights.delete(image)
+      if (disposed) return
+      updateLives()
+      hearts[slot]?.animate([{ transform: 'scale(1.5)', filter: 'drop-shadow(0 0 10px #f5ff00)' },
+        { transform: 'scale(1)', filter: 'none' }], { duration: 350 })
+    }
+  }
   let shakeRemaining = 0
   function catchEffect(correct: boolean, y: number) {
     if (!correct) shakeRemaining = .65
@@ -114,6 +142,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     updateHud(); message.hidden = true; message.classList.remove('is-level-up'); running = true; keys.clear(); previous = 0
   }
   function start() {
+    clearHeartFlights()
     winSound.pause(); winSound.currentTime = 0
     gameOverSound.pause(); gameOverSound.currentTime = 0
     wrongSound.pause(); wrongSound.currentTime = 0
@@ -192,7 +221,9 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
           drops.splice(i, 1)
           if (drop.kind === heartKind) {
             const recovered = lives < 3
-            lives = Math.min(3, lives + 1); updateLives()
+            lives = Math.min(3, lives + 1)
+            if (recovered) flyHeart(player * width, playerY + playerSize / 2, lives - 1)
+            else updateLives()
             catchEffect(true, playerY + 20)
             effects[effects.length - 1]!.label = recovered ? '♥ +1' : '♥ MAX'
             itemSound.currentTime = 0
@@ -278,6 +309,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   resize(); start(); frame = requestAnimationFrame(loop)
   return () => {
     disposed = true; cancelAnimationFrame(frame); clearTimeout(transition); observer.disconnect()
+    clearHeartFlights()
     itemSound.pause()
     levelSound.pause()
     wrongSound.pause()

@@ -367,3 +367,5 @@ html[data-view='camera'] .play-screen::before { display: none; }
 .rain-level .rain-goal-images canvas.is-caught {
   filter: drop-shadow(0 0 5px #f5ff00) drop-shadow(0 0 12px #f5ff00);
 }
+
+.flying-life-heart { position: fixed; top: 0; left: 0; width: 64px; height: 64px; object-fit: contain; z-index: 30; pointer-events: none; }
