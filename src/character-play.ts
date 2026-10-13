@@ -41,7 +41,7 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
           drops.push({ mesh, vx: (Math.random() - .5) * 4.8, vy: 2 + Math.random() * 2, age: 0 })
         }
       }
-    } else say(clicks === 1 ? 'Hey! Personal space!' : 'Easy! I’m full of gummies!')
+    } else say('Tap me a few more times!')
   })
   return {
     update(dt: number, px: number, py: number, camera: THREE.OrthographicCamera, visible: boolean, moving = false) {
