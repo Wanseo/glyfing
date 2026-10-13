@@ -12,7 +12,7 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
   const moveHint = document.createElement('div')
   moveHint.className = 'movement-hint home-movement-hint'
   moveHint.setAttribute('aria-label', '방향키로 캐릭터 이동')
-  moveHint.innerHTML = '<span aria-hidden="true">←</span><span aria-hidden="true">→</span>'
+  moveHint.innerHTML = '<span class="pixel-move-arrow left" aria-hidden="true"></span><span class="pixel-move-arrow" aria-hidden="true"></span>'
   app.appendChild(moveHint)
   const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)')
   const projected = new THREE.Vector3(), corner = new THREE.Vector3()
@@ -20,6 +20,7 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
   let candy: THREE.Mesh<THREE.PlaneGeometry, THREE.MeshBasicMaterial> | null = null
   let elapsed = 1, lastClick = -Infinity, clicks = 0, x = 0, y = 0
   let idleTime = 0, hintTime = 0, hasMoved = false, hasTapped = false
+  let tapPromptShown = false
   new THREE.TextureLoader().load(candyUrl, source => {
     candy = cutout(source.image, [.62, .425, .14, .14])
     source.dispose()
@@ -51,7 +52,9 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
       if (available) hintTime += dt
       idleTime = available && !moving ? idleTime + dt : 0
       const inviting = available && !moving && !hasTapped && !reducedMotion.matches
-      button.classList.toggle('is-inviting', inviting)
+      if (available && !hasTapped && !tapPromptShown && hintTime > 1.6) {
+        say('Tap me!'); tapPromptShown = true
+      }
       const phase = idleTime % 8
       const idleHop = inviting && phase > 1 && phase < 1.6 ? Math.sin((phase - 1) / .6 * Math.PI) * .16 : 0
       const hop = (reducedMotion.matches || elapsed >= .8 ? 0
@@ -65,7 +68,7 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
       button.style.top = `${(1 - projected.y) * window.innerHeight / 2}px`
       button.style.width = `${Math.abs(corner.x - projected.x) * window.innerWidth}px`
       button.style.height = `${Math.abs(corner.y - projected.y) * window.innerHeight}px`
-      moveHint.hidden = !available || hasMoved || hintTime < .5 || hintTime > 7
+      moveHint.hidden = !available || hasMoved || hintTime < .5 || hintTime > 1.5
       moveHint.style.left = button.style.left
       moveHint.style.top = `${(1 - projected.y) * window.innerHeight / 2 + 75}px`
       for (let i = drops.length - 1; i >= 0; i--) {

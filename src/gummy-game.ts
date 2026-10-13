@@ -44,7 +44,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       <div class="rain-lives" role="status" aria-label="남은 목숨 3개">${Array.from({ length: 3 }, () => `<img src="${lifeHeartUrl}" alt="" aria-hidden="true">`).join('')}</div>
       <a class="play-button pink-button rain-home home-icon-link" href="#home" aria-label="HOME"><img src="${homeIconUrl}" alt=""></a>
       <canvas class="game-canvas" aria-label="방향키 또는 A와 D 키로 목표 아이템을 받으세요"></canvas>
-      <div class="movement-hint game-movement-hint" aria-label="좌우 방향키로 이동"><span aria-hidden="true">←</span><span aria-hidden="true">→</span></div>
+      <div class="movement-hint game-movement-hint" aria-label="좌우 방향키로 이동"><span class="pixel-move-arrow left" aria-hidden="true"></span><span class="pixel-move-arrow" aria-hidden="true"></span></div>
       <div class="rain-level"><b data-level></b>
         <div class="rain-goal-images"><canvas data-target width="100" height="100" role="img" aria-label="이번 단계에서 받을 아이템"></canvas></div>
       </div>
@@ -288,7 +288,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       }
     }
     const bob = running ? Math.sin(time / 150) * 3 : 0
-    moveHint.hidden = !running || hasMoved || hintTime > 7
+    moveHint.hidden = !running || hasMoved || hintTime > 1
     moveHint.style.left = `${player * width}px`
     moveHint.style.top = `${height - 50}px`
     shakeRemaining = Math.max(0, shakeRemaining - dt)

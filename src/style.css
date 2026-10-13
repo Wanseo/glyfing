@@ -451,3 +451,16 @@ html[data-view='game'] .brand-home { display: none; }
 @keyframes hint-key-press { 0%, 35%, 100% { transform: translateY(0); background: #fff; box-shadow: 0 3px #171717; } 15%, 25% { transform: translateY(3px); background: #f5ff00; box-shadow: none; } }
 @keyframes hint-tap-ring { 0%, 12% { opacity: 0; transform: translate(-50%, -50%) scale(.7); } 15% { opacity: .8; } 24%, 100% { opacity: 0; transform: translate(-50%, -50%) scale(1.35); } }
 @media (prefers-reduced-motion: reduce) { .movement-hint span { animation: none; } .character-play.is-inviting::after { animation: none; } }
+
+.movement-hint .pixel-move-arrow { position: relative; width: 34px; height: 26px; border: 0; border-radius: 0; background: #171717; box-shadow: none; animation: none; clip-path: polygon(0 27%, 50% 27%, 50% 0, 67% 0, 67% 14%, 83% 14%, 83% 27%, 100% 27%, 100% 73%, 83% 73%, 83% 86%, 67% 86%, 67% 100%, 50% 100%, 50% 73%, 0 73%); }
+.pixel-move-arrow::after { content: ''; position: absolute; inset: 3px; background: #f5ff00; clip-path: inherit; }
+.movement-hint .pixel-move-arrow.left { transform: scaleX(-1); }
+html[data-view='game'] .brand-bar { top: 18px; bottom: auto; right: 12px; }
+html[data-view='game'] .rain-timer { right: 96px; }
+@media (max-width: 700px) {
+  html[data-view='game'] .brand-bar { top: 120px; right: 8px; }
+  html[data-view='game'] .rain-timer { right: 76px; }
+  html[data-view='game'] .pixel-battery { width: 100px; }
+  .rain-lives { height: 37.5px; }
+  .rain-timer [data-time] { font-size: 20px; }
+}
