@@ -37,7 +37,7 @@ export function createExperiences(app: HTMLElement, captureCharacter: () => stri
       if (request !== current) return
       if (route === 'game') dispose = createGummyGame(screen, images)
       else dispose = createPhotoBooth(screen, images, score)
-      const title = screen.querySelector<HTMLElement>('h1')!
+      const title = screen.querySelector<HTMLElement>('h1') ?? screen.querySelector<HTMLElement>('.rain-game')!
       title.tabIndex = -1; title.focus({ preventScroll: true })
     } catch {
       if (request !== current) return
