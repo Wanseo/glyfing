@@ -6,11 +6,11 @@ export function createCustomCursor() {
   magnifier.src = magnifierUrl
   void magnifier.decode().then(() => {
     const canvas = document.createElement('canvas')
-    canvas.width = canvas.height = 36
+    canvas.width = canvas.height = 48
     const ctx = canvas.getContext('2d')!
     ctx.imageSmoothingEnabled = false
-    ctx.drawImage(magnifier, 0, 0, 36, 36)
-    document.documentElement.style.setProperty('--badge-cursor', `url("${canvas.toDataURL('image/png')}") 13 13, zoom-in`)
+    ctx.drawImage(magnifier, 0, 0, 48, 48)
+    document.documentElement.style.setProperty('--badge-cursor', `url("${canvas.toDataURL('image/png')}") 17 17, zoom-in`)
   }).catch(() => { /* Keep the standard zoom cursor if loading fails. */ })
   const image = new Image()
   image.src = cursorUrl
