@@ -120,9 +120,11 @@ window.addEventListener('resize', resize)
 resize()
 let currentView = 'home'
 const keys = new Set<string>()
-function captureCharacter() {
+function captureCharacter(blinking = false) {
   const stickerScene = new THREE.Scene()
+  character.blink(blinking ? 1 : 0)
   const model = character.root.clone(true)
+  character.blink(0)
   model.visible = true
   model.position.set(0, -3.37309375 * characterSize, 0)
   model.rotation.set(0, 0, 0)

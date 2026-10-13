@@ -370,7 +370,8 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     ctx.save()
     ctx.translate(player * width + shake * 20, playerY + bob + playerSize / 2)
     ctx.rotate(shake * .23)
-    drawFit(ctx, assets.character, -playerSize / 2, -playerSize / 2, playerSize, playerSize)
+    const playerImage = time % 3600 > 3370 ? assets.characterBlink : assets.character
+    drawFit(ctx, playerImage, -playerSize / 2, -playerSize / 2, playerSize, playerSize)
     ctx.restore()
     for (let i = effects.length - 1; i >= 0; i--) {
       const effect = effects[i]!
