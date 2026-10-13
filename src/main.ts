@@ -12,9 +12,11 @@ import { createExperiences } from './experiences'
 import { createCharacterPlay } from './character-play'
 import { createPlushProps } from './plush-props'
 import { createClickSound } from './click-sound'
+import { createCustomCursor } from './custom-cursor'
 
 THREE.Cache.enabled = true
 createClickSound()
+createCustomCursor()
 document.documentElement.classList.add('is-loading')
 const app = document.querySelector<HTMLDivElement>('#app')!
 const scene = new THREE.Scene()

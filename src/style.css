@@ -383,3 +383,7 @@ html[data-view='camera'] .play-screen::before { display: none; }
 .is-loading .startup-loading { position: fixed; inset: 0; display: grid; place-items: center; z-index: 20; background: #e83796; }
 .startup-loading img, .experience-loading img { display: block; width: min(520px, 84vw); height: auto; }
 .experience-loading { position: fixed; inset: 0; display: grid; place-items: center; pointer-events: none; }
+
+@media (any-pointer: fine) {
+  html, body, body * { cursor: var(--site-cursor, auto) !important; }
+}
