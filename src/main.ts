@@ -184,8 +184,8 @@ renderer.setAnimationLoop((time: number) => {
   if (document.querySelector('dialog[open]')) keys.clear()
   const direction = getDirection(keys)
   const previousX = position.x, previousY = position.y
-  position.x = clampPosition(position.x + direction.x * dt * 2.4, viewHalfWidth, 2.429375 * characterSize)
-  position.y = clampPosition(position.y + direction.y * dt * 2.4, viewHalfHeight, 2.803125 * characterSize)
+  position.x = clampPosition(position.x + direction.x * dt * 2.9, viewHalfWidth, 2.429375 * characterSize)
+  position.y = clampPosition(position.y + direction.y * dt * 2.9, viewHalfHeight, 2.803125 * characterSize)
   const distance = Math.hypot(position.x - previousX, position.y - previousY)
   walk = THREE.MathUtils.damp(walk, distance > 0 ? 1 : 0, 12, dt)
   // Tie steps to distance travelled so the feet stop stepping at walls.
