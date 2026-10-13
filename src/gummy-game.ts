@@ -177,6 +177,14 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   host.querySelector('[data-restart]')!.addEventListener('click', start)
   function keydown(event: KeyboardEvent) {
     const key = event.key.toLowerCase()
+    if (key === 'j') {
+      event.preventDefault()
+      if (event.repeat) return
+      clearTimeout(transition)
+      level = levels.length - 1
+      beginLevel()
+      return
+    }
     if (!['arrowleft', 'arrowright', 'a', 'd'].includes(key)) return
     event.preventDefault(); keys.add(key)
   }
