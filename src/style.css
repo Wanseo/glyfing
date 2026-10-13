@@ -265,7 +265,7 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
   object-fit: contain; transform-origin: center; transform: rotate(-28deg); animation: badge-closeup-sway 5s ease-in-out infinite;
 }
 .badge-close {
-  position: absolute; top: -12px; right: -16px; width: 44px; height: 44px;
+  position: absolute; top: -12px; right: -16px; width: 28px; height: 28px;
   border: 0; padding: 0; background: transparent; cursor: pointer;
 }
 .badge-close img { display: block; width: 100%; height: 100%; object-fit: contain; }
