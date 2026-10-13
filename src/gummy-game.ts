@@ -43,7 +43,6 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       <div class="rain-timer" role="timer" aria-label="남은 시간"><small>TIME LEFT</small><span data-time></span></div>
       <aside class="rain-goal"><h1 class="rain-title"><span>GUMMY</span><span>RUSH</span></h1>
       </aside>
-      <div class="rain-help">← → / A·D 키로 이동<br>목표만 받아요! 다른 아이템은 -2sec</div>
       <button class="text-button rain-restart" data-restart>다시 시작 ↻</button>
       <div class="game-message rain-message" hidden></div>
     </section>`
