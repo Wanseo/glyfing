@@ -266,8 +266,9 @@ button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible
 }
 .badge-close {
   position: absolute; top: -12px; right: -16px; width: 44px; height: 44px;
-  border: 2px solid #171717; background: #fff; color: #171717; font-size: 19px; cursor: pointer;
+  border: 0; padding: 0; background: transparent; cursor: pointer;
 }
+.badge-close img { display: block; width: 100%; height: 100%; object-fit: contain; }
 @keyframes badge-closeup-sway { 0%, 100% { transform: rotate(-29.5deg); } 50% { transform: rotate(-26.5deg); } }
 @media (prefers-reduced-motion: reduce) { .badge-viewer-image { animation: none; } }
 

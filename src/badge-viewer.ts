@@ -1,4 +1,5 @@
 import * as THREE from 'three'
+import closeButtonUrl from './assets/close-button.png'
 
 export function createBadgeViewer(app: HTMLElement) {
   const button = document.createElement('button')
@@ -15,7 +16,9 @@ export function createBadgeViewer(app: HTMLElement) {
   const image = document.createElement('img')
   image.className = 'badge-viewer-image'; image.alt = 'MONSTER. HEIGHT 20CM. WEIGHT BIMIL. FUR GREY. EYES THREE. GLYF FUGGLER. HUMAN-LIKE TEETH. THREE GREY EYES. RED AND WHITE UNDERWEAR. GLOSS MADE THICK. SHINE THAT STICKS.'
   const close = document.createElement('button')
-  close.className = 'badge-close'; close.type = 'button'; close.textContent = '✕'
+  close.className = 'badge-close'; close.type = 'button'
+  const closeIcon = document.createElement('img')
+  closeIcon.src = closeButtonUrl; closeIcon.alt = ''; close.appendChild(closeIcon)
   close.setAttribute('aria-label', '사원증 닫기')
   dialog.append(image, close); app.append(button, dialog)
   button.addEventListener('click', () => {
