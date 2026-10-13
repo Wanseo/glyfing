@@ -435,3 +435,6 @@ html[data-view='game'] .brand-home { display: none; }
 
 .home-icon-link img { display: block; width: 28px; height: 28px; object-fit: contain; }
 .world-nav .home-icon-link { display: flex; align-items: center; justify-content: center; padding: 4px 12px; }
+
+.retry-icon-button img, .retry-icon { display: block; width: 28px; height: 28px; object-fit: contain; }
+.camera-shutter .retry-icon { width: 100%; height: 100%; }

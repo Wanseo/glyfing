@@ -1,3 +1,4 @@
+import retryIconUrl from './assets/retry-icon.png'
 import { loadPlayAssets } from './play-assets'
 import { createGummyGame } from './gummy-game'
 import { createPhotoBooth } from './photo-booth'
@@ -42,7 +43,7 @@ export function createExperiences(app: HTMLElement, captureCharacter: () => stri
       title.tabIndex = -1; title.focus({ preventScroll: true })
     } catch {
       if (request !== current) return
-      screen.innerHTML = '<div class="loading-card" role="alert">이미지를 불러오지 못했어요. <button class="play-button" data-retry>다시 시도 ↻</button></div>'
+      screen.innerHTML = `<div class="loading-card" role="alert">이미지를 불러오지 못했어요. <button class="play-button retry-icon-button" data-retry aria-label="다시 시도"><img src="${retryIconUrl}" alt=""></button></div>`
       screen.querySelector('[data-retry]')!.addEventListener('click', () => location.reload())
     }
   }

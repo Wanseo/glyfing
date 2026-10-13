@@ -1,3 +1,4 @@
+import retryIconUrl from './assets/retry-icon.png'
 import './style.css'
 import brandLogoUrl from './assets/glyf-logo.webp'
 import * as THREE from 'three'
@@ -229,7 +230,7 @@ Promise.all([glossProps.ready, badgeCandies.ready, plushProps.ready, brandLogo.d
   const message = document.createElement('div')
   message.className = 'startup-error'
   message.setAttribute('role', 'alert')
-  message.innerHTML = '이미지를 불러오지 못했어요. <button type="button">다시 시도 ↻</button>'
+  message.innerHTML = `이미지를 불러오지 못했어요. <button type="button" class="retry-icon-button" aria-label="다시 시도"><img src="${retryIconUrl}" alt=""></button>`
   message.querySelector('button')!.addEventListener('click', () => location.reload())
   document.body.appendChild(message)
 })

@@ -1,3 +1,4 @@
+import retryIconUrl from './assets/retry-icon.png'
 import { drawFit, loadImage } from './play-assets'
 import type { PlayAssets } from './play-assets'
 import { createGlitterBackground } from './glitter'
@@ -13,7 +14,7 @@ export function createPhotoBooth(host: HTMLElement, assets: PlayAssets, gameScor
       <div class="control-section"><span class="control-label">01 / 사진 고르기</span>
         <div class="button-pair"><button class="play-button" data-camera>카메라 켜기 ↗</button><label class="play-button upload-button">사진 업로드 +<input type="file" accept="image/*" data-upload></label></div>
         <button class="play-button pink-button capture-button" data-capture hidden>찰칵! 3초 후 촬영</button>
-        <button class="text-button" data-reset>사진 없이 캐릭터로 만들기 ↻</button>
+        <button class="text-button retry-icon-button" data-reset aria-label="사진 없이 캐릭터로 만들기"><img src="${retryIconUrl}" alt=""></button>
         <p class="control-note">사진은 업로드 전송 없이 이 기기에서만 꾸며져요.</p>
       </div>
       <div class="control-section"><span class="control-label">02 / 프레임 고르기</span>

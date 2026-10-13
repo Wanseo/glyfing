@@ -1,3 +1,4 @@
+import retryIconUrl from './assets/retry-icon.png'
 import { drawFit } from './play-assets'
 import type { PlayAssets } from './play-assets'
 import levelUpUrl from './assets/level-up.png'
@@ -168,7 +169,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       if (score > best) localStorage.setItem('glyf-gummy-best', String(score))
     } catch { /* optional */ }
     message.innerHTML = `${won ? `<img class="victory-art" src="${victoryUrl}" alt="ALL LEVELS CLEAR!">` : `<img class="game-over-art" src="${gameOverUrl}" alt="GAME OVER">`}
-      <div class="result-actions"><button class="play-button" data-again>RETRY</button><a class="play-button pink-button home-icon-link" href="#home" aria-label="HOME"><img src="${homeIconUrl}" alt=""></a></div>`
+      <div class="result-actions"><button class="play-button retry-icon-button" data-again aria-label="RETRY"><img src="${retryIconUrl}" alt=""></button><a class="play-button pink-button home-icon-link" href="#home" aria-label="HOME"><img src="${homeIconUrl}" alt=""></a></div>`
     message.hidden = false
     message.querySelector('[data-again]')!.addEventListener('click', start)
   }

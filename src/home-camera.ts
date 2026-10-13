@@ -1,3 +1,4 @@
+import retryIconUrl from './assets/retry-icon.png'
 import stickersUrl from './assets/camera-stickers.png'
 import { loadImage, drawFit } from './play-assets'
 import { cutout } from './badge-candies'
@@ -7,11 +8,12 @@ export function createHomeCamera(host: HTMLElement) {
     <a class="camera-close" href="#home" aria-label="카메라 닫기">✕</a>
     <header class="camera-titlebar"><span aria-hidden="true">● ● ●</span><h1>Photo Booth</h1></header><div class="home-camera-view"><video autoplay muted playsinline></video><img alt="촬영한 사진" hidden><canvas class="camera-sticker-layer" aria-hidden="true"></canvas></div>
     <p role="status"></p><div class="camera-actions"><button class="camera-shutter" data-shoot disabled aria-label="촬영"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 4h8l2 3h3v13H3V7h3zm4 5a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg></button><button class="play-button" data-save hidden>SAVE</button></div>
-    <button class="text-button" data-retry hidden>카메라 다시 연결 ↻</button></section>`
+    <button class="text-button retry-icon-button" data-retry hidden aria-label="카메라 다시 연결"><img src="${retryIconUrl}" alt=""></button></section>`
   const video = host.querySelector<HTMLVideoElement>('video')!
   const image = host.querySelector<HTMLImageElement>('img')!
   const status = host.querySelector<HTMLElement>('[role="status"]')!
   const shoot = host.querySelector<HTMLButtonElement>('[data-shoot]')!
+  const shutterMarkup = shoot.innerHTML
   const save = host.querySelector<HTMLButtonElement>('[data-save]')!
   const view = host.querySelector<HTMLElement>('.home-camera-view')!
   const overlay = host.querySelector<HTMLCanvasElement>('.camera-sticker-layer')!
@@ -50,7 +52,7 @@ export function createHomeCamera(host: HTMLElement) {
       stream = incoming; video.srcObject = incoming; await video.play()
       if (disposed || current !== request) return
       image.hidden = true; video.hidden = false; save.hidden = true; photo = null
-      shoot.disabled = false; shoot.setAttribute('aria-label', '촬영'); overlay.hidden = false
+      shoot.disabled = false; shoot.innerHTML = shutterMarkup; shoot.setAttribute('aria-label', '촬영'); overlay.hidden = false
       status.textContent = ''
     } catch {
       if (disposed || current !== request) return
@@ -68,7 +70,7 @@ export function createHomeCamera(host: HTMLElement) {
     ctx.drawImage(video, (photo.width - video.videoWidth * scale) / 2, (photo.height - video.videoHeight * scale) / 2, video.videoWidth * scale, video.videoHeight * scale)
     ctx.restore(); decorate(ctx, photo.width, photo.height); overlay.hidden = true
     image.src = photo.toDataURL('image/png'); image.hidden = false; video.hidden = true
-    stop(); save.hidden = false; shoot.setAttribute('aria-label', '다시 촬영'); status.textContent = ''
+    stop(); save.hidden = false; shoot.innerHTML = `<img class="retry-icon" src="${retryIconUrl}" alt="">`; shoot.setAttribute('aria-label', '다시 촬영'); status.textContent = ''
   })
   save.addEventListener('click', () => photo?.toBlob(blob => {
     if (!blob || disposed) return
