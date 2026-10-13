@@ -370,10 +370,10 @@ html[data-view='camera'] .play-screen::before { display: none; }
 
 .flying-life-heart { position: fixed; top: 0; left: 0; width: 64px; height: 64px; object-fit: contain; z-index: 30; pointer-events: none; }
 
-.product-prompt { width: min(372px, 58vw, 78dvh); max-width: none; max-height: none; padding: 0; border: 0; background: transparent; overflow: visible; }
+.product-prompt { width: min(298px, 46vw, 62dvh); max-width: none; max-height: none; padding: 0; border: 0; background: transparent; overflow: visible; }
 .product-prompt::backdrop { background: #170a1210; backdrop-filter: blur(3px); }
 .product-prompt-art { display: block; width: 100%; height: auto; }
-.product-prompt.is-game-prompt { width: min(372px, 58vw, 78dvh); }
+.product-prompt.is-game-prompt { width: min(298px, 46vw, 62dvh); }
 .product-prompt button { position: absolute; padding: 0; background: transparent; border: 0; cursor: pointer; border-radius: 8px; }
 .product-prompt button:hover { background: #ffffff26; }
 .product-prompt-yes { left: 19.5%; top: 65%; width: 23.5%; height: 15%; }
