@@ -2,6 +2,7 @@ import retryIconUrl from './assets/retry-icon.png'
 import closeButtonUrl from './assets/close-button.png'
 import stickersUrl from './assets/camera-stickers.png'
 import whiteStickerUrl from './assets/camera-sticker-white.png'
+import glossWandUrl from './assets/gloss-wand.png'
 import { loadImage, drawFit } from './play-assets'
 import { cutout } from './badge-candies'
 
@@ -26,6 +27,7 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
   const view = host.querySelector<HTMLElement>('.home-camera-view')!
   const overlay = host.querySelector<HTMLCanvasElement>('.camera-sticker-layer')!
   const stickerImages: HTMLCanvasElement[] = []
+  let glossWand: HTMLCanvasElement | undefined
   const placements = [[0, .01, .29, 2], [.04, .04, .29, 0], [.73, .2, .27, 1], [.69, .49, .29, 0]]
   function decorate(ctx: CanvasRenderingContext2D, w: number, h: number, motion = false) {
     const phase = Math.floor(performance.now() / 150)
@@ -62,6 +64,11 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
       ctx.fillText('FLUFFY FANG', 0, 0); ctx.restore()
     }
     ctx.restore()
+    if (glossWand) {
+      const wandHeight = h * .4
+      const wandWidth = wandHeight * glossWand.width / glossWand.height
+      ctx.drawImage(glossWand, w * .52 - wandWidth / 2, h - wandHeight * .88, wandWidth, wandHeight)
+    }
   }
   function resizeOverlay() {
     overlay.width = Math.max(1, view.clientWidth * 2); overlay.height = Math.max(1, view.clientHeight * 2)
@@ -99,7 +106,7 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
     ctx.fillStyle = '#f21c2c'; ctx.beginPath(); ctx.arc(540, footerY + 37, 6, 0, Math.PI * 2); ctx.fill()
     return result
   }
-  void Promise.all([loadImage(stickersUrl), loadImage(whiteStickerUrl)]).then(([source, white]) => {
+  void Promise.all([loadImage(stickersUrl), loadImage(whiteStickerUrl), loadImage(glossWandUrl)]).then(([source, white, wand]) => {
     if (disposed) return
     for (let i = 0; i < 2; i++) {
       const mesh = cutout(source, [i / 2, 0, .5, 1])!
@@ -109,6 +116,9 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
     const whiteMesh = cutout(white, [0, 0, 1, 1])!
     stickerImages.push(whiteMesh.material.map!.image as HTMLCanvasElement)
     whiteMesh.geometry.dispose(); whiteMesh.material.map!.dispose(); whiteMesh.material.dispose()
+    const wandMesh = cutout(wand, [0, 0, 1, 1], false)!
+    glossWand = wandMesh.material.map!.image as HTMLCanvasElement
+    wandMesh.geometry.dispose(); wandMesh.material.map!.dispose(); wandMesh.material.dispose()
     resizeOverlay()
   }).catch(() => { /* Camera still works if decorations cannot load. */ })
   function shootFrame(motion = false) {
