@@ -66,7 +66,7 @@ export function createCharacterPlay(app: HTMLElement, scene: THREE.Scene, say: (
       button.style.height = `${Math.abs(corner.y - projected.y) * window.innerHeight}px`
       moveHint.hidden = !available || hasMoved || hintTime < .5 || hintTime > 5.5
       moveHint.style.left = button.style.left
-      moveHint.style.top = `${(1 - projected.y) * window.innerHeight / 2 + 135}px`
+      moveHint.style.top = `${(1 - projected.y) * window.innerHeight / 2 + 110}px`
       for (let i = drops.length - 1; i >= 0; i--) {
         const drop = drops[i]!
         drop.age += dt; drop.vy -= dt * 7
