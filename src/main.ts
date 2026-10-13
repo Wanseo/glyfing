@@ -26,7 +26,7 @@ scene.background = new THREE.Color('#e83796')
 const camera = new THREE.OrthographicCamera(-10, 10, 7, -7, 0.1, 100)
 camera.position.set(0, 0, 20)
 const renderer = new THREE.WebGLRenderer({ antialias: true })
-const mobileRendering = window.matchMedia('(pointer: coarse)').matches || window.innerWidth <= 700
+const mobileRendering = window.matchMedia('(pointer: coarse)').matches
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, mobileRendering ? 1.25 : 2))
 renderer.shadowMap.enabled = false
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
@@ -92,24 +92,29 @@ const shadow = new THREE.Mesh(new THREE.PlaneGeometry(3.924375 * characterSize, 
 scene.add(shadow)
 
 let viewHalfWidth = 5.95, viewHalfHeight = 3.15
+let layoutHalfWidth = 5.95, layoutHalfHeight = 3.15
 let background: THREE.CanvasTexture | null = null
 let backgroundSize = ''
 let needsBackgroundRender = true
 function resize() {
   needsBackgroundRender = true
-  characterSize = window.innerWidth <= 700 ? .54 : .84
+  characterSize = mobileRendering ? .54 : .84
   character.root.scale.setScalar(1.86875 * characterSize)
   shadow.scale.setScalar(characterSize / .84)
   const aspect = window.innerWidth / window.innerHeight
-  // Keep the character approximately 120 pixels tall on desktop screens.
-  const pixelsPerUnit = Math.min(48, window.innerHeight / 8, window.innerWidth / 6)
+  // Fit one fixed desktop composition so narrowing a laptop window scales all props together.
+  const pixelsPerUnit = mobileRendering
+    ? Math.min(48, window.innerHeight / 8, window.innerWidth / 6)
+    : Math.min(48, window.innerWidth / 36, window.innerHeight / 20)
   const halfHeight = window.innerHeight / pixelsPerUnit / 2
   const halfWidth = halfHeight * aspect
   viewHalfWidth = halfWidth
   viewHalfHeight = halfHeight
-  glossProps.layout(halfWidth, halfHeight)
-  badgeCandies.layout(halfWidth, halfHeight)
-  plushProps.layout(halfWidth, halfHeight)
+  layoutHalfWidth = mobileRendering ? halfWidth : 18
+  layoutHalfHeight = mobileRendering ? halfHeight : 10
+  glossProps.layout(layoutHalfWidth, layoutHalfHeight)
+  badgeCandies.layout(layoutHalfWidth, layoutHalfHeight)
+  plushProps.layout(layoutHalfWidth, layoutHalfHeight)
   const pixelRatio = Math.min(window.devicePixelRatio, mobileRendering ? 1.25 : 2,
     renderer.capabilities.maxTextureSize / Math.max(window.innerWidth, window.innerHeight))
   renderer.setPixelRatio(pixelRatio)
@@ -175,7 +180,7 @@ function captureHome() {
     ctx.drawImage(brandLogo, 32, 32, 110, 110 * brandLogo.naturalHeight / brandLogo.naturalWidth)
   } finally {
     scene.background = originalBackground
-    glossProps.layout(viewHalfWidth, viewHalfHeight); badgeCandies.layout(viewHalfWidth, viewHalfHeight); plushProps.layout(viewHalfWidth, viewHalfHeight)
+    glossProps.layout(layoutHalfWidth, layoutHalfHeight); badgeCandies.layout(layoutHalfWidth, layoutHalfHeight); plushProps.layout(layoutHalfWidth, layoutHalfHeight)
     captureBackground.dispose(); captureRenderer.dispose(); captureRenderer.forceContextLoss()
   }
   return output
