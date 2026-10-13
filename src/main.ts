@@ -36,6 +36,7 @@ const touchMovement = createTouchMovement(renderer.domElement, () => {
   const center = new THREE.Vector3(position.x, position.y, 0).project(camera)
   return { x: (center.x + 1) * window.innerWidth / 2, y: (1 - center.y) * window.innerHeight / 2 }
 })
+touchMovement.addControls(app, true)
 const brandLogo = document.createElement('img')
 brandLogo.className = 'brand-logo'
 brandLogo.src = brandLogoUrl

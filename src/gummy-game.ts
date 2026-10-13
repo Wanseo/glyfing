@@ -68,6 +68,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   const canvas = host.querySelector<HTMLCanvasElement>('.game-canvas')!
   const ctx = canvas.getContext('2d')!
   const touchMovement = createTouchMovement(canvas)
+  touchMovement.addControls(host.querySelector<HTMLElement>('.rain-game')!)
   const moveHint = host.querySelector<HTMLElement>('.game-movement-hint')!
   let hintTime = 0, hasMoved = false
   const stage = host.querySelector<HTMLElement>('.rain-game')!

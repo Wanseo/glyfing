@@ -608,3 +608,15 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
   }
   html[data-view='home'] #app, html[data-view='game'] .rain-game { touch-action: none; }
 }
+
+.mobile-touch-controls { display: none; }
+@media (pointer: coarse) {
+  .home-movement-hint, .game-movement-hint { display: none !important; }
+  .mobile-touch-controls.movement-hint { position: fixed; top: auto !important; bottom: max(14px, env(safe-area-inset-bottom)); left: 50% !important; display: flex; gap: 10px; animation: none; opacity: 1; pointer-events: auto; z-index: 12; }
+  .mobile-touch-controls button { display: grid; place-items: center; width: 46px; height: 46px; padding: 0; border: 0; background: transparent; touch-action: none; }
+  .mobile-touch-controls .pixel-move-arrow { width: 42px; height: 42px; }
+  .mobile-touch-controls .pixel-move-arrow.up { transform: rotate(-90deg); }
+  .mobile-touch-controls .pixel-move-arrow.down { transform: rotate(90deg); }
+  .mobile-touch-controls button:active { filter: brightness(1.15); }
+  html:not([data-view='home']) #app > .mobile-touch-controls { display: none; }
+}
