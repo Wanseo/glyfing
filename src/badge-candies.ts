@@ -202,6 +202,19 @@ export function createBadgeCandies(app: HTMLElement) {
     layout,
     syncInteraction(camera: THREE.OrthographicCamera) { viewer.sync(interactiveBadge, camera, root.visible) },
     hoveredBounds() { return root.visible ? viewer.hoveredBounds() : [] },
+    eatNearby(x: number, y: number, radiusX: number, radiusY: number) {
+      if (!root.visible) return
+      for (const candy of candies) {
+        if (!candy.visible) continue
+        const geometry = candy.geometry as THREE.PlaneGeometry
+        const halfWidth = geometry.parameters.width * candy.scale.x / 2
+        const halfHeight = geometry.parameters.height * candy.scale.y / 2
+        const cosine = Math.abs(Math.cos(candy.rotation.z)), sine = Math.abs(Math.sin(candy.rotation.z))
+        const dx = Math.max(0, Math.abs(candy.position.x - x) - halfWidth * cosine - halfHeight * sine)
+        const dy = Math.max(0, Math.abs(candy.position.y - y) - halfWidth * sine - halfHeight * cosine)
+        if ((dx / radiusX) ** 2 + (dy / radiusY) ** 2 <= 1) candy.visible = false
+      }
+    },
     update(dt: number) {
       swingTime += dt
       const target = root.visible && viewer.isHovered() ? 1 : 0

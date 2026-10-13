@@ -210,6 +210,8 @@ renderer.setAnimationLoop((time: number) => {
   })
   character.arms.forEach((arm, i) => { arm.rotation.x = Math.sin(gait + i * Math.PI) * 0.45 * walk })
   shadow.position.set(position.x, position.y - 2.23315625 * characterSize, -0.8)
+  if (currentView === 'home') badgeCandies.eatNearby(position.x, position.y + hop,
+    1.9 * characterSize, 2.4 * characterSize)
   glossProps.syncLinks(camera)
   badgeCandies.syncInteraction(camera)
   if (currentView === 'home') speech.update(dt, position.x, position.y + hop, camera,
