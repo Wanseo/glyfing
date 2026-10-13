@@ -6,7 +6,7 @@ import lifeHeartUrl from './assets/life-heart.png'
 import levelLabelsUrl from './assets/level-labels.png'
 
 type Drop = { x: number; y: number; speed: number; kind: number; angle: number }
-type CatchEffect = { x: number; y: number; age: number; correct: boolean }
+type CatchEffect = { x: number; y: number; age: number; correct: boolean; label: string }
 const levels = [
   { target: 0, count: 7, seconds: 35 },
   { target: 4, count: 9, seconds: 33 },
@@ -20,7 +20,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       <div class="rain-lives" role="status" aria-label="남은 목숨 3개">${Array.from({ length: 3 }, () => `<img src="${lifeHeartUrl}" alt="" aria-hidden="true">`).join('')}</div>
       <a class="play-button rain-home" href="#home">메인으로 ↗</a>
       <canvas class="game-canvas" aria-label="방향키 또는 A와 D 키로 목표 아이템을 받으세요"></canvas>
-      <div class="rain-level"><b data-level></b><span data-count></span>
+      <div class="rain-level"><b data-level></b>
         <div class="rain-goal-images"><img class="rain-mascot" alt="움직이는 GLYF 캐릭터"><span>→</span><canvas data-target width="100" height="100" role="img" aria-label="이번 단계에서 받을 아이템"></canvas></div>
       </div>
       <div class="rain-timer" role="timer" aria-label="남은 시간"><div class="pixel-battery"><div class="pixel-battery-interior"><div class="pixel-battery-fill" data-time-fill></div></div><span data-time></span></div></div>
@@ -34,7 +34,6 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   const targetCanvas = host.querySelector<HTMLCanvasElement>('[data-target]')!
   const targetCtx = targetCanvas.getContext('2d')!
   const levelEl = host.querySelector<HTMLElement>('[data-level]')!
-  const countEl = host.querySelector<HTMLElement>('[data-count]')!
   const timeEl = host.querySelector<HTMLElement>('[data-time]')!
   const timeFill = host.querySelector<HTMLElement>('[data-time-fill]')!
   const livesEl = host.querySelector<HTMLElement>('.rain-lives')!
@@ -58,7 +57,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   let shakeRemaining = 0
   function catchEffect(correct: boolean, y: number) {
     if (!correct) shakeRemaining = .65
-    effects.push({ x: player, y, age: 0, correct })
+    effects.push({ x: player, y, age: 0, correct, label: correct ? `${caught}/${levels[level]!.count}` : '♥ -1' })
     if (effects.length > 12) effects.shift()
   }
   function resize() {
@@ -74,7 +73,6 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       levelEl.dataset.label = label
       levelEl.innerHTML = `<span class="level-pixel-text" role="img" aria-label="${label}" style="background-image:url('${levelLabelsUrl}');background-position:center ${(100 + level * 230) / (1280 - 190) * 100}%"></span>`
     }
-    countEl.textContent = `${caught}/${levels[level]!.count}`
     timeEl.textContent = `${Math.ceil(remaining)}sec`
     timeFill.style.width = `${24 + (1 - remaining / levels[level]!.seconds) * 69.5}%`
   }
@@ -145,8 +143,8 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
         if (Math.abs(drop.x - player * width) < playerSize * .45 + 15 && drop.y >= playerY + 20 && lastY < height - 30) {
           drops.splice(i, 1)
           if (drop.kind === levels[level]!.target) {
-            catchEffect(true, playerY + 20)
             caught++; score += 10 * (level + 1)
+            catchEffect(true, playerY + 20)
             if (caught >= levels[level]!.count) { updateHud(); clearLevel(); break }
           } else {
             catchEffect(false, playerY + 20)
@@ -199,7 +197,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       ctx.textAlign = 'center'; ctx.font = '900 21px Arial'
       ctx.lineWidth = 5; ctx.strokeStyle = effect.correct ? '#875000' : '#fff'
       ctx.fillStyle = effect.correct ? '#fff9a0' : '#d90035'
-      const label = effect.correct ? '✦ +1' : '♥ -1'
+      const label = effect.label
       const labelY = y - 28 - (reducedMotion.matches ? 0 : progress * 35)
       ctx.strokeText(label, x, labelY); ctx.fillText(label, x, labelY)
       ctx.restore()
