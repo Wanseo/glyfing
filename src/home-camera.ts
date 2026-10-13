@@ -2,7 +2,7 @@ export function createHomeCamera(host: HTMLElement) {
   host.innerHTML = `<section class="home-camera" aria-label="카메라 촬영">
     <a class="camera-close" href="#home" aria-label="카메라 닫기">✕</a>
     <h1>PHOTO TIME!</h1><div class="home-camera-view"><video autoplay muted playsinline></video><img alt="촬영한 사진" hidden></div>
-    <p role="status">카메라를 연결하고 있어요…</p><div class="camera-actions"><button class="play-button pink-button" data-shoot disabled>촬영 ✦</button><button class="play-button" data-save hidden>사진 저장 ↓</button></div>
+    <p role="status"></p><div class="camera-actions"><button class="play-button pink-button" data-shoot disabled>촬영 ✦</button><button class="play-button" data-save hidden>사진 저장 ↓</button></div>
     <button class="text-button" data-retry hidden>카메라 다시 연결 ↻</button></section>`
   const video = host.querySelector<HTMLVideoElement>('video')!
   const image = host.querySelector<HTMLImageElement>('img')!
@@ -15,7 +15,7 @@ export function createHomeCamera(host: HTMLElement) {
   async function connect() {
     const current = ++request
     stop(); shoot.disabled = true; retry.hidden = true
-    status.textContent = '카메라를 연결하고 있어요…'
+    status.textContent = ''
     try {
       const incoming = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false })
       if (disposed || current !== request) { incoming.getTracks().forEach(track => track.stop()); return }
