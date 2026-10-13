@@ -24,7 +24,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       <a class="play-button rain-home" href="#home">메인으로 ↗</a>
       <canvas class="game-canvas" aria-label="방향키 또는 A와 D 키로 목표 아이템을 받으세요"></canvas>
       <div class="rain-level"><b data-level></b>
-        <div class="rain-goal-images"><img class="rain-mascot" alt="움직이는 GLYF 캐릭터"><span>→</span><canvas data-target width="100" height="100" role="img" aria-label="이번 단계에서 받을 아이템"></canvas></div>
+        <div class="rain-goal-images"><canvas data-target width="100" height="100" role="img" aria-label="이번 단계에서 받을 아이템"></canvas></div>
       </div>
       <div class="rain-timer" role="timer" aria-label="남은 시간"><div class="pixel-battery"><div class="pixel-battery-interior"><div class="pixel-battery-fill" data-time-fill></div></div><span data-time></span></div></div>
       <button class="text-button rain-restart" data-restart>다시 시작 ↻</button>
@@ -46,7 +46,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     hearts.forEach((heart, index) => { heart.hidden = index >= lives })
     livesEl.setAttribute('aria-label', `남은 목숨 ${lives}개`)
   }
-  host.querySelector<HTMLImageElement>('.rain-mascot')!.src = assets.character.src
+  let targetGlowTimer = 0
   const items = [...assets.candies, ...assets.toys]
   const levelUpImage = new Image()
   levelUpImage.src = levelUpUrl
@@ -148,6 +148,9 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
           if (drop.kind === levels[level]!.target) {
             caught++; score += 10 * (level + 1)
             catchEffect(true, playerY + 20)
+            clearTimeout(targetGlowTimer)
+            targetCanvas.classList.add('is-caught')
+            targetGlowTimer = window.setTimeout(() => targetCanvas.classList.remove('is-caught'), 450)
             itemSound.currentTime = 0
             void itemSound.play().catch(() => { /* Browser audio permission may be unavailable. */ })
             if (caught >= levels[level]!.count) { updateHud(); clearLevel(); break }
@@ -213,6 +216,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   return () => {
     disposed = true; cancelAnimationFrame(frame); clearTimeout(transition); observer.disconnect()
     itemSound.pause()
+    clearTimeout(targetGlowTimer)
     window.removeEventListener('keydown', keydown); window.removeEventListener('keyup', keyup)
     window.removeEventListener('blur', clearKeys); document.removeEventListener('visibilitychange', visibility)
   }
