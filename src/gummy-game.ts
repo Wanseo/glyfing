@@ -87,6 +87,21 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   const countdownLabels = ['ARE YOU READY?', '3', '2', '1', 'GO!']
   const countdownImages: string[] = []
   let countdownLoaded = false
+  function trimCountdown(source: HTMLCanvasElement) {
+    const ctx = source.getContext('2d')!
+    const pixels = ctx.getImageData(0, 0, source.width, source.height).data
+    let left = source.width, right = -1, top = source.height, bottom = -1
+    for (let y = 0; y < source.height; y++) for (let x = 0; x < source.width; x++) {
+      if (pixels[(y * source.width + x) * 4 + 3]! < 8) continue
+      left = Math.min(left, x); right = Math.max(right, x)
+      top = Math.min(top, y); bottom = Math.max(bottom, y)
+    }
+    if (right < left) return source.toDataURL('image/png')
+    const trimmed = document.createElement('canvas')
+    trimmed.width = right - left + 1; trimmed.height = bottom - top + 1
+    trimmed.getContext('2d')!.drawImage(source, left, top, trimmed.width, trimmed.height, 0, 0, trimmed.width, trimmed.height)
+    return trimmed.toDataURL('image/png')
+  }
   void Promise.all([loadImage(countdownUrl), loadImage(countdownDigitsUrl)]).then(([source, digits]) => {
     if (disposed) return
     const regions = [[.03, .1, .94, .14], [.42, .285, .17, .145], [.42, .46, .17, .15], [.43, .64, .15, .15], [.33, .81, .34, .15]]
@@ -94,14 +109,14 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       const crop = document.createElement('canvas')
       crop.width = Math.round(source.width * w!); crop.height = Math.round(source.height * h!)
       crop.getContext('2d')!.drawImage(source, source.width * x!, source.height * y!, crop.width, crop.height, 0, 0, crop.width, crop.height)
-      countdownImages.push(crop.toDataURL('image/png'))
+      countdownImages.push(trimCountdown(crop))
     }
     for (let i = 0; i < 3; i++) {
       const crop = document.createElement('canvas')
       crop.width = Math.round(digits.width / 3); crop.height = digits.height
       crop.getContext('2d')!.drawImage(digits, i * digits.width / 3, 0, digits.width / 3, digits.height,
         0, 0, crop.width, crop.height)
-      countdownImages[i + 1] = crop.toDataURL('image/png')
+      countdownImages[i + 1] = trimCountdown(crop)
     }
     countdownLoaded = true; introStep = -1
   }).catch(() => { countdownLoaded = true })
@@ -249,9 +264,9 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     const playerY = height - playerSize - 20
     if (introActive) {
       if (countdownLoaded) introTime += dt
-      const step = introTime < 1.3 ? 0 : introTime < 2.3 ? 1 : introTime < 3.3 ? 2 : introTime < 4.3 ? 3 : 4
+      const step = introTime < .7 ? 0 : introTime < 1.25 ? 1 : introTime < 1.8 ? 2 : introTime < 2.35 ? 3 : 4
       showIntro(step)
-      if (introTime >= 4.95) {
+      if (introTime >= 2.8) {
         introActive = false; message.hidden = true; message.classList.remove('is-countdown'); running = true; keys.clear()
       }
     }

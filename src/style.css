@@ -522,3 +522,5 @@ html[data-view='game'] .rain-home.home-icon-link { right: 88px; }
 .result-actions .play-button { padding: 0; min-width: 68px; min-height: 68px; border: 0; background: transparent; box-shadow: none; }
 .result-actions .play-button:hover { background: transparent; }
 .result-actions .retry-icon-button img, .result-actions .home-icon-link img { width: 68px; height: 68px; image-rendering: pixelated; filter: drop-shadow(1px 0 0 #000) drop-shadow(-1px 0 0 #000) drop-shadow(0 1px 0 #000) drop-shadow(0 -1px 0 #000); }
+
+.countdown-art, .countdown-art.is-ready { width: auto; height: min(84px, 12vw); max-width: 94vw; object-fit: contain; }
