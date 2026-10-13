@@ -668,3 +668,7 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
   .rain-level .rain-goal-images canvas { width: 79px; height: 79px; }
   .rain-level .rain-goal-images { height: 89px; }
 }
+
+@media (pointer: coarse) {
+  .badge-close:focus, .badge-close:focus-visible { outline: none; box-shadow: none; }
+}
