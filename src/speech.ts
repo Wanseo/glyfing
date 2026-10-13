@@ -130,10 +130,6 @@ export function createSpeech(app: HTMLElement) {
         top = character.bottom + gap + tail
         direction = 'up'
       }
-      if (overlapsBlocked()) {
-        bubble.style.visibility = 'hidden'
-        return
-      }
       bubble.style.visibility = 'visible'
       bubble.dataset.placement = placement
       bubble.dataset.tail = direction

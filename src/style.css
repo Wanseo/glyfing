@@ -638,3 +638,5 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
   html[data-view='home'] #app > .mobile-touch-controls button:has(.right) { grid-column: 3; grid-row: 2; }
   html[data-view='home'] #app > .mobile-touch-controls button:has(.down) { grid-column: 2; grid-row: 3; }
 }
+
+.character-speech { z-index: 100; }
