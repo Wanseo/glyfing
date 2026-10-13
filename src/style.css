@@ -684,3 +684,6 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
   body .badge-trigger, body .badge-trigger * { cursor: default !important; }
   #app input, #app textarea { -webkit-user-select: text; user-select: text; }
 }
+
+.startup-error { z-index: 100; }
+.startup-error input { display: block; width: 100%; box-sizing: border-box; margin-top: 14px; padding: 8px; }

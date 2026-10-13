@@ -25,9 +25,10 @@ const scene = new THREE.Scene()
 scene.background = new THREE.Color('#e83796')
 const camera = new THREE.OrthographicCamera(-10, 10, 7, -7, 0.1, 100)
 camera.position.set(0, 0, 20)
-const renderer = new THREE.WebGLRenderer({ antialias: true })
+const inInstagram = /Instagram/i.test(navigator.userAgent)
+const renderer = new THREE.WebGLRenderer({ antialias: !inInstagram })
 const mobileRendering = window.matchMedia('(pointer: coarse)').matches
-renderer.setPixelRatio(Math.min(window.devicePixelRatio, mobileRendering ? 1.25 : 2))
+renderer.setPixelRatio(Math.min(window.devicePixelRatio, inInstagram ? 1 : mobileRendering ? 1.25 : 2))
 renderer.shadowMap.enabled = false
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
 renderer.domElement.setAttribute('aria-label', '핑크 글리터 배경 위의 3D 캐릭터와 Glue Gloss 패키지, 크롬 튜브, 사원증과 알록달록한 젤리들. 방향키로 움직일 수 있습니다.')
@@ -117,7 +118,7 @@ function resize() {
   glossProps.layout(layoutHalfWidth, layoutHalfHeight)
   badgeCandies.layout(layoutHalfWidth, layoutHalfHeight)
   plushProps.layout(layoutHalfWidth, layoutHalfHeight)
-  const pixelRatio = Math.min(window.devicePixelRatio, mobileRendering ? 1.25 : 2,
+  const pixelRatio = Math.min(window.devicePixelRatio, inInstagram ? 1 : mobileRendering ? 1.25 : 2,
     renderer.capabilities.maxTextureSize / Math.max(window.innerWidth, window.innerHeight))
   renderer.setPixelRatio(pixelRatio)
   const size = `${window.innerWidth}:${window.innerHeight}:${pixelRatio}`
