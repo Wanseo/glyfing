@@ -60,6 +60,10 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   }
   let targetGlowTimer = 0
   const items = [...assets.candies, ...assets.toys]
+  const heartKind = items.length
+  const fallingHeart = new Image()
+  fallingHeart.src = lifeHeartUrl
+  let heartSpawn = 3
   const levelUpImage = new Image()
   levelUpImage.src = levelUpUrl
   const gameOverImage = new Image()
@@ -92,7 +96,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     timeFill.style.width = `${24 + (1 - remaining / levels[level]!.seconds) * 69.5}%`
   }
   function beginLevel() {
-    caught = 0; remaining = levels[level]!.seconds; spawn = 0; drops.length = 0
+    caught = 0; remaining = levels[level]!.seconds; spawn = 0; heartSpawn = 3; drops.length = 0
     targetCtx.clearRect(0, 0, 100, 100)
     const outline = document.createElement('canvas')
     outline.width = outline.height = 100
@@ -164,6 +168,14 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       const direction = Number(keys.has('arrowright') || keys.has('d')) - Number(keys.has('arrowleft') || keys.has('a'))
       player = Math.max(.07, Math.min(.93, player + direction * dt * .8))
       spawn -= dt
+      if (level === levels.length - 1) {
+        heartSpawn -= dt
+        if (heartSpawn <= 0) {
+          heartSpawn = 5
+          drops.push({ x: 30 + Math.random() * (width - 60), y: -50,
+            speed: height * .38, kind: heartKind, angle: 0 })
+        }
+      }
       if (spawn <= 0) {
         spawn = .48 - level * .065
         const target = levels[level]!.target
@@ -178,7 +190,14 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
         drop.y += drop.speed * dt
         if (Math.abs(drop.x - player * width) < playerSize * .45 + 15 && drop.y >= playerY + 20 && lastY < height - 30) {
           drops.splice(i, 1)
-          if (drop.kind === levels[level]!.target) {
+          if (drop.kind === heartKind) {
+            const recovered = lives < 3
+            lives = Math.min(3, lives + 1); updateLives()
+            catchEffect(true, playerY + 20)
+            effects[effects.length - 1]!.label = recovered ? '♥ +1' : '♥ MAX'
+            itemSound.currentTime = 0
+            void itemSound.play().catch(() => { /* Audio playback is optional. */ })
+          } else if (drop.kind === levels[level]!.target) {
             caught++; score += 10 * (level + 1)
             catchEffect(true, playerY + 20)
             clearTimeout(targetGlowTimer)
@@ -202,7 +221,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     for (const drop of drops) {
       const size = drop.kind < 4 ? 52 : 66
       ctx.save(); ctx.translate(drop.x, drop.y); ctx.rotate(drop.angle)
-      drawFit(ctx, items[drop.kind]!, -size / 2, -size / 2, size, size); ctx.restore()
+      drawFit(ctx, drop.kind === heartKind ? fallingHeart : items[drop.kind]!, -size / 2, -size / 2, size, size); ctx.restore()
     }
     const bob = running ? Math.sin(time / 150) * 3 : 0
     shakeRemaining = Math.max(0, shakeRemaining - dt)
