@@ -1,6 +1,7 @@
 import { drawFit } from './play-assets'
 import type { PlayAssets } from './play-assets'
 import levelUpUrl from './assets/level-up.png'
+import gameOverUrl from './assets/game-over.png'
 
 type Drop = { x: number; y: number; speed: number; kind: number; angle: number }
 type CatchEffect = { x: number; y: number; age: number; correct: boolean }
@@ -41,6 +42,8 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
   const items = [...assets.candies, ...assets.toys]
   const levelUpImage = new Image()
   levelUpImage.src = levelUpUrl
+  const gameOverImage = new Image()
+  gameOverImage.src = gameOverUrl
   let width = 900, height = 600, player = .5, score = 0, level = 0, caught = 0, remaining = 45
   let running = false, spawn = 0, previous = 0, frame = 0, transition = 0, disposed = false
   const keys = new Set<string>(), drops: Drop[] = []
@@ -81,7 +84,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets, openPhoto
       const best = Number(localStorage.getItem('glyf-gummy-best')) || 0
       if (score > best) localStorage.setItem('glyf-gummy-best', String(score))
     } catch { /* optional */ }
-    message.innerHTML = `<h2>${won ? 'ALL LEVELS CLEAR! ✦' : '시간이 다 됐어요!'}</h2>
+    message.innerHTML = `${won ? '<h2>ALL LEVELS CLEAR! ✦</h2>' : `<img class="game-over-art" src="${gameOverUrl}" alt="GAME OVER">`}
       <p>${won ? '5단계 모두 성공!' : `LEVEL ${level + 1} · ${caught} / ${levels[level]!.count}개`} · ${score} POINTS</p>
       <div class="result-actions"><button class="play-button" data-again>다시 도전 ↻</button><button class="play-button pink-button" data-photo>포토카드 만들기 ↗</button></div>`
     message.hidden = false
