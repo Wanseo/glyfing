@@ -394,3 +394,9 @@ html[data-view='camera'] .play-screen::before { display: none; }
 .music-off-slash { display: none; position: absolute; inset: 0; width: 100%; height: 100%; shape-rendering: crispEdges; }
 .music-toggle.is-off .music-off-slash { display: block; }
 @media (max-width: 700px) { .music-toggle { width: 60px; height: 60px; } }
+
+.loading-art { position: relative; width: min(520px, 84vw); }
+.startup-loading .loading-art img, .experience-loading .loading-art img { width: 100%; }
+.loading-liquid-drain { position: absolute; top: 33.5%; bottom: 45%; right: 44.4%; width: 0; background: #fafafa; animation: loading-liquid-drain 2.5s ease-out forwards; }
+@keyframes loading-liquid-drain { from { width: 0; } to { width: 45%; } }
+@media (prefers-reduced-motion: reduce) { .loading-liquid-drain { animation: none; } }

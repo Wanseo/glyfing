@@ -32,7 +32,7 @@ export function createExperiences(app: HTMLElement, captureCharacter: () => stri
       screen.querySelector<HTMLAnchorElement>('.camera-close')!.focus({ preventScroll: true })
       return
     }
-    screen.innerHTML = `<div class="experience-loading" role="status"><img src="${loadingUrl}" alt="LOADING..."></div>`
+    screen.innerHTML = `<div class="experience-loading" role="status"><div class="loading-art"><img src="${loadingUrl}" alt="LOADING..."><span class="loading-liquid-drain" aria-hidden="true"></span></div></div>`
     try {
       const images = await (assets ??= loadPlayAssets(captureCharacter()))
       if (request !== current) return
