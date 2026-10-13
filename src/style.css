@@ -305,8 +305,8 @@ html[data-view='game'] .world-nav { display: none; }
 .rain-restart { top: 176px; }
 .rain-goal p { margin: 10px 0 0; font: 700 11px/1.4 Arial, sans-serif; }
 .rain-help { position: absolute; bottom: max(12px, env(safe-area-inset-bottom)); left: 16px; font: 800 10px/1.5 Arial; color: #fff; text-shadow: 1px 1px #171717; pointer-events: none; }
-.rain-restart { position: absolute; top: 62px; right: 16px; padding: 10px; background: #fff; border: 2px solid #171717; }
-.rain-home { position: absolute; top: max(16px, env(safe-area-inset-top)); right: 16px; }
+.rain-restart { position: absolute; top: 176px; right: 16px; padding: 10px; background: #fff; border: 2px solid #171717; }
+.rain-home { position: absolute; top: 126px; right: 16px; }
 .rain-message { background: #ffffffa6; z-index: 2; }
 @keyframes rain-mascot-hop { from { transform: translate(-4px, 2px) rotate(-6deg); } to { transform: translate(5px, -5px) rotate(7deg); } }
 @media (prefers-reduced-motion: reduce) { .rain-mascot { animation: none; } }
