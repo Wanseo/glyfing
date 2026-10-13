@@ -387,7 +387,7 @@ html[data-view='camera'] .play-screen::before { display: none; }
 .startup-loading img, .experience-loading img { display: block; width: min(520px, 84vw); height: auto; }
 .experience-loading { position: fixed; inset: 0; display: grid; place-items: center; pointer-events: none; }
 
-@media (any-pointer: fine) {
+@media (hover: hover) and (pointer: fine) {
   html, body, body * { cursor: var(--site-cursor, auto) !important; }
 }
 
@@ -408,7 +408,7 @@ html[data-view='camera'] .play-screen::before { display: none; }
 .rain-message.is-victory { background: #000b; }
 .victory-art { display: block; width: min(560px, 85vw, 70dvh); height: auto; max-height: 72dvh; object-fit: contain; margin-bottom: 18px; filter: drop-shadow(0 0 16px #f5ff0033); }
 
-@media (any-pointer: fine) {
+@media (hover: hover) and (pointer: fine) {
   body .badge-trigger, body .badge-trigger * { cursor: var(--badge-cursor, zoom-in) !important; }
 }
 
@@ -671,4 +671,16 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
 
 @media (pointer: coarse) {
   .badge-close:focus, .badge-close:focus-visible { outline: none; box-shadow: none; }
+}
+
+@media (pointer: coarse) {
+  html, body, #app, #app * {
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  #app img { -webkit-user-drag: none; }
+  body .badge-trigger, body .badge-trigger * { cursor: default !important; }
+  #app input, #app textarea { -webkit-user-select: text; user-select: text; }
 }
