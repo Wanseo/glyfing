@@ -6,7 +6,7 @@ import lifeHeartUrl from './assets/life-heart.png'
 import levelLabelsUrl from './assets/level-labels.png'
 import victoryUrl from './assets/all-levels-clear.png'
 
-type Drop = { x: number; y: number; speed: number; kind: number; angle: number }
+type Drop = { x: number; y: number; speed: number; kind: number; angle: number; double?: boolean }
 type CatchEffect = { x: number; y: number; age: number; correct: boolean; label: string; bonus: number }
 const levels = [
   { target: 0, count: 7, seconds: 35 },
@@ -105,7 +105,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   let shakeRemaining = 0
   function catchEffect(correct: boolean, y: number) {
     if (!correct) shakeRemaining = .65
-    effects.push({ x: player, y, age: 0, correct, label: correct ? `${caught}/${levels[level]!.count}` : '♥ -1', bonus: level >= 3 ? 2 : 1 })
+    effects.push({ x: player, y, age: 0, correct, label: correct ? `${caught}/${levels[level]!.count}` : '♥ -1', bonus: 1 })
     if (effects.length > 12) effects.shift()
   }
   function resize() {
@@ -222,7 +222,8 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
         const targetChance = level === 4 ? .4 : .5 - level * .045
         const kind = Math.random() < targetChance ? target : others[Math.floor(Math.random() * others.length)]!
         drops.push({ x: 30 + Math.random() * (width - 60), y: -50,
-          speed: height * (.26 + level * .065 + Math.random() * .13) * (level === 4 ? .85 : 1), kind, angle: (Math.random() - .5) * .6 })
+          speed: height * (.26 + level * .065 + Math.random() * .13) * (level === 4 ? .85 : 1), kind,
+          angle: (Math.random() - .5) * .6, double: level >= 3 && kind === target && Math.random() < .15 })
       }
       for (let i = drops.length - 1; i >= 0; i--) {
         const drop = drops[i]!
@@ -241,9 +242,10 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
             itemSound.currentTime = 0
             void itemSound.play().catch(() => { /* Audio playback is optional. */ })
           } else if (drop.kind === levels[level]!.target) {
-            const amount = level >= 3 ? 2 : 1
+            const amount = drop.double ? 2 : 1
             caught = Math.min(levels[level]!.count, caught + amount); score += 10 * (level + 1) * amount
             catchEffect(true, playerY + 20)
+            effects[effects.length - 1]!.bonus = amount
             clearTimeout(targetGlowTimer)
             targetCanvas.classList.add('is-caught')
             targetGlowTimer = window.setTimeout(() => targetCanvas.classList.remove('is-caught'), 450)
@@ -266,7 +268,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       const size = drop.kind < 4 ? 52 : 66
       ctx.save(); ctx.translate(drop.x, drop.y); ctx.rotate(drop.angle)
       drawFit(ctx, drop.kind === heartKind ? fallingHeart : items[drop.kind]!, -size / 2, -size / 2, size, size); ctx.restore()
-      if (level >= 3 && drop.kind === levels[level]!.target) {
+      if (drop.double) {
         ctx.save(); ctx.font = '900 18px Arial'; ctx.textAlign = 'left'
         ctx.strokeStyle = '#171717'; ctx.lineWidth = 4; ctx.fillStyle = '#f5ff00'
         ctx.strokeText('x2', drop.x + size / 2 - 4, drop.y)
