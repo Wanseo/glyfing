@@ -41,7 +41,7 @@ canvas {
   width: max-content;
   max-width: min(300px, calc(100vw - 32px));
   box-sizing: border-box;
-  padding: 8px 12px;
+  padding: 6px 10px;
   background: #fff;
   color: #171717;
   font: 800 clamp(17px, 1.7vw, 22px)/1.2 Arial, sans-serif;

@@ -21,6 +21,17 @@ export function createSpeech(app: HTMLElement) {
   app.appendChild(bubble)
   const anchor = new THREE.Vector3()
   const corner = new THREE.Vector3()
+  const textRange = document.createRange()
+  function fitBubble(maxWidth: number) {
+    bubble.style.width = 'max-content'
+    bubble.style.maxWidth = `${maxWidth}px`
+    textRange.selectNodeContents(text)
+    const lineWidths = [...textRange.getClientRects()].map(rect => rect.width)
+    if (!lineWidths.length) return
+    const style = getComputedStyle(bubble)
+    const padding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight)
+    bubble.style.width = `${Math.min(maxWidth, Math.ceil(Math.max(...lineWidths) + padding))}px`
+  }
   let countdown = .35, greeting = 0
   let awaitingTap = true, introductionTime = 0
   let remaining: string[] = []
@@ -91,14 +102,14 @@ export function createSpeech(app: HTMLElement) {
       const sideRoom = onLeft ? leftRoom : rightRoom
       const canUseSide = sideRoom >= 156
       const upperRoom = onLeft ? screenX - 60 : window.innerWidth - screenX - 60
-      bubble.style.maxWidth = `${Math.min(300, window.innerWidth - margin * 2, Math.max(156, upperRoom))}px`
+      fitBubble(Math.min(300, window.innerWidth - margin * 2, Math.max(156, upperRoom)))
       let width = bubble.offsetWidth, height = bubble.offsetHeight
       const fitsAbove = character.top - gap - tail - height >= margin
       const fitsBelow = character.bottom + gap + tail + height <= window.innerHeight - margin
       const beside = canUseSide && (blocked.length > 0 || placement === 'middle' || !fitsAbove)
       let left: number, top: number, direction: string
       if (beside) {
-        bubble.style.maxWidth = `${Math.min(300, sideRoom)}px`
+        fitBubble(Math.min(300, sideRoom))
         width = bubble.offsetWidth; height = bubble.offsetHeight
         left = onLeft ? character.left - gap - tail - width : character.right + gap + tail
         top = THREE.MathUtils.clamp(screenY - height / 2, margin, window.innerHeight - height - margin)
