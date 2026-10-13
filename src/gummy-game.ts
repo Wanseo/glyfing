@@ -242,12 +242,11 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       if (effect.correct) {
         ctx.fillStyle = '#fff9a0'; ctx.strokeStyle = '#fff'; ctx.lineWidth = 2
         for (let star = 0; star < 32; star++) {
-          const angle = star * Math.PI * (3 - Math.sqrt(5))
-          const spread = .45 + (star % 7) / 10
+          const angle = star * Math.PI * 2 / 32
+          const spread = .8 + (star % 3) * .1
           const radius = reducedMotion.matches ? 42 : (12 + progress * 115) * spread
-          const bodyY = playerSize * (.05 + (star % 5) * .13)
           const sx = x + Math.cos(angle) * radius
-          const sy = y + bodyY + Math.sin(angle) * radius
+          const sy = y + playerSize / 2 - 20 + Math.sin(angle) * radius
           const size = (star % 3 === 0 ? 12 : 5 + star % 4) * (1 - progress * .5)
           ctx.beginPath()
           for (let point = 0; point < 8; point++) {
