@@ -6,13 +6,13 @@ import lifeHeartUrl from './assets/life-heart.png'
 import levelLabelsUrl from './assets/level-labels.png'
 
 type Drop = { x: number; y: number; speed: number; kind: number; angle: number }
-type CatchEffect = { x: number; y: number; age: number; correct: boolean; label: string }
+type CatchEffect = { x: number; y: number; age: number; correct: boolean; label: string; bonus: number }
 const levels = [
   { target: 0, count: 7, seconds: 35 },
   { target: 4, count: 9, seconds: 33 },
   { target: 1, count: 11, seconds: 31 },
   { target: 11, count: 13, seconds: 29 },
-  { target: 6, count: 15, seconds: 27 },
+  { target: 6, count: 15, seconds: 30 },
 ]
 export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   const itemSound = new Audio(`${import.meta.env.BASE_URL}audio/item-get.mp3`)
@@ -104,7 +104,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   let shakeRemaining = 0
   function catchEffect(correct: boolean, y: number) {
     if (!correct) shakeRemaining = .65
-    effects.push({ x: player, y, age: 0, correct, label: correct ? `${caught}/${levels[level]!.count}` : '♥ -1' })
+    effects.push({ x: player, y, age: 0, correct, label: correct ? `${caught}/${levels[level]!.count}` : '♥ -1', bonus: level >= 3 ? 2 : 1 })
     if (effects.length > 12) effects.shift()
   }
   function resize() {
@@ -217,9 +217,10 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
         spawn = .48 - level * .065
         const target = levels[level]!.target
         const others = items.map((_, index) => index).filter(index => index !== target)
-        const kind = Math.random() < .5 - level * .045 ? target : others[Math.floor(Math.random() * others.length)]!
+        const targetChance = level === 4 ? .4 : .5 - level * .045
+        const kind = Math.random() < targetChance ? target : others[Math.floor(Math.random() * others.length)]!
         drops.push({ x: 30 + Math.random() * (width - 60), y: -50,
-          speed: height * (.26 + level * .065 + Math.random() * .13), kind, angle: (Math.random() - .5) * .6 })
+          speed: height * (.26 + level * .065 + Math.random() * .13) * (level === 4 ? .85 : 1), kind, angle: (Math.random() - .5) * .6 })
       }
       for (let i = drops.length - 1; i >= 0; i--) {
         const drop = drops[i]!
@@ -234,10 +235,12 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
             else updateLives()
             catchEffect(true, playerY + 20)
             effects[effects.length - 1]!.label = recovered ? '♥ +1' : '♥ MAX'
+            effects[effects.length - 1]!.bonus = 1
             itemSound.currentTime = 0
             void itemSound.play().catch(() => { /* Audio playback is optional. */ })
           } else if (drop.kind === levels[level]!.target) {
-            caught++; score += 10 * (level + 1)
+            const amount = level >= 3 ? 2 : 1
+            caught = Math.min(levels[level]!.count, caught + amount); score += 10 * (level + 1) * amount
             catchEffect(true, playerY + 20)
             clearTimeout(targetGlowTimer)
             targetCanvas.classList.add('is-caught')
@@ -261,6 +264,12 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       const size = drop.kind < 4 ? 52 : 66
       ctx.save(); ctx.translate(drop.x, drop.y); ctx.rotate(drop.angle)
       drawFit(ctx, drop.kind === heartKind ? fallingHeart : items[drop.kind]!, -size / 2, -size / 2, size, size); ctx.restore()
+      if (level >= 3 && drop.kind === levels[level]!.target) {
+        ctx.save(); ctx.font = '900 18px Arial'; ctx.textAlign = 'left'
+        ctx.strokeStyle = '#171717'; ctx.lineWidth = 4; ctx.fillStyle = '#f5ff00'
+        ctx.strokeText('x2', drop.x + size / 2 - 4, drop.y)
+        ctx.fillText('x2', drop.x + size / 2 - 4, drop.y); ctx.restore()
+      }
     }
     const bob = running ? Math.sin(time / 150) * 3 : 0
     shakeRemaining = Math.max(0, shakeRemaining - dt)
@@ -311,7 +320,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
         ctx.globalAlpha = 1 - rise * rise
         ctx.font = '900 30px Arial'
         const bonusY = y - 58 - (reducedMotion.matches ? 0 : rise * 105)
-        ctx.strokeText('+1', x, bonusY); ctx.fillText('+1', x, bonusY)
+        ctx.strokeText(`+${effect.bonus}`, x, bonusY); ctx.fillText(`+${effect.bonus}`, x, bonusY)
       }
       ctx.restore()
     }
