@@ -25,7 +25,7 @@ export function createProductPrompt(app: HTMLElement) {
   return (game: boolean) => {
     dialog.classList.toggle('is-game-prompt', game)
     destination = game ? '#game' : '#camera'
-    question.textContent = game ? 'PLAY GAME?' : 'TAKE A PHOTO?'
+    question.textContent = game ? 'PLAY GAME?' : 'READY TO SHOOT?'
     dialog.setAttribute('aria-label', question.textContent)
     if (!dialog.open) { dialog.showModal(); yes.focus() }
   }
