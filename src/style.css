@@ -524,3 +524,9 @@ html[data-view='game'] .rain-home.home-icon-link { right: 88px; }
 .result-actions .retry-icon-button img, .result-actions .home-icon-link img { width: 68px; height: 68px; image-rendering: pixelated; filter: drop-shadow(1px 0 0 #000) drop-shadow(-1px 0 0 #000) drop-shadow(0 1px 0 #000) drop-shadow(0 -1px 0 #000); }
 
 .countdown-art, .countdown-art.is-ready { width: auto; height: min(84px, 12vw); max-width: 94vw; object-fit: contain; }
+
+.rain-message.is-countdown { display: grid; place-items: center; padding: 0; }
+.rain-message.is-countdown .countdown-art { margin: 0; align-self: center; justify-self: center; }
+.result-actions { gap: 12px; align-items: center; justify-content: center; }
+.result-actions .play-button { display: grid; place-items: center; width: 68px; height: 68px; min-width: 68px; min-height: 68px; }
+.result-actions .retry-icon-button img, .result-actions .home-icon-link img { align-self: center; justify-self: center; }
