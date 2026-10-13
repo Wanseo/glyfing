@@ -377,6 +377,7 @@ html[data-view='camera'] .play-screen::before { display: none; }
 .product-prompt.is-game-prompt { width: min(298px, 46vw, 62dvh); }
 .product-prompt button { position: absolute; padding: 0; background: transparent; border: 0; cursor: pointer; border-radius: 8px; }
 .product-prompt button:hover { background: #ffffff26; }
+.product-prompt button:focus-visible { outline: none; background: #e8379633; }
 .product-prompt-yes { left: 19.5%; top: 65%; width: 23.5%; height: 15%; }
 .product-prompt-no { left: 57%; top: 65%; width: 23.5%; height: 15%; }
 .product-prompt-close { left: 79%; top: 15.5%; width: 9.5%; height: 12.5%; }
