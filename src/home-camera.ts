@@ -3,6 +3,8 @@ import closeButtonUrl from './assets/close-button.png'
 import stickersUrl from './assets/camera-stickers.png'
 import whiteStickerUrl from './assets/camera-sticker-white.png'
 import glossWandUrl from './assets/gloss-wand.png'
+import glossProductsUrl from './assets/gloss-cutouts.webp'
+import { productTexture } from './gloss-props'
 import { loadImage, drawFit } from './play-assets'
 import { cutout } from './badge-candies'
 
@@ -28,6 +30,7 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
   const overlay = host.querySelector<HTMLCanvasElement>('.camera-sticker-layer')!
   const stickerImages: HTMLCanvasElement[] = []
   let glossWand: HTMLCanvasElement | undefined
+  let chromeTube: HTMLCanvasElement | undefined
   const placements = [[0, .01, .29, 2], [.04, .04, .29, 0], [.73, .2, .27, 1], [.69, .49, .29, 0]]
   function decorate(ctx: CanvasRenderingContext2D, w: number, h: number, motion = false) {
     const phase = Math.floor(performance.now() / 150)
@@ -70,8 +73,9 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
     if (glossWand) {
       const wandHeight = h * .34
       const wandWidth = wandHeight * glossWand.width / glossWand.height
-      ctx.drawImage(glossWand, w * .25 - wandWidth / 2, h - wandHeight * .88, wandWidth, wandHeight)
+      ctx.drawImage(glossWand, w * .14 - wandWidth / 2, h - wandHeight * .88, wandWidth, wandHeight)
     }
+    if (chromeTube) drawFit(ctx, chromeTube, w * .18, h * .7, w * .18, h * .33)
   }
   function resizeOverlay() {
     overlay.width = Math.max(1, view.clientWidth * 2); overlay.height = Math.max(1, view.clientHeight * 2)
@@ -109,7 +113,7 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
     ctx.fillStyle = '#f21c2c'; ctx.beginPath(); ctx.arc(540, footerY + 37, 6, 0, Math.PI * 2); ctx.fill()
     return result
   }
-  void Promise.all([loadImage(stickersUrl), loadImage(whiteStickerUrl), loadImage(glossWandUrl)]).then(([source, white, wand]) => {
+  void Promise.all([loadImage(stickersUrl), loadImage(whiteStickerUrl), loadImage(glossWandUrl), loadImage(glossProductsUrl)]).then(([source, white, wand, products]) => {
     if (disposed) return
     for (let i = 0; i < 2; i++) {
       const mesh = cutout(source, [i / 2, 0, .5, 1])!
@@ -122,6 +126,9 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
     const wandMesh = cutout(wand, [0, 0, 1, 1], false)!
     glossWand = wandMesh.material.map!.image as HTMLCanvasElement
     wandMesh.geometry.dispose(); wandMesh.material.map!.dispose(); wandMesh.material.dispose()
+    const tube = productTexture(products, false)
+    chromeTube = tube.texture.image as HTMLCanvasElement
+    tube.texture.dispose()
     resizeOverlay()
   }).catch(() => { /* Camera still works if decorations cannot load. */ })
   function shootFrame(motion = false) {
