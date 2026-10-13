@@ -6,15 +6,24 @@ export function createTouchMovement(surface: HTMLElement, anchor?: () => { x: nu
     for (const panel of controls) {
       const bounds = panel.getBoundingClientRect()
       if (!bounds.width || !bounds.height) continue
-      if (panel !== activePanel && (event.clientX < bounds.left - 28 || event.clientX > bounds.right + 28
+      const vertical = panel.dataset.vertical === 'true'
+      if (!vertical && panel !== activePanel && (event.clientX < bounds.left - 28 || event.clientX > bounds.right + 28
         || event.clientY < bounds.top - 28 || event.clientY > bounds.bottom + 28)) continue
       let nearest: { x: number; y: number } | undefined
       let distance = Infinity
+      const previous = touches.get(event.pointerId)
+      let previousDistance = Infinity
       for (const button of panel.querySelectorAll('button')) {
         const rect = button.getBoundingClientRect()
+        const vector = controlDirections.get(button)
+        if (event.clientX >= rect.left && event.clientX <= rect.right
+          && event.clientY >= rect.top && event.clientY <= rect.bottom) return vector
         const next = Math.hypot(event.clientX - rect.left - rect.width / 2, event.clientY - rect.top - rect.height / 2)
+        if (vector?.x === previous?.x && vector?.y === previous?.y) previousDistance = next
         if (next < distance) { distance = next; nearest = controlDirections.get(button) }
       }
+      // Keep a direction through small finger jitter at diagonal boundaries.
+      if (previous && previousDistance <= distance + 14) return previous
       return nearest
     }
   }
@@ -47,6 +56,7 @@ export function createTouchMovement(surface: HTMLElement, anchor?: () => { x: nu
     addControls(host: HTMLElement, vertical = false) {
       const panel = document.createElement('div')
       panel.className = 'movement-hint mobile-touch-controls'
+      panel.dataset.vertical = String(vertical)
       const directions = vertical ? ['left', 'up', 'down', 'right'] : ['left', 'right']
       const vectors: Record<string, { x: number; y: number }> = {
         left: { x: -1, y: 0 }, right: { x: 1, y: 0 }, up: { x: 0, y: 1 }, down: { x: 0, y: -1 },
