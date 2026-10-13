@@ -264,6 +264,15 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   }
   function keydown(event: KeyboardEvent) {
     const key = event.key.toLowerCase()
+    if (key === 'k') {
+      event.preventDefault()
+      if (event.repeat) return
+      clearTimeout(transition)
+      introActive = false; countdownSound.pause()
+      level = levels.length - 1; caught = levels[level]!.count
+      updateHud(); finish(true)
+      return
+    }
     if (key === 'j') {
       event.preventDefault()
       if (event.repeat) return
