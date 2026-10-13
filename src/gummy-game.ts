@@ -2,6 +2,7 @@ import { drawFit } from './play-assets'
 import type { PlayAssets } from './play-assets'
 import levelUpUrl from './assets/level-up.png'
 import gameOverUrl from './assets/game-over.png'
+import lifeHeartUrl from './assets/life-heart.png'
 
 type Drop = { x: number; y: number; speed: number; kind: number; angle: number }
 type CatchEffect = { x: number; y: number; age: number; correct: boolean }
@@ -35,6 +36,7 @@ function levelLettering(text: string) {
 export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   host.innerHTML = `
     <section class="rain-game" aria-label="젤리와 인형 수집 게임">
+      <div class="rain-lives" role="status" aria-label="남은 목숨 3개">${Array.from({ length: 3 }, () => `<img src="${lifeHeartUrl}" alt="" aria-hidden="true">`).join('')}</div>
       <a class="play-button rain-home" href="#home">메인으로 ↗</a>
       <canvas class="game-canvas" aria-label="방향키 또는 A와 D 키로 목표 아이템을 받으세요"></canvas>
       <div class="rain-level"><b data-level></b><span data-count></span>
@@ -54,6 +56,13 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   const countEl = host.querySelector<HTMLElement>('[data-count]')!
   const timeEl = host.querySelector<HTMLElement>('[data-time]')!
   const timeFill = host.querySelector<HTMLElement>('[data-time-fill]')!
+  const livesEl = host.querySelector<HTMLElement>('.rain-lives')!
+  const hearts = livesEl.querySelectorAll<HTMLImageElement>('img')
+  let lives = 3
+  function updateLives() {
+    hearts.forEach((heart, index) => { heart.hidden = index >= lives })
+    livesEl.setAttribute('aria-label', `남은 목숨 ${lives}개`)
+  }
   host.querySelector<HTMLImageElement>('.rain-mascot')!.src = assets.character.src
   const items = [...assets.candies, ...assets.toys]
   const levelUpImage = new Image()
@@ -94,7 +103,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     updateHud(); message.hidden = true; message.classList.remove('is-level-up'); running = true; keys.clear(); previous = 0
   }
   function start() {
-    clearTimeout(transition); effects.length = 0; shakeRemaining = 0; level = 0; score = 0; player = .5; beginLevel()
+    clearTimeout(transition); effects.length = 0; shakeRemaining = 0; lives = 3; updateLives(); level = 0; score = 0; player = .5; beginLevel()
   }
   function finish(won: boolean) {
     running = false; keys.clear()
@@ -159,7 +168,8 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
             if (caught >= levels[level]!.count) { updateHud(); clearLevel(); break }
           } else {
             catchEffect(false, playerY + 20)
-            remaining = Math.max(0, remaining - 2)
+            lives--; updateLives()
+            if (lives === 0) { finish(false); break }
           }
         } else if (drop.y > height + 50) drops.splice(i, 1)
       }
@@ -207,7 +217,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       ctx.textAlign = 'center'; ctx.font = '900 21px Arial'
       ctx.lineWidth = 5; ctx.strokeStyle = effect.correct ? '#875000' : '#fff'
       ctx.fillStyle = effect.correct ? '#fff9a0' : '#d90035'
-      const label = effect.correct ? '✦ +1' : '✕ -2sec'
+      const label = effect.correct ? '✦ +1' : '♥ -1'
       const labelY = y - 28 - (reducedMotion.matches ? 0 : progress * 35)
       ctx.strokeText(label, x, labelY); ctx.fillText(label, x, labelY)
       ctx.restore()
