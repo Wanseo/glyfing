@@ -30,7 +30,7 @@ function levelLettering(text: string) {
       if (pixel === '1') pixels += `<rect x="${index * 6 + x + 1}" y="${y + 1}" width="1" height="1"/>`
     }))
   }
-  return `<svg class="level-pixel-text" viewBox="0 0 ${text.length * 6 + 2} 10" role="img" aria-label="${text}" xmlns="http://www.w3.org/2000/svg"><g fill="#171717" transform="translate(1 1)">${pixels}</g><g fill="#f5ff00">${pixels}</g></svg>`
+  return `<svg class="level-pixel-text" viewBox="-1 -1 ${text.length * 6 + 5} 12" role="img" aria-label="${text}" xmlns="http://www.w3.org/2000/svg"><g fill="#171717" stroke="#171717" stroke-width="1.2" stroke-linejoin="miter" transform="translate(.8 .8)">${pixels}</g><g fill="#171717" stroke="#171717" stroke-width=".8" stroke-linejoin="miter">${pixels}</g><g fill="#f5ff00">${pixels}</g></svg>`
 }
 export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   host.innerHTML = `
