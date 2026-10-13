@@ -1,6 +1,7 @@
 import retryIconUrl from './assets/retry-icon.png'
 import closeButtonUrl from './assets/close-button.png'
 import stickersUrl from './assets/camera-stickers.png'
+import whiteStickerUrl from './assets/camera-sticker-white.png'
 import { loadImage, drawFit } from './play-assets'
 import { cutout } from './badge-candies'
 
@@ -24,13 +25,13 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
   const view = host.querySelector<HTMLElement>('.home-camera-view')!
   const overlay = host.querySelector<HTMLCanvasElement>('.camera-sticker-layer')!
   const stickerImages: HTMLCanvasElement[] = []
-  const placements = [[0, .01, .29, 0], [.04, .04, .29, 0], [.73, .2, .27, 1], [.69, .49, .29, 0]]
+  const placements = [[0, .01, .29, 2], [.04, .04, .29, 0], [.73, .2, .27, 1], [.69, .49, .29, 0]]
   function decorate(ctx: CanvasRenderingContext2D, w: number, h: number, motion = false) {
     const phase = Math.floor(performance.now() / 150)
     const animated = Array.from({ length: 10 }, (_, index) => {
       const base = placements[index % placements.length]!
       return [Math.max(0, Math.min(.8, base[0]! + (index % 3 - 1) * .065)),
-        Math.max(0, Math.min(.75, base[1]! + Math.floor(index / 4) * .045)), base[2]!, index % 2]
+        Math.max(0, Math.min(.75, base[1]! + Math.floor(index / 4) * .045)), base[2]!, index === 0 ? 2 : index % 2]
     })
     for (const [index, [x, y, size, kind]] of (motion ? animated : placements).entries()) {
       if (motion && (index + phase) % 7 > 3) continue
@@ -74,13 +75,16 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
     ctx.fillStyle = '#f21c2c'; ctx.beginPath(); ctx.arc(540, footerY + 37, 6, 0, Math.PI * 2); ctx.fill()
     return result
   }
-  void loadImage(stickersUrl).then(source => {
+  void Promise.all([loadImage(stickersUrl), loadImage(whiteStickerUrl)]).then(([source, white]) => {
     if (disposed) return
     for (let i = 0; i < 2; i++) {
       const mesh = cutout(source, [i / 2, 0, .5, 1])!
       stickerImages.push(mesh.material.map!.image as HTMLCanvasElement)
       mesh.geometry.dispose(); mesh.material.map!.dispose(); mesh.material.dispose()
     }
+    const whiteMesh = cutout(white, [0, 0, 1, 1])!
+    stickerImages.push(whiteMesh.material.map!.image as HTMLCanvasElement)
+    whiteMesh.geometry.dispose(); whiteMesh.material.map!.dispose(); whiteMesh.material.dispose()
     resizeOverlay()
   }).catch(() => { /* Camera still works if decorations cannot load. */ })
   function shootFrame(motion = false) {
