@@ -40,7 +40,6 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
         <div class="rain-goal-images"><canvas data-target width="100" height="100" role="img" aria-label="이번 단계에서 받을 아이템"></canvas></div>
       </div>
       <div class="rain-timer" role="timer" aria-label="남은 시간"><div class="pixel-battery"><div class="pixel-battery-interior"><div class="pixel-battery-fill" data-time-fill></div></div><span data-time></span></div></div>
-      <button class="text-button rain-restart" data-restart>다시 시작 ↻</button>
       <div class="game-message rain-message" hidden></div>
     </section>`
   const canvas = host.querySelector<HTMLCanvasElement>('.game-canvas')!
@@ -176,7 +175,6 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     message.hidden = false
     transition = window.setTimeout(() => { if (!disposed) { level++; beginLevel() } }, 1400)
   }
-  host.querySelector('[data-restart]')!.addEventListener('click', start)
   function keydown(event: KeyboardEvent) {
     const key = event.key.toLowerCase()
     if (key === 'j') {
