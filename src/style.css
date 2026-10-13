@@ -573,3 +573,9 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
 
 .home-camera-view { background-size: cover; background-position: center; }
 .home-camera-view video.recorded-video { left: 50%; right: auto; width: auto; height: 100%; max-width: 100%; aspect-ratio: 9 / 16; transform: translateX(-50%); object-fit: contain; }
+
+.camera-mode-options { grid-column: 1; grid-row: 1; display: flex; gap: 5px; justify-self: start; }
+.camera-mode-options button { min-height: 30px; padding: 5px 8px; border: 2px solid #171717; background: #fff; color: #171717; font: 800 10px Arial; }
+.camera-mode-options button[aria-pressed='true'] { background: #f5ff00; }
+.camera-mode-options button:disabled { opacity: .5; }
+@media (max-width: 480px) { .camera-mode-options { gap: 3px; } .camera-mode-options button { padding: 4px 5px; font-size: 8px; } }

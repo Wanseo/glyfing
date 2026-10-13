@@ -9,13 +9,14 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
   host.innerHTML = `<section class="home-camera" aria-label="카메라 촬영">
     <a class="camera-close" href="#home" aria-label="카메라 닫기"><img src="${closeButtonUrl}" alt=""></a>
     <header class="camera-titlebar"><span aria-hidden="true">● ● ●</span><h1>Photo Booth</h1></header><div class="home-camera-view"><video autoplay muted playsinline></video><img alt="촬영한 사진" hidden><canvas class="camera-sticker-layer" aria-hidden="true"></canvas></div>
-    <p role="status"></p><div class="camera-actions"><button class="camera-mode" data-mode aria-label="영상 모드로 바꾸기">PHOTO</button><button class="camera-shutter" data-shoot disabled aria-label="촬영"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 4h8l2 3h3v13H3V7h3zm4 5a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg></button><button class="camera-share" data-save hidden aria-label="인스타그램에 공유"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="17.5" cy="6.5" r="1.3" fill="currentColor"/></svg></button></div>
+    <p role="status"></p><div class="camera-actions"><div class="camera-mode-options" role="group" aria-label="촬영 모드"><button data-mode="photo" aria-pressed="true">PHOTO</button><button data-mode="video" aria-pressed="false">VIDEO</button></div><button class="camera-shutter" data-shoot disabled aria-label="촬영"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 4h8l2 3h3v13H3V7h3zm4 5a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg></button><button class="camera-share" data-save hidden aria-label="인스타그램에 공유"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2.5"/><circle cx="17.5" cy="6.5" r="1.3" fill="currentColor"/></svg></button></div>
     <button class="text-button retry-icon-button" data-retry hidden aria-label="카메라 다시 연결"><img src="${retryIconUrl}" alt=""></button></section>`
   const video = host.querySelector<HTMLVideoElement>('video')!
   const image = host.querySelector<HTMLImageElement>('.home-camera-view > img')!
   const status = host.querySelector<HTMLElement>('[role="status"]')!
   const shoot = host.querySelector<HTMLButtonElement>('[data-shoot]')!
-  const modeButton = host.querySelector<HTMLButtonElement>('[data-mode]')!
+  const modeButtons = host.querySelectorAll<HTMLButtonElement>('[data-mode]')!
+  function disableModes(disabled: boolean) { modeButtons.forEach(button => { button.disabled = disabled }) }
   let videoMode = false, recording = false, recordedBlob: Blob | null = null, recordedUrl = ''
   let recorder: MediaRecorder | null = null, recordStream: MediaStream | null = null, animationFrame = 0
   let recordStarted = 0, recordCanvas: HTMLCanvasElement | null = null, recordBackground: HTMLCanvasElement | null = null
@@ -99,7 +100,7 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
   }
   function finishRecording() {
     if (!recording) return
-    recording = false; modeButton.disabled = false; shoot.disabled = true
+    recording = false; disableModes(false); shoot.disabled = true
     if (recorder?.state !== 'inactive') recorder?.stop()
   }
   function frame(time: number) {
@@ -142,7 +143,7 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
         save.hidden = false; shoot.disabled = false; shoot.innerHTML = `<img class="retry-icon" src="${retryIconUrl}" alt="">`
         shoot.setAttribute('aria-label', '다시 촬영'); status.textContent = ''; downloadBlob(recordedBlob)
       }
-      recorder.start(); recording = true; recordStarted = performance.now(); modeButton.disabled = true
+      recorder.start(); recording = true; recordStarted = performance.now(); disableModes(true)
       shoot.innerHTML = '<span class="record-stop"></span>'; shoot.setAttribute('aria-label', '영상 촬영 중지')
     } catch {
       recordStream?.getTracks().forEach(track => track.stop()); recordStream = null
@@ -163,12 +164,14 @@ export function createHomeCamera(host: HTMLElement, captureHome: () => HTMLCanva
       catch (error) { if (!(error instanceof DOMException && error.name === 'AbortError')) { downloadBlob(blob); status.textContent = '저장한 파일을 인스타 스토리에 올려주세요.' } }
     } else { downloadBlob(blob); status.textContent = '저장한 파일을 인스타 스토리에 올려주세요.' }
   }
-  modeButton.addEventListener('click', () => {
-    videoMode = !videoMode; modeButton.textContent = videoMode ? 'VIDEO' : 'PHOTO'
-    modeButton.setAttribute('aria-label', videoMode ? '사진 모드로 바꾸기' : '영상 모드로 바꾸기')
+  modeButtons.forEach(button => button.addEventListener('click', () => {
+    const next = button.dataset.mode === 'video'
+    if (next === videoMode || recording) return
+    videoMode = next
+    modeButtons.forEach(option => option.setAttribute('aria-pressed', String(option === button)))
     if (photo || recordedBlob) void connect()
     else resizeOverlay()
-  })
+  }))
   animationFrame = requestAnimationFrame(frame)
   function stop() { stream?.getTracks().forEach(track => track.stop()); stream = null; video.srcObject = null }
   async function connect() {
