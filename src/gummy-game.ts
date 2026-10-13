@@ -10,6 +10,12 @@ import levelLabelsUrl from './assets/level-labels.png'
 import victoryUrl from './assets/all-levels-clear.png'
 import homeIconUrl from './assets/home-icon.png'
 
+let preparedImages: Promise<HTMLImageElement[]> | undefined
+export function prepareGameImages() {
+  return preparedImages ??= Promise.all([retryIconUrl, levelUpUrl, gameOverUrl, lifeHeartUrl,
+    levelLabelsUrl, victoryUrl, homeIconUrl, countdownUrl, countdownDigitsUrl].map(loadImage))
+}
+
 type Drop = { x: number; y: number; speed: number; kind: number; angle: number; double?: boolean }
 type CatchEffect = { x: number; y: number; age: number; correct: boolean; label: string; bonus: number }
 const levels = [

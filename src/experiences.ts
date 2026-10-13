@@ -1,6 +1,6 @@
 import retryIconUrl from './assets/retry-icon.png'
 import { loadPlayAssets } from './play-assets'
-import { createGummyGame } from './gummy-game'
+import { createGummyGame, prepareGameImages } from './gummy-game'
 import { createPhotoBooth } from './photo-booth'
 import { createHomeCamera } from './home-camera'
 import homeIconUrl from './assets/home-icon.png'
@@ -36,6 +36,7 @@ export function createExperiences(app: HTMLElement, captureCharacter: () => stri
     screen.replaceChildren()
     try {
       const images = await (assets ??= loadPlayAssets(captureCharacter()))
+      if (route === 'game') await prepareGameImages()
       if (request !== current) return
       if (route === 'game') dispose = createGummyGame(screen, images)
       else dispose = createPhotoBooth(screen, images, score)
