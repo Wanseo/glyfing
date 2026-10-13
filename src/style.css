@@ -586,3 +586,6 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
 
 .victory-celebration { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; z-index: 0; }
 .rain-message.is-victory .victory-art, .rain-message.is-victory .result-actions { position: relative; z-index: 1; }
+
+.rain-message.is-victory .victory-art { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: min(480px, 80vw, 56dvh); max-height: 56dvh; margin: 0; }
+.rain-message.is-victory .result-actions { position: absolute; left: 50%; bottom: max(24px, 7dvh); transform: translateX(-50%); }

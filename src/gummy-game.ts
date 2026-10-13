@@ -99,7 +99,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   celebration.className = 'victory-celebration'; celebration.setAttribute('aria-hidden', 'true')
   message.appendChild(celebration)
   const partyCtx = celebration.getContext('2d')!
-  const confetti: { x: number; y: number; speed: number; kind: number; angle: number; size: number }[] = []
+  const confetti: { x: number; y: number; speed: number; drift: number; kind: number; angle: number; size: number }[] = []
   let celebrating = false, partySpawn = 0, partyTime = 0
   let introActive = false, introTime = 0, introStep = -1
   const countdownLabels = ['ARE YOU READY?', '3', '2', '1', 'GO!']
@@ -447,14 +447,14 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       partyCtx.clearRect(0, 0, width, height)
       if (partySpawn <= 0 && confetti.length < 90) {
         partySpawn = .12
-        confetti.push({ x: Math.random() * width, y: -35, speed: 65 + Math.random() * 100,
+        confetti.push({ x: Math.random() * width, y: -35, speed: 85 + Math.random() * 65, drift: (Math.random() - .5) * 18,
           kind: Math.floor(Math.random() * assets.candies.length), angle: Math.random() * 6, size: 18 + Math.random() * 18 })
       }
       for (let i = confetti.length - 1; i >= 0; i--) {
         const piece = confetti[i]!
-        if (!reducedMotion.matches) { piece.y += piece.speed * dt; piece.angle += dt * .7 }
+        if (!reducedMotion.matches) { piece.y += piece.speed * dt; piece.x += piece.drift * dt; piece.angle += dt * .35 }
         if (piece.y > height + 40) { confetti.splice(i, 1); continue }
-        partyCtx.save(); partyCtx.translate(piece.x + Math.sin(partyTime + i) * 12, piece.y)
+        partyCtx.save(); partyCtx.translate(piece.x, piece.y)
         partyCtx.rotate(piece.angle); drawFit(partyCtx, assets.candies[piece.kind]!, -piece.size / 2, -piece.size / 2, piece.size, piece.size); partyCtx.restore()
       }
       for (let star = 0; star < 24; star++) {
