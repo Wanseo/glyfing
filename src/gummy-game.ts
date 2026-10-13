@@ -84,7 +84,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     if (levelEl.dataset.label !== label) {
       levelEl.dataset.label = label; levelEl.innerHTML = levelLettering(label)
     }
-    countEl.textContent = `${caught} / ${levels[level]!.count}개`
+    countEl.textContent = `${caught}/${levels[level]!.count}`
     timeEl.textContent = `${Math.ceil(remaining)}초`
   }
   function beginLevel() {
