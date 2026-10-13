@@ -476,3 +476,7 @@ html[data-view='game'] .rain-home.home-icon-link img { width: 64px; height: 64px
   html[data-view='game'] .rain-home.home-icon-link { top: 117.75px; right: 6px; width: 60px; height: 60px; }
   html[data-view='game'] .rain-home.home-icon-link img { width: 54px; height: 54px; }
 }
+
+.home-movement-hint { gap: 18px; }
+.home-movement-hint .pixel-move-arrow { width: 68px; height: 52px; }
+.home-movement-hint .pixel-move-arrow::after { inset: 5px; }
