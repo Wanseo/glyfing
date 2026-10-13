@@ -44,7 +44,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   const countdownSound = new Audio(`${import.meta.env.BASE_URL}audio/countdown.mp3`)
   countdownSound.preload = 'auto'
   countdownSound.volume = .65
-  countdownSound.playbackRate = 6.034 / 2.5
+  countdownSound.playbackRate = 2.2
   function syncSound() {
     const muted = document.documentElement.dataset.soundMuted === 'true'
     for (const sound of [itemSound, levelSound, wrongSound, gameOverSound, winSound, countdownSound]) sound.muted = muted
@@ -283,7 +283,6 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       const step = introTime < .7 ? 0 : introTime < 1.35 ? 1 : introTime < 2 ? 2 : introTime < 2.65 ? 3 : 4
       showIntro(step)
       if (introTime >= 3.2) {
-        countdownSound.pause()
         introActive = false; message.hidden = true; message.classList.remove('is-countdown'); running = true; keys.clear()
       }
     }
