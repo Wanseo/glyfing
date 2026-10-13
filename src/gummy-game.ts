@@ -4,6 +4,7 @@ import levelUpUrl from './assets/level-up.png'
 import gameOverUrl from './assets/game-over.png'
 import lifeHeartUrl from './assets/life-heart.png'
 import levelLabelsUrl from './assets/level-labels.png'
+import victoryUrl from './assets/all-levels-clear.png'
 
 type Drop = { x: number; y: number; speed: number; kind: number; angle: number }
 type CatchEffect = { x: number; y: number; age: number; correct: boolean; label: string; bonus: number }
@@ -139,7 +140,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     }
     targetCtx.drawImage(outline, 0, 0)
     drawFit(targetCtx, items[levels[level]!.target]!, 5, 5, 90, 90)
-    updateHud(); message.hidden = true; message.classList.remove('is-level-up'); running = true; keys.clear(); previous = 0
+    updateHud(); message.hidden = true; message.classList.remove('is-level-up', 'is-victory'); running = true; keys.clear(); previous = 0
   }
   function start() {
     clearHeartFlights()
@@ -155,11 +156,12 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     void resultSound.play().catch(() => { /* Audio playback is optional. */ })
     running = false; keys.clear()
     message.classList.remove('is-level-up')
+    message.classList.toggle('is-victory', won)
     try {
       const best = Number(localStorage.getItem('glyf-gummy-best')) || 0
       if (score > best) localStorage.setItem('glyf-gummy-best', String(score))
     } catch { /* optional */ }
-    message.innerHTML = `${won ? '<h2>ALL LEVELS CLEAR! ✦</h2>' : `<img class="game-over-art" src="${gameOverUrl}" alt="GAME OVER">`}
+    message.innerHTML = `${won ? `<img class="victory-art" src="${victoryUrl}" alt="ALL LEVELS CLEAR!">` : `<img class="game-over-art" src="${gameOverUrl}" alt="GAME OVER">`}
       <div class="result-actions"><button class="play-button" data-again>RETRY ↻</button><a class="play-button pink-button" href="#home">HOME ↗</a></div>`
     message.hidden = false
     message.querySelector('[data-again]')!.addEventListener('click', start)
