@@ -99,23 +99,21 @@ let needsBackgroundRender = true
 function resize() {
   needsBackgroundRender = true
   const aspect = window.innerWidth / window.innerHeight
-  // Fit the desktop composition down to 960 × 540; smaller windows crop it.
+  // Restore the original desktop scale; freeze the layout below 960 × 540.
   const desktopWidth = Math.max(960, window.innerWidth)
   const desktopHeight = Math.max(540, window.innerHeight)
   const pixelsPerUnit = mobileRendering
     ? Math.min(48, window.innerHeight / 8, window.innerWidth / 6)
-    : Math.min(48, desktopWidth / 36, desktopHeight / 20)
-  // Preserve the character's original on-screen size within the fitted desktop scene.
-  const originalPixelsPerUnit = Math.min(48, desktopHeight / 8, desktopWidth / 6)
-  characterSize = mobileRendering ? .54 : .84 * originalPixelsPerUnit / pixelsPerUnit
+    : Math.min(48, desktopHeight / 8, desktopWidth / 6)
+  characterSize = mobileRendering ? .54 : .84
   character.root.scale.setScalar(1.86875 * characterSize)
   shadow.scale.setScalar(characterSize / .84)
   const halfHeight = window.innerHeight / pixelsPerUnit / 2
   const halfWidth = halfHeight * aspect
   viewHalfWidth = halfWidth
   viewHalfHeight = halfHeight
-  layoutHalfWidth = mobileRendering ? halfWidth : 18
-  layoutHalfHeight = mobileRendering ? halfHeight : 10
+  layoutHalfWidth = mobileRendering ? halfWidth : desktopWidth / pixelsPerUnit / 2
+  layoutHalfHeight = mobileRendering ? halfHeight : desktopHeight / pixelsPerUnit / 2
   glossProps.layout(layoutHalfWidth, layoutHalfHeight)
   badgeCandies.layout(layoutHalfWidth, layoutHalfHeight)
   plushProps.layout(layoutHalfWidth, layoutHalfHeight)
