@@ -226,7 +226,6 @@ Promise.all([glossProps.ready, badgeCandies.ready, plushProps.ready, brandLogo.d
   renderer.compile(scene, camera)
   requestAnimationFrame(() => document.documentElement.classList.remove('is-loading'))
 }).catch(() => {
-  document.querySelector('.startup-loading')?.remove()
   const message = document.createElement('div')
   message.className = 'startup-error'
   message.setAttribute('role', 'alert')
