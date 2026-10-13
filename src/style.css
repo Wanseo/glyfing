@@ -687,3 +687,19 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
 
 .startup-error { z-index: 100; }
 .startup-error input { display: block; width: 100%; box-sizing: border-box; margin-top: 14px; padding: 8px; }
+
+@media (pointer: coarse) {
+  html[data-view='home'] #app > .mobile-touch-controls.movement-hint {
+    visibility: hidden;
+    opacity: 0;
+    pointer-events: none;
+  }
+  html[data-view='home'].show-object-hints #app > .mobile-touch-controls.movement-hint {
+    visibility: visible;
+    pointer-events: auto;
+    animation: movement-hint-blink 5s ease-in-out both;
+  }
+}
+@media (pointer: coarse) and (prefers-reduced-motion: reduce) {
+  html[data-view='home'].show-object-hints #app > .mobile-touch-controls.movement-hint { animation: none; opacity: 1; }
+}
