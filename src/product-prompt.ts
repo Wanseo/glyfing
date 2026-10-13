@@ -19,6 +19,7 @@ export function createProductPrompt(app: HTMLElement) {
   dialog.addEventListener('click', event => { if (event.target === dialog) dialog.close() })
   window.addEventListener('hashchange', () => { if (dialog.open) dialog.close() })
   return (game: boolean) => {
+    dialog.classList.toggle('is-game-prompt', game)
     destination = game ? '#game' : '#camera'
     image.src = game ? playPromptUrl : photoPromptUrl
     image.alt = game ? 'PLAY GAME?' : 'TAKE A PHOTO?'
