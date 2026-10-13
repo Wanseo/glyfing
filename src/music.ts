@@ -15,7 +15,7 @@ export function createMusic(app: HTMLElement) {
   const slash = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
   slash.setAttribute('viewBox', '0 0 64 64'); slash.setAttribute('aria-hidden', 'true')
   slash.classList.add('music-off-slash')
-  slash.innerHTML = '<path d="M10 8H18V16H26V24H34V32H42V40H50V48H58V56H50V48H42V40H34V32H26V24H18V16H10Z" fill="#f5ff00" stroke="#171717" stroke-width="3" stroke-linejoin="miter"/>'
+  slash.innerHTML = '<path transform="translate(64 0) scale(-1 1)" d="M10 8H18V16H26V24H34V32H42V40H50V48H58V56H50V48H42V40H34V32H26V24H18V16H10Z" fill="#f5ff00" stroke="#171717" stroke-width="3" stroke-linejoin="miter"/>'
   button.append(icon, slash)
   app.append(audio, button)
   let pending = false
