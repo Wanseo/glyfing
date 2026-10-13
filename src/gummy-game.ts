@@ -40,7 +40,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
       <div class="rain-level"><b data-level></b><span data-count></span>
         <div class="rain-goal-images"><img class="rain-mascot" alt="움직이는 GLYF 캐릭터"><span>→</span><canvas data-target width="100" height="100" role="img" aria-label="이번 단계에서 받을 아이템"></canvas></div>
       </div>
-      <div class="rain-timer" role="timer" aria-label="남은 시간"><small>TIME LEFT</small><div class="pixel-battery"><div class="pixel-battery-fill" data-time-fill></div><span data-time></span></div></div>
+      <div class="rain-timer" role="timer" aria-label="남은 시간"><small>TIME LEFT</small><div class="pixel-battery"><div class="pixel-battery-interior"><div class="pixel-battery-fill" data-time-fill></div></div><span data-time></span></div></div>
       <button class="text-button rain-restart" data-restart>다시 시작 ↻</button>
       <div class="game-message rain-message" hidden></div>
     </section>`
@@ -85,7 +85,7 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     }
     countEl.textContent = `${caught}/${levels[level]!.count}`
     timeEl.textContent = `${Math.ceil(remaining)}초`
-    timeFill.style.width = `${remaining / levels[level]!.seconds * 100}%`
+    timeFill.style.width = `${24 + (1 - remaining / levels[level]!.seconds) * 69.5}%`
   }
   function beginLevel() {
     caught = 0; remaining = levels[level]!.seconds; spawn = 0; drops.length = 0
