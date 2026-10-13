@@ -1,16 +1,44 @@
+import stickersUrl from './assets/camera-stickers.png'
+import { loadImage, drawFit } from './play-assets'
+import { cutout } from './badge-candies'
+
 export function createHomeCamera(host: HTMLElement) {
   host.innerHTML = `<section class="home-camera" aria-label="카메라 촬영">
     <a class="camera-close" href="#home" aria-label="카메라 닫기">✕</a>
-    <h1>PHOTO TIME!</h1><div class="home-camera-view"><video autoplay muted playsinline></video><img alt="촬영한 사진" hidden></div>
-    <p role="status"></p><div class="camera-actions"><button class="play-button pink-button" data-shoot disabled>촬영 ✦</button><button class="play-button" data-save hidden>사진 저장 ↓</button></div>
+    <header class="camera-titlebar"><span aria-hidden="true">● ● ●</span><h1>Photo Booth</h1></header><div class="home-camera-view"><video autoplay muted playsinline></video><img alt="촬영한 사진" hidden><canvas class="camera-sticker-layer" aria-hidden="true"></canvas></div>
+    <p role="status"></p><div class="camera-actions"><button class="camera-shutter" data-shoot disabled aria-label="촬영"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M8 4h8l2 3h3v13H3V7h3zm4 5a4 4 0 1 0 0 8 4 4 0 0 0 0-8z"/></svg></button><button class="play-button" data-save hidden>SAVE</button></div>
     <button class="text-button" data-retry hidden>카메라 다시 연결 ↻</button></section>`
   const video = host.querySelector<HTMLVideoElement>('video')!
   const image = host.querySelector<HTMLImageElement>('img')!
   const status = host.querySelector<HTMLElement>('[role="status"]')!
   const shoot = host.querySelector<HTMLButtonElement>('[data-shoot]')!
   const save = host.querySelector<HTMLButtonElement>('[data-save]')!
+  const view = host.querySelector<HTMLElement>('.home-camera-view')!
+  const overlay = host.querySelector<HTMLCanvasElement>('.camera-sticker-layer')!
+  const stickerImages: HTMLCanvasElement[] = []
+  const placements = [[0, .01, .29, 0], [.04, .04, .29, 0], [.73, .2, .27, 1], [.69, .49, .29, 0], [.32, .72, .24, 1], [.56, .76, .28, 1]]
+  function decorate(ctx: CanvasRenderingContext2D, w: number, h: number) {
+    for (const [x, y, size, kind] of placements) {
+      const sticker = stickerImages[kind!]
+      if (sticker) drawFit(ctx, sticker, x! * w, y! * h, size! * w, size! * w)
+    }
+  }
+  function resizeOverlay() {
+    overlay.width = Math.max(1, view.clientWidth * 2); overlay.height = Math.max(1, view.clientHeight * 2)
+    decorate(overlay.getContext('2d')!, overlay.width, overlay.height)
+  }
+  const observer = new ResizeObserver(resizeOverlay); observer.observe(view)
   const retry = host.querySelector<HTMLButtonElement>('[data-retry]')!
   let stream: MediaStream | null = null, disposed = false, photo: HTMLCanvasElement | null = null, request = 0
+  void loadImage(stickersUrl).then(source => {
+    if (disposed) return
+    for (let i = 0; i < 2; i++) {
+      const mesh = cutout(source, [i / 2, 0, .5, 1])!
+      stickerImages.push(mesh.material.map!.image as HTMLCanvasElement)
+      mesh.geometry.dispose(); mesh.material.map!.dispose(); mesh.material.dispose()
+    }
+    resizeOverlay()
+  }).catch(() => { /* Camera still works if decorations cannot load. */ })
   function stop() { stream?.getTracks().forEach(track => track.stop()); stream = null; video.srcObject = null }
   async function connect() {
     const current = ++request
@@ -22,7 +50,7 @@ export function createHomeCamera(host: HTMLElement) {
       stream = incoming; video.srcObject = incoming; await video.play()
       if (disposed || current !== request) return
       image.hidden = true; video.hidden = false; save.hidden = true; photo = null
-      shoot.disabled = false; shoot.textContent = '촬영 ✦'
+      shoot.disabled = false; shoot.setAttribute('aria-label', '촬영'); overlay.hidden = false
       status.textContent = ''
     } catch {
       if (disposed || current !== request) return
@@ -33,11 +61,14 @@ export function createHomeCamera(host: HTMLElement) {
   shoot.addEventListener('click', () => {
     if (photo) { void connect(); return }
     if (!video.videoWidth || !video.videoHeight) return
-    photo = document.createElement('canvas'); photo.width = video.videoWidth; photo.height = video.videoHeight
+    photo = document.createElement('canvas'); photo.width = 1080; photo.height = Math.round(1080 * view.clientHeight / view.clientWidth)
     const ctx = photo.getContext('2d')!
-    ctx.translate(photo.width, 0); ctx.scale(-1, 1); ctx.drawImage(video, 0, 0)
+    const scale = Math.max(photo.width / video.videoWidth, photo.height / video.videoHeight)
+    ctx.save(); ctx.translate(photo.width, 0); ctx.scale(-1, 1)
+    ctx.drawImage(video, (photo.width - video.videoWidth * scale) / 2, (photo.height - video.videoHeight * scale) / 2, video.videoWidth * scale, video.videoHeight * scale)
+    ctx.restore(); decorate(ctx, photo.width, photo.height); overlay.hidden = true
     image.src = photo.toDataURL('image/png'); image.hidden = false; video.hidden = true
-    stop(); save.hidden = false; shoot.textContent = '다시 촬영 ↻'; status.textContent = '찰칵! 사진을 저장할 수 있어요.'
+    stop(); save.hidden = false; shoot.setAttribute('aria-label', '다시 촬영'); status.textContent = ''
   })
   save.addEventListener('click', () => photo?.toBlob(blob => {
     if (!blob || disposed) return
@@ -47,5 +78,5 @@ export function createHomeCamera(host: HTMLElement) {
   }, 'image/png'))
   retry.addEventListener('click', () => { void connect() })
   void connect()
-  return () => { disposed = true; request++; stop() }
+  return () => { disposed = true; request++; stop(); observer.disconnect() }
 }
