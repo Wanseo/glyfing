@@ -22,15 +22,29 @@ export function createSpeech(app: HTMLElement) {
   const anchor = new THREE.Vector3()
   const corner = new THREE.Vector3()
   const textRange = document.createRange()
+  const measurements = new Map<number, { width: number; height: number }>()
+  let measurementKey = ''
   function fitBubble(maxWidth: number) {
+    maxWidth = Math.floor(maxWidth / 4) * 4
+    const key = `${text.textContent}:${window.innerWidth}:${window.innerHeight}`
+    if (key !== measurementKey) { measurements.clear(); measurementKey = key }
+    const cached = measurements.get(maxWidth)
+    if (cached) {
+      bubble.style.maxWidth = `${maxWidth}px`
+      bubble.style.width = `${cached.width}px`
+      return cached
+    }
     bubble.style.width = 'max-content'
     bubble.style.maxWidth = `${maxWidth}px`
     textRange.selectNodeContents(text)
     const lineWidths = [...textRange.getClientRects()].map(rect => rect.width)
-    if (!lineWidths.length) return
+    if (!lineWidths.length) return { width: 0, height: 0 }
     const style = getComputedStyle(bubble)
     const padding = parseFloat(style.paddingLeft) + parseFloat(style.paddingRight)
     bubble.style.width = `${Math.min(maxWidth, Math.ceil(Math.max(...lineWidths) + padding))}px`
+    const size = { width: bubble.offsetWidth, height: bubble.offsetHeight }
+    measurements.set(maxWidth, size)
+    return size
   }
   let countdown = .35, greeting = 0
   let awaitingTap = true, introductionTime = 0
@@ -65,7 +79,8 @@ export function createSpeech(app: HTMLElement) {
       if (awaitingTap) {
         introductionTime += dt
         if (introductionTime < .5) { bubble.hidden = true; return }
-        text.textContent = introductionTime < 3.5 ? 'Hello! My name is Fuggler!' : 'Tap me!'
+        const message = introductionTime < 3.5 ? 'Hello! My name is Fuggler!' : 'Tap me!'
+        if (text.textContent !== message) text.textContent = message
         bubble.hidden = false
         if (placementIndex < 0) placementIndex = 0
       } else countdown -= dt
@@ -102,15 +117,13 @@ export function createSpeech(app: HTMLElement) {
       const sideRoom = onLeft ? leftRoom : rightRoom
       const canUseSide = sideRoom >= 156
       const upperRoom = onLeft ? screenX - 60 : window.innerWidth - screenX - 60
-      fitBubble(Math.min(300, window.innerWidth - margin * 2, Math.max(156, upperRoom)))
-      let width = bubble.offsetWidth, height = bubble.offsetHeight
+      let { width, height } = fitBubble(Math.min(300, window.innerWidth - margin * 2, Math.max(156, upperRoom)))
       const fitsAbove = character.top - gap - tail - height >= margin
       const fitsBelow = character.bottom + gap + tail + height <= window.innerHeight - margin
       const beside = canUseSide && (blocked.length > 0 || placement === 'middle' || !fitsAbove)
       let left: number, top: number, direction: string
       if (beside) {
-        fitBubble(Math.min(300, sideRoom))
-        width = bubble.offsetWidth; height = bubble.offsetHeight
+        ;({ width, height } = fitBubble(Math.min(300, sideRoom)))
         left = onLeft ? character.left - gap - tail - width : character.right + gap + tail
         top = THREE.MathUtils.clamp(screenY - height / 2, margin, window.innerHeight - height - margin)
         direction = onLeft ? 'right' : 'left'

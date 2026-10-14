@@ -28,7 +28,8 @@ camera.position.set(0, 0, 20)
 const inInstagram = /Instagram/i.test(navigator.userAgent)
 const renderer = new THREE.WebGLRenderer({ antialias: true })
 const mobileRendering = window.matchMedia('(pointer: coarse)').matches
-const renderResolutionLimit = inInstagram ? 2 : mobileRendering ? 3 : 2
+const safariRendering = /AppleWebKit/i.test(navigator.userAgent) && !/Chrome|Chromium|Edg|Android/i.test(navigator.userAgent)
+const renderResolutionLimit = inInstagram || safariRendering ? 2 : mobileRendering ? 3 : 2
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, renderResolutionLimit))
 renderer.shadowMap.enabled = false
 renderer.shadowMap.type = THREE.PCFSoftShadowMap
@@ -279,7 +280,7 @@ renderer.setAnimationLoop((time: number) => {
   if (currentView === 'home') badgeCandies.eatNearby(position.x, position.y + hop,
     1.9 * characterSize, 2.4 * characterSize)
   uiElapsed += dt
-  if (!mobileRendering || uiElapsed >= 1 / 30) {
+  if (uiElapsed >= 1 / 30) {
     glossProps.syncLinks(camera)
     badgeCandies.syncInteraction(camera)
     if (currentView === 'home') speech.update(uiElapsed, position.x, position.y + hop, camera,

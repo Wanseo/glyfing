@@ -93,7 +93,7 @@ export function createCharacter() {
     new THREE.Vector3(0.053, 0.143, 0.003),
     new THREE.Vector3(0.065, 0.121, -0.009),
   ])
-  const tuftGeometry = new THREE.TubeGeometry(strandCurve, 10, 0.012, 5, false)
+  const tuftGeometry = new THREE.TubeGeometry(strandCurve, mobile ? 6 : 10, 0.012, mobile ? 4 : 5, false)
   const strandVertices = tuftGeometry.attributes.position!
   for (let i = 0; i < strandVertices.count; i++) {
     const t = Math.floor(i / 6) / 10
