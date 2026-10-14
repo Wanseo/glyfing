@@ -212,15 +212,29 @@ window.addEventListener('blur', () => keys.clear())
 document.addEventListener('visibilitychange', () => { if (document.hidden) keys.clear() })
 let previous = 0, gait = 0, walk = 0
 let uiElapsed = 0
+let lastFrameSample = 0, frameSamples = 0, slowFrameSamples = 0
+let renderInterval = 1000 / 60 - .75
 let nextBlink = Number.POSITIVE_INFINITY
 let blinkStarted: number | null = null
 renderer.setAnimationLoop((time: number) => {
-  if (document.hidden) { previous = time; return }
+  if (document.hidden) { previous = time; lastFrameSample = 0; return }
   if (currentView !== 'home' && currentView !== 'camera') {
     previous = time
     if (needsBackgroundRender) { renderer.render(scene, camera); needsBackgroundRender = false }
     return
   }
+  // Limit high-refresh displays to 60 fps. On consistently slow devices use
+  // a steady 30 fps, retaining the same textures, antialiasing and pixel ratio.
+  if (lastFrameSample && time - lastFrameSample < 250) {
+    frameSamples++
+    if (time - lastFrameSample > 24) slowFrameSamples++
+    if (frameSamples >= 120) {
+      if (slowFrameSamples > 45) renderInterval = 1000 / 30 - .75
+      frameSamples = 0; slowFrameSamples = 0
+    }
+  }
+  lastFrameSample = time
+  if (previous && time - previous < renderInterval) return
   if (!previous || !Number.isFinite(nextBlink)) nextBlink = time + 1200 + Math.random() * 1000
   const dt = previous ? Math.min((time - previous) / 1000, 0.05) : 0
   previous = time

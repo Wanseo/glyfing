@@ -93,10 +93,12 @@ export function createCharacter() {
     new THREE.Vector3(0.053, 0.143, 0.003),
     new THREE.Vector3(0.065, 0.121, -0.009),
   ])
-  const tuftGeometry = new THREE.TubeGeometry(strandCurve, mobile ? 6 : 10, 0.012, mobile ? 4 : 5, false)
+  // Keep every fleece lock; simplify its curved surface instead of lowering image resolution.
+  const strandSegments = 6, strandSides = 4
+  const tuftGeometry = new THREE.TubeGeometry(strandCurve, strandSegments, 0.012, strandSides, false)
   const strandVertices = tuftGeometry.attributes.position!
   for (let i = 0; i < strandVertices.count; i++) {
-    const t = Math.floor(i / 6) / 10
+    const t = Math.floor(i / (strandSides + 1)) / strandSegments
     const center = strandCurve.getPointAt(t)
     const taper = 1 - t * 0.72
     strandVertices.setXYZ(i,

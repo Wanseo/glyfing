@@ -246,8 +246,10 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
     const resultSound = won ? winSound : gameOverSound
     resultSound.currentTime = 0
     void resultSound.play().catch(() => { /* Audio playback is optional. */ })
+    clearTimeout(transition)
+    introActive = false; countdownSound.pause(); touchMovement.clear()
     running = false; keys.clear()
-    message.classList.remove('is-level-up')
+    message.classList.remove('is-level-up', 'is-countdown')
     message.classList.toggle('is-victory', won)
     celebrating = won; partySpawn = 0; partyTime = 0; confetti.length = 0
     jellyBurst.length = 0
@@ -309,6 +311,11 @@ export function createGummyGame(host: HTMLElement, assets: PlayAssets) {
   window.addEventListener('blur', clearKeys); document.addEventListener('visibilitychange', visibility)
   function loop(time: number) {
     if (disposed) return
+    if (document.hidden || (previous && time - previous < 1000 / 60 - .75)) {
+      if (document.hidden) previous = 0
+      frame = requestAnimationFrame(loop)
+      return
+    }
     const dt = previous && !document.hidden ? Math.min((time - previous) / 1000, .05) : 0
     previous = time
     ctx.clearRect(0, 0, width, height)

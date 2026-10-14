@@ -717,3 +717,8 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
 }
 
 .camera-sticker-layer.is-playback { pointer-events: auto; }
+
+/* Result controls must stay interactive after countdown and level transitions. */
+.rain-message.is-victory { pointer-events: auto; }
+.rain-message .result-actions { z-index: 2; pointer-events: auto; }
+.rain-message .result-actions img { pointer-events: none; }
