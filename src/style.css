@@ -722,3 +722,72 @@ html[data-view='game'] .rain-level .rain-goal-images { margin-top: 32px; }
 .rain-message.is-victory { pointer-events: auto; }
 .rain-message .result-actions { z-index: 2; pointer-events: auto; }
 .rain-message .result-actions img { pointer-events: none; }
+
+/* Scale the entire game HUD against one 1200px layout, including its gaps.
+   Separate fixed sizes and breakpoint offsets let the center and right overlap. */
+html[data-view='game'] {
+  --game-hud-unit: min(1px, calc((100vw - 24px - env(safe-area-inset-left) - env(safe-area-inset-right)) / 1200));
+  --game-hud-left: calc(12px + env(safe-area-inset-left));
+  --game-hud-right: calc(12px + env(safe-area-inset-right));
+  --game-hud-top: max(20px, env(safe-area-inset-top));
+}
+
+html[data-view='game'] .rain-lives {
+  top: var(--game-hud-top);
+  left: var(--game-hud-left);
+  height: calc(72 * var(--game-hud-unit));
+  gap: calc(4 * var(--game-hud-unit));
+}
+html[data-view='game'] .life-label {
+  font-size: calc(30 * var(--game-hud-unit));
+  margin-right: calc(4 * var(--game-hud-unit));
+}
+html[data-view='game'] .rain-lives img {
+  width: calc(58 * var(--game-hud-unit));
+  height: calc(58 * var(--game-hud-unit));
+}
+html[data-view='game'] .rain-level {
+  top: var(--game-hud-top);
+  left: calc(50% + (env(safe-area-inset-left) - env(safe-area-inset-right)) / 2);
+  padding: calc(10 * var(--game-hud-unit)) calc(16 * var(--game-hud-unit));
+}
+html[data-view='game'] .level-pixel-text { width: calc(280 * var(--game-hud-unit)); }
+html[data-view='game'] .rain-level .rain-goal-images {
+  height: calc(135 * var(--game-hud-unit));
+  margin-top: calc(32 * var(--game-hud-unit));
+  padding: calc(5 * var(--game-hud-unit)) calc(8 * var(--game-hud-unit));
+}
+html[data-view='game'] .rain-level .rain-goal-images canvas {
+  width: calc(120 * var(--game-hud-unit));
+  height: calc(120 * var(--game-hud-unit));
+}
+html[data-view='game'] .rain-timer {
+  top: var(--game-hud-top);
+  right: calc(var(--game-hud-right) + 168 * var(--game-hud-unit));
+}
+html[data-view='game'] .pixel-battery {
+  width: calc(230 * var(--game-hud-unit));
+  margin-top: 0;
+}
+html[data-view='game'] .rain-timer [data-time] { font-size: calc(30 * var(--game-hud-unit)); }
+html[data-view='game'] .brand-bar {
+  top: var(--game-hud-top);
+  right: var(--game-hud-right);
+  left: auto;
+  bottom: auto;
+}
+html[data-view='game'] .music-toggle,
+html[data-view='game'] .rain-home.home-icon-link {
+  width: calc(72 * var(--game-hud-unit));
+  height: calc(72 * var(--game-hud-unit));
+  min-width: 0;
+  min-height: 0;
+}
+html[data-view='game'] .rain-home.home-icon-link {
+  top: var(--game-hud-top);
+  right: calc(var(--game-hud-right) + 76 * var(--game-hud-unit));
+}
+html[data-view='game'] .rain-home.home-icon-link img {
+  width: calc(64 * var(--game-hud-unit));
+  height: calc(64 * var(--game-hud-unit));
+}
